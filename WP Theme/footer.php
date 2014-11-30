@@ -1,8 +1,10 @@
 <footer>
     <div class="container-fluid clearfix" style="background: #fff; padding-top: 20px; margin-top: 10px; ">
         <div class="col-md-3">
-            <ul class="clearfix" style="list-style: none; margin-bottom: 20px; border: none;">
+            <?php if (has_nav_menu('jobseeker')) {$primenu = wp_nav_menu(array('theme_location' => 'jobseeker', 'echo' => TRUE,'container' => '', 'items_wrap' => '<ul class="clearfix" style="list-style: none; margin-bottom: 20px; border: none;"><li><span style="color: #BF2026">Job Seeker</span></li>%3$s</ul>'));
+echo $primenu; unset($primenu);}else{?><ul class="clearfix" style="list-style: none; margin-bottom: 20px; border: none;">
                 <li><span style="color: #BF2026">Job Seeker</span></li>
+                
                 <li>Store Resume (Member)</li>
                 <li>Search Job</li>
                 <li>All Category</li>
@@ -10,15 +12,19 @@
                 <li>Industrial Jobs</li>
                 <li>Disability Jobs</li>
                 <li>Feature Guide</li>
-            </ul>
-
+                
+            </ul><?php }?>
+<?php if (has_nav_menu('employer')) {$primenu = wp_nav_menu(array('theme_location' => 'employer', 'echo' => TRUE,'container' => '', 'items_wrap' => '<ul class="clearfix" style="list-style: none; border: none;"><li><span style="color: #BF2026">Employers</span></li>%3$s</ul>'));
+echo $primenu; unset($primenu);}else{?>
             <ul class="clearfix" style="list-style: none; border: none;">
                 <li><span style="color: #BF2026">Employers</span></li>
+                
                 <li>Post Job</li>
                 <li>Advertise Rate</li>
                 <li>Search Resume</li>
                 <li>Feature Guide</li>
-            </ul>
+                
+            </ul><?php }?>
         </div>
         <div class="col-md-3">
             <ul class="clearfix" style="list-style: none; border: none;">

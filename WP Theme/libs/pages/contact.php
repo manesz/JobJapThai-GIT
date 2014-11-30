@@ -10,13 +10,7 @@
 
                         <div class="col-md-6">
                             <img src="<?php echo get_template_directory_uri(); ?>/libs/img/nav-logo-big.png" class=""/>
-                            <h4 class="font-color-BF2026 margin-top-20" style="">เกี่ยวกับทีมงานผู้ก่อตั้งเว็บไซต์ Jobjapthai.com</h4>
-                            <p>
-                                JobJapThai Co., Ltd.<br/>
-                                1 Infinite Loop Cupertino, CA 95014<br/>
-                                Tel. +6686 627 0681<br/>
-                                contact@jobjapthai.com
-                            </p>
+                            <h4 class="font-color-BF2026 margin-top-20" style="">เกี่ยวกับทีมงานผู้ก่อตั้งเว็บไซต์ Jobjapthai.com</h4><?php if (have_posts()) : while (have_posts()) : the_post(); the_content(); endwhile; endif;?>
                         </div>
                         <div class="col-md-6">
                             <form>
