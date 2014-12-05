@@ -42,7 +42,8 @@ if ($postPage == 'banner_slide') {
         if ($page != 1) {
             $startpage = $plimit * ($page - 1);
         }
-        $gallerylist = $classBannerSlide->getList($plimit, $startpage);
+//        $gallerylist = $classBannerSlide->getList($plimit, $startpage);
+        $gallerylist = $classBannerSlide->getList();
 //        echo json_encode(array($page, 66));exit;
         foreach ($gallerylist as $key) {
             $returnGallery['data'][] = $key;
@@ -161,6 +162,13 @@ if ($postPage == 'banner_slide') {
         header('Content-type: application/json');
         echo $callbackname, '(', json_encode($returnGallery), ')';
         exit();
+    } else if ($typePost == 'update_order') {
+        $result = $classBannerSlide->updateOder($_REQUEST['array_order']);
+        if (!$result)
+            echo 'fail';
+        else
+            echo 'success';
+        exit;
     }
 }
 
@@ -185,9 +193,13 @@ function theme_banner_slide_page()
     <link href="<?php bloginfo('template_directory'); ?>/library/css/icon.css" rel="stylesheet" type="text/css"/>
     <link href="<?php echo includes_url(); ?>css/editor.min.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/library/js/banner_slide.js"></script>
-    <script type="text/javascript"
-            src="<?php bloginfo('template_directory'); ?>/library/js/sortable/jquery.sortable.js"></script>
 
+    <!--Sortable-->
+    <script type="text/javascript"
+            src="<?php bloginfo('template_directory'); ?>/library/js/sortable/jquery-1.10.2.js"></script>
+    <script type="text/javascript"
+            src="<?php bloginfo('template_directory'); ?>/library/js/sortable/jquery-ui.js"></script>
+    <!--End Sortable-->
 
     <input type="hidden" value="<?php bloginfo('template_directory'); ?>/library/js/jquery.min.js" id="getjqpath"/>
     <input type="hidden" value="<?php bloginfo('template_directory'); ?>/" id="getbasepath"/>
@@ -210,7 +222,15 @@ function theme_banner_slide_page()
 
                     </div>
                     <input type="hidden" id="siteurl" value="<?php echo network_site_url('/'); ?>"/>
-
+                    <!--                    <ul class="sortable" id="sortable">-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>-->
+                    <!--                        <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>-->
+                    <!--                    </ul>-->
                     <h3>Upload Banner Slide</h3>
                     <!--                        <ul id="sortable" class="sortable grid">-->
                     <!--                            <li draggable="true" id="item1">Item 1</li>-->
@@ -277,13 +297,11 @@ function theme_banner_slide_page()
                             background: none;
                         }
                     </style>
-                    <script>
-
-                    </script>
                     <div class="update-nag" id="showstatus"></div>
                     <div id="formstage">
                         <form action="" id="gallery-post" method="post">
                             <input name="gsort" type="hidden" id="gsort" value="99" size="3" maxlength="3"/>
+
                             <div id="div-inner">
                                 <input name="typepost" type="hidden" id="typepost" value="add"/>
                                 <input type="hidden" id="galleryID" value="0"/>

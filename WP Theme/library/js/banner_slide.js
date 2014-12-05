@@ -112,11 +112,38 @@ function getGalleryList(url) {
                 $.each(data.data, function (index, value) {
                     mytxt += listMenuGallery(value.image_path, value.id, '');
                 });
-                mytxt += '</ul><div class="clear"></div><div class="pagination">' + data.pagination + '</div>';
+                mytxt += '</ul>';
+                mytxt += '<div class="clear">';
+//                mytxt += '</div><div class="pagination">' + data.pagination + '</div>';
                 $('div#slidelist-stage').html(mytxt);
                 delete mytxt;
                 getGalleryEvent();
-                $('#sortable').sortable();
+                $('#sortable').sortable({
+                    update: function( event, ui ) {
+                        var arrayOrderID = [];
+                        $('.image_sort').each(function(){
+                            arrayOrderID.push($(this).attr("data"));
+                        });
+                        $.ajax({
+                            type: "POST",
+                            url: '',
+                            data: {
+                                post_page: 'banner_slide',
+                                typePost: 'update_order',
+                                array_order: arrayOrderID
+                            },
+                            success: function (result) {
+                                if (result != 'success') {
+                                    alert(result);
+                                }
+                            },
+                            error: function (result) {
+                                alert("Error:\n" + result.responseText);
+                                hideImgLoading();
+                            }
+                        });
+                    }
+                });
 //                $('#draggables li').draggable({
 //                    connectToSortable: '#sortable',
 //                    helper: 'clone',
@@ -125,11 +152,11 @@ function getGalleryList(url) {
 //                });
 //                ​$('#sortable').sortable('disable');
                 // disable the *sortable* functionality while retaining the *droppable*
-                $('#sortable').droppable({
-                    drop: function(ev, ui){
-                        $(ui.draggable).html('<div>' + ui.draggable.text() + '</div>');
-                    }
-                });
+//                $('#sortable').droppable({
+//                    drop: function(ev, ui){
+//                        $(ui.draggable).html('<div>' + ui.draggable.text() + '</div>');
+//                    }
+//                });
             } else {
                 $('div#slidelist-stage').html('<h3 style="text-align:center">ยังไม่มีข้อมูล</h3>');
             }
@@ -246,7 +273,7 @@ function checkFormInput() {
     return validate;
 }
 function listMenuGallery(img, id, title) {
-    var listtxt = '<li ondrop="dragImage(event);" draggable="true" class="image_list" data="'+id+
+    var listtxt = '<li class="image_sort" data="'+id+
         '" ><a href="#" class="img-edit" rel="' + id + '"><img title="' + title +
         '" src="' + img + '" alt="" width="165" height="110" onerror="defaultImage(this);" /></a>' +
         '<a href="#" class="remove-slide" rel="' + id + '"><i class="icon-cancel-2"></i></a></li>';
@@ -409,25 +436,6 @@ function defaultImage(img)
     img.src = sbasepath + '/lib/images/no_image.jpg';
 }
 
-var isDragging = false;
-$(document).ready(function () {
-
-
-});
-
-var checkClickImage = false;
-function dragImage(ev) {
-    ev.preventDefault();alert(5)
-    $("#slidelist-stage").append(5)
-}
-
-function mouseOutImage() {
-    if (checkClickImage) {
-        alert("drag")
-    } else {
-        checkClickImage = false;
-    }
-}
 
 //$('.image_list').on('onmouseout', function(e) {
 //    alert(5)

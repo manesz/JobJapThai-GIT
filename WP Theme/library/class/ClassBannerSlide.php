@@ -2,6 +2,7 @@
 if (!class_exists('pagination')) {
     include_once('pagination.class.php');
 }
+
 class BannerSlide
 {
     private $wpdb;
@@ -16,13 +17,11 @@ class BannerSlide
         //$this->createDB();
     }
 
-    /*public function createDB()
+    public function createDB()
     {
         $sql = "
             CREATE TABLE `$this->tableBannerSlide` (
               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-              `title` varchar(255) DEFAULT NULL,
-              `description` text,
               `link` text,
               `sort` int(11) DEFAULT NULL,
               `image_path` text,
@@ -30,10 +29,10 @@ class BannerSlide
               `update_datetime` datetime DEFAULT NULL,
               `publish` int(1) DEFAULT '0',
               PRIMARY KEY (`id`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8
         ";
         dbDelta($sql);
-    }*/
+    }
 
     public function getCountValue()
     {
@@ -46,7 +45,7 @@ class BannerSlide
 
     public function getByID($sid)
     {
-        $sql ="
+        $sql = "
           SELECT * FROM $this->tableBannerSlide WHERE id={$sid} AND `publish` = 1
         ";
         $result = $this->wpdb->get_row($sql);
@@ -55,11 +54,12 @@ class BannerSlide
 
     public function getList($plimit = 0, $pbegin = 0)
     {
+        $this->createDB();
         if ($plimit != 0 && $pbegin != 0) {
             $strLimit = " LIMIT $pbegin, $plimit ";
-        } else if ($plimit != 0){
+        } else if ($plimit != 0) {
             $strLimit = " LIMIT $plimit ";
-        }else {
+        } else {
             $strLimit = "";
         }
 
@@ -129,6 +129,41 @@ class BannerSlide
         } else {
             return FALSE;
         }
+    }
+
+    public function updateOder($array_order)
+    {
+        if (!$array_order)
+            return true;
+//        var_dump($array_order);
+        $sql = "";
+        foreach ($array_order as $key => $value) {
+            $sort = $key + 1;
+//            $sql .= "
+//                UPDATE
+//                  $this->tableBannerSlide
+//                SET
+//                    sort={$sort}
+//                WHERE 1
+//                AND id={$value};
+//            ";
+
+            $result = $this->wpdb->update(
+                $this->tableBannerSlide,
+                array(
+                    'sort' => $sort,
+                    'update_datetime' => date_i18n('Y-m-d H:i:s'),
+                ),
+                array('id' => $value),
+                array('%d', '%s'),
+                array('%d')
+
+            );
+//            $result = $this->wpdb->query($sql);
+            if (!$result)
+                return false;
+        }
+        return true;
     }
 
     public function deleteValue($id)
