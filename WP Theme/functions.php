@@ -10,8 +10,6 @@ sidebars, comments, ect.
 
 // LOAD BONES CORE (if you remove this, the theme will break)
 require_once( 'library/bones.php' );
-require_once('library/get-post-data.php');
-require_once('library/menu-control.php');
 
 // CUSTOMIZE THE WORDPRESS ADMIN (off by default)
 // require_once( 'library/admin.php' );
