@@ -1,10 +1,12 @@
 <?php
 
 require_once("class/ClassBannerSlide.php");
+require_once("class/ClassContact.php");
 
 //admin menu
 require_once('menu/theme-option-menu.php');
 require_once('menu/banner-slide-menu.php');
+require_once('menu/contact-menu.php');
 
 /*
 //require class for post data
