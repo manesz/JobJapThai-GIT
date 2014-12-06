@@ -37,10 +37,8 @@ function render_contact_page()
     $title_line = "";
     $link_line = "";
     $qr_code_line = "";
-    $title_pinterest = "";
-    $link_pinterest = "";
-    $title_tripadvisor = "";
-    $link_tripadvisor = "";
+    $title_ggp = "";
+    $link_ggp = "";
     $latitude = "";
     $longitude = "";
     if ($arrayContact) {
@@ -111,27 +109,17 @@ function render_contact_page()
                         <td><label for="title_line">Title line :</label></td>
                         <td><input type="text" id="title_line" name="title_line"
                                    value="<?php echo $title_line; ?>"/></td>
-                        <td><label for="title_pinterest">Title Pinterest :</label></td>
-                        <td><input type="text" id="title_pinterest" name="title_pinterest"
-                                   value="<?php echo $title_pinterest; ?>"/></td>
+                        <td><label for="title_ggp">Title Google+ :</label></td>
+                        <td><input type="text" id="title_ggp" name="title_ggp"
+                                   value="<?php echo $title_ggp; ?>"/></td>
                     </tr>
                     <tr class="alternate">
                         <td><label for="link_line">Link Line :</label></td>
                         <td><input type="text" id="link_line" name="link_line"
                                    value="<?php echo $link_line; ?>"/></td>
-                        <td><label for="link_pinterest">Link Pinterest :</label></td>
-                        <td><input type="text" id="link_pinterest" name="link_pinterest"
-                                   value="<?php echo $link_pinterest; ?>"/></td>
-                    </tr>
-                    <tr class="alternate">
-                        <td><label for="title_tripadvisor">Title Tripadvisor :</label></td>
-                        <td colspan="3"><input type="text" id="title_tripadvisor" name="title_tripadvisor"
-                                   value="<?php echo $title_tripadvisor; ?>"/></td>
-                    </tr>
-                    <tr class="alternate">
-                        <td><label for="link_tripadvisor">Link Tripadvisor :</label></td>
-                        <td colspan="3"><input type="text" id="link_tripadvisor" name="link_tripadvisor"
-                                   value="<?php echo $link_tripadvisor; ?>"/></td>
+                        <td><label for="link_ggp">Link Google+ :</label></td>
+                        <td><input type="text" id="link_ggp" name="link_ggp"
+                                   value="<?php echo $link_ggp; ?>"/></td>
                     </tr>
                     <tr class="alternate">
                         <td><label for="latitude">Latitude :</label></td>
