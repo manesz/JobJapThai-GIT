@@ -118,11 +118,6 @@ if ($arrayContact) {
 
 </footer><!-- END : footers.container-fluid -->
 
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<script src="<?php echo get_template_directory_uri(); ?>/libs/js/jquery.1.11.1.min.js"></script>
-<script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap.min.js"></script>
-<script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrapValidator.min.js"></script>
-<script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap-modal.js"></script>
 
 <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
 <!--[if lt IE 9]>
@@ -136,6 +131,29 @@ if ($arrayContact) {
 <![endif]-->
 
 <script>
+    var str_loading = '<div class="img_loading" style="position: fixed; top: 40%; left: 50%;"><img src="<?php
+    bloginfo('template_directory'); ?>/library/images/loading.gif" width="64"/></div>';
+
+    function showImgLoading() {
+        $("body").append(str_loading);
+    }
+
+    function hideImgLoading() {
+        $(".img_loading").remove();
+    }
+
+    function scrollToTop(fade_in) {
+        fade_in = fade_in || false;
+        $("body, html").animate({
+                scrollTop: $("body").position().top
+            },
+            500,
+            function () {
+                if (fade_in)
+                    $(fade_in).fadeIn();
+            });
+    }
+
     var wppage = {
         init: function () {
             wppage.addEvent();
