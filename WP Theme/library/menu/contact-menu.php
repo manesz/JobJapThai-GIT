@@ -26,9 +26,11 @@ function render_contact_page()
 {
     global $objClassContact;
     global $webSiteName;
-    $arrayContact = $objClassContact->getContact(1);
+    $arrayContact = $objClassContact->getContact();
     $massage = "";
     $tel = "";
+    $address = "";
+    $fax = "";
     $email = "";
     $title_facebook = "";
     $link_facebook = "";
@@ -79,6 +81,13 @@ function render_contact_page()
                         <td><label for="email">Email :</label></td>
                         <td><input type="text" id="email" name="email"
                                    value="<?php echo $email; ?>"/></td>
+                    </tr>
+                    <tr class="alternate">
+                        <td><label for="fax">Fax :</label></td>
+                        <td><input type="text" id="fax" name="fax"
+                                   value="<?php echo $fax; ?>"/></td>
+                        <td><label for="address">Address :</label></td>
+                        <td><textarea id="address" name="address"><?php echo $address; ?></textarea></td>
                     </tr>
                     <tr class="alternate">
                         <td><label for="title_facebook">Title Facebook :</label></td>

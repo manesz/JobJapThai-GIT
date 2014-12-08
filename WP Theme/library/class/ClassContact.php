@@ -18,6 +18,8 @@ class Contact
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
               `massage` text,
               `tel` varchar(120) DEFAULT NULL,
+              `fax` varchar(120) DEFAULT NULL,
+              `address` text,
               `email` varchar(120) DEFAULT NULL,
               `title_facebook` varchar(120) DEFAULT NULL,
               `link_facebook` text,
@@ -38,7 +40,8 @@ class Contact
 
     public function getContact($id = 0)
     {
-//        $this->createDB();
+        if (!$id)
+            $this->createDB();
         $strAnd = $id ? " AND id=$id" : "";
         $sql = "
             SELECT
@@ -67,6 +70,8 @@ class Contact
                 'massage' => @$massage,
                 'tel' => @$tel,
                 'email' => @$email,
+                'fax' => @$fax,
+                'address' => @$address,
                 'title_facebook' => @$title_facebook,
                 'link_facebook' => @$link_facebook,
                 'title_twitter' => @$title_twitter,
@@ -80,6 +85,8 @@ class Contact
                 'longitude' => @$longitude,
             ),
             array(
+                '%s',
+                '%s',
                 '%s',
                 '%s',
                 '%s',
@@ -110,6 +117,8 @@ class Contact
             array(
                 'massage' => @$massage,
                 'tel' => @$tel,
+                'fax' => @$fax,
+                'address' => @$address,
                 'email' => @$email,
                 'title_facebook' => @$title_facebook,
                 'link_facebook' => @$link_facebook,
@@ -125,6 +134,8 @@ class Contact
             ),
             array('id' => 1),
             array(
+                '%s',
+                '%s',
                 '%s',
                 '%s',
                 '%s',
