@@ -1,3 +1,9 @@
+<?php
+
+$classBannerSlide = new BannerSlide($wpdb);
+$arrayBanner = $classBannerSlide->getList();
+
+?>
 <section class="container-fluid" style="">
 
     <div class="container">
@@ -13,14 +19,21 @@
 
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner">
-                        <div class="item active">
-                            <img src="<?php echo get_template_directory_uri(); ?>/libs/img/slide-01.png" alt="..." style="width: 100%;">
-                            <!--                            <div class="carousel-caption">...</div>-->
-                        </div>
-                        <div class="item">
-                            <img src="<?php echo get_template_directory_uri(); ?>/libs/img/slide-01.png" alt="..." style="width: 100%;">
-                            <div class="carousel-caption">...</div>
-                        </div>
+                        <?php foreach ($arrayBanner as $key => $value): ?>
+                            <div class="item <?php echo $key == 0 ? 'active' : ""; ?>">
+                                <a href="<?php echo $value->link; ?>" target="_blank">
+                                    <img src="<?php echo $value->image_path; ?>"
+                                         alt="" style="width: 100%; height: 350px;">
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                        <!--                        <div class="item active">-->
+                        <!--                            <img src="-->
+                        <!--                        --><?php //echo get_template_directory_uri(); ?><!--/libs/img/slide-01.png" alt="..."-->
+                        <!--                                 style="width: 100%;">-->
+                        <!---->
+                        <!--                            <div class="carousel-caption">...</div>-->
+                        <!--                        </div>-->
                     </div>
 
                     <!-- Controls -->
