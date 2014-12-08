@@ -176,32 +176,6 @@ function getGalleryList(url) {
 
 function getJsonAdd() {
     statusUpdate('Loading...', '#0C6');
-    /*$.ajax({
-        //url: $('input#siteurl').val() + '?tabPage=tab1',
-        url: "",
-        async: false,
-        jsonpCallback: 'jsonCallback',
-        contentType: "application/json",
-        dataType: 'jsonp',
-        data: {
-            post_page: post_page,
-            ran: Math.random(),
-            gtitle: $('div#formstage input#gtitle').val(),
-            glink: $('div#formstage input#glink').val(),
-            pathimg: $('div#formstage input#pathImg').val(),
-            gsort: $('div#formstage input#gsort').val(),
-            gdesc: $('div#formstage textarea#gsort2').val(),
-            typePost: 'add',
-            callback: 'jsonCallback'},
-        success: function (data) {
-            if (data.data == 'success') {
-                statusUpdate('เพิ่มเรียบร้อย', '#06C');
-                clearTab1();
-            } else {
-                statusUpdate('ข้อมูลผิดพราดกรุณาลองใหม่', '#F00');
-            }
-        }
-    });*/
 
     var myurl = $('input#siteurl').val();
     $.ajax({
@@ -393,6 +367,8 @@ function getJsonEdit() {
             } else {
                 statusUpdate('ข้อมูลผิดพราดกรุณาลองใหม่', '#F00');
             }
+        }, error: function (result) {
+            statusUpdate("Error:\n" + result.responseText, '#F00');
         }
     });
 }

@@ -104,7 +104,7 @@ if ($postPage == 'banner_slide') {
                                     <input id="uploadImageButton" type="button" class="button"
                                            value="Upload Image"
                                            onclick="imageUploaderAll('form#gallery-post-edit #pathImg', 'form#gallery-post-edit #imgchang');"/>
-                                    <br/><font color='red'>**</font>ขนาดที่แนะนำ 300x225px
+                                    <br/><font color='red'>**</font>ขนาดที่แนะนำ 960x120px
                                 </center>
                             </td>
                         </tr>
@@ -131,7 +131,7 @@ if ($postPage == 'banner_slide') {
 //            $gtitle = isset($_REQUEST['gtitle']) ? $_REQUEST['gtitle'] : '';
 //            $pathimg = isset($_REQUEST['pathimg']) ? $_REQUEST['pathimg'] : '';
 //            $glink = isset($_REQUEST['glink']) ? $_REQUEST['glink'] : '';
-//            $galleryID = isset($_REQUEST['galleryid']) ? $_REQUEST['galleryid'] : FALSE;
+            $galleryID = isset($_REQUEST['galleryid']) ? $_REQUEST['galleryid'] : FALSE;
             if ($galleryID) {
                 if ($classBannerSlide->editData($_REQUEST)) {
                     $returnGallery = array('data' => 'success');
@@ -325,7 +325,7 @@ function theme_banner_slide_page()
                                                    value="Upload Image"
                                                    onclick="imageUploader('#pathImg');"/>
                                             <input type="submit" name="gallery" value="Save" class="button-primary"/>
-                                            <br/><font color='red'>**</font>ขนาดที่แนะนำ 300x225px
+                                            <br/><font color='red'>**</font>ขนาดที่แนะนำ 960x120px
                                         </td>
                                     </tr>
                                     </tbody>
