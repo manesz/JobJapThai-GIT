@@ -377,7 +377,7 @@ function checkEventTab(tabid) {
     getEventImageGallery();
 }
 function getLoadingPage() {
-    return '<center><img src="' + sbasepath + '/library/images/332.gif" alt="Loading" /></center>';
+    return '<center><img src="' + sbasepath + '/libs/images/332.gif" alt="Loading" /></center>';
 }
 function imageUploader(id) {
     window.send_to_editor = newSendToEditor;

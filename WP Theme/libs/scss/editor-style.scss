@@ -17,19 +17,19 @@ here http://codex.wordpress.org/Function_Reference/add_editor_style */
 body#tinymce.wp-editor {
 
 	// normalize: http://necolas.github.io/normalize.css/
-	@import "partials/normalize";
+	@import "partials/_normalize";
 
 	// Sass variables
-	@import "partials/variables";
+	@import "partials/_variables";
 
 	// typography
-	@import "partials/typography";
+	@import "partials/_typography";
 
 	// Sass functions
-	@import "partials/functions";
+	@import "partials/_functions";
 
 	// import mixins
-	@import "partials/mixins";
+	@import "partials/_mixins";
 
 	width: 731px;
 	font-family: $lato;

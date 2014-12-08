@@ -9,12 +9,12 @@ sidebars, comments, ect.
 */
 
 // LOAD BONES CORE (if you remove this, the theme will break)
-require_once( 'library/bones.php' );
-require_once('library/get-post-data.php');
-require_once('library/menu-control.php');
+require_once('libs/bones.php');
+require_once('libs/get-post-data.php');
+require_once('libs/menu-control.php');
 
 // CUSTOMIZE THE WORDPRESS ADMIN (off by default)
-// require_once( 'library/admin.php' );
+// require_once( 'libs/admin.php' );
 
 /*********************
 LAUNCH BONES
@@ -27,11 +27,11 @@ function bones_ahoy() {
   add_editor_style();
 
   // let's get language support going, if you need it
-  load_theme_textdomain( 'bonestheme', get_template_directory() . '/library/translation' );
+  load_theme_textdomain( 'bonestheme', get_template_directory() . '/libs/translation' );
 
   // USE THIS TEMPLATE TO CREATE CUSTOM POST TYPES EASILY
-  require_once( 'library/custom-post-type.php' );
-  require_once( 'library/news-type.php' );
+  require_once('libs/custom-post-type.php');
+  require_once('libs/news-type.php');
 
   // launching operation cleanup
   add_action( 'init', 'bones_head_cleanup' );
@@ -213,7 +213,7 @@ function bones_comments( $comment, $args, $depth ) {
           // create variable
           $bgauthemail = get_comment_author_email();
         ?>
-        <img data-gravatar="http://www.gravatar.com/avatar/<?php echo md5( $bgauthemail ); ?>?s=40" class="load-gravatar avatar avatar-48 photo" height="40" width="40" src="<?php echo get_template_directory_uri(); ?>/library/images/nothing.gif" />
+        <img data-gravatar="http://www.gravatar.com/avatar/<?php echo md5( $bgauthemail ); ?>?s=40" class="load-gravatar avatar avatar-48 photo" height="40" width="40" src="<?php echo get_template_directory_uri(); ?>/libs/images/nothing.gif" />
         <?php // end custom gravatar call ?>
         <?php printf(__( '<cite class="fn">%1$s</cite> %2$s', 'bonestheme' ), get_comment_author_link(), edit_comment_link(__( '(Edit)', 'bonestheme' ),'  ','') ) ?>
         <time datetime="<?php echo comment_time('Y-m-j'); ?>"><a href="<?php echo htmlspecialchars( get_comment_link( $comment->comment_ID ) ) ?>"><?php comment_time(__( 'F jS, Y', 'bonestheme' )); ?> </a></time>

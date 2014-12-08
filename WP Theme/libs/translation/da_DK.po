@@ -245,130 +245,130 @@ msgstr "Beklager, men det søgte emne blev ikke fundet på denne side."
 msgid "Please activate some Widgets."
 msgstr "Aktiver venligst nogle Widgets."
 
-#: library/bones.php:52
+#: libs/bones.php:52
 msgid "Read more &raquo;"
 msgstr "Læs mere &raquo;"
 
-#: library/custom-post-type.php:24
+#: libs/custom-post-type.php:24
 msgid "Custom Types"
 msgstr "Brugerdefinerede Typer:"
 
-#: library/custom-post-type.php:25
+#: libs/custom-post-type.php:25
 msgid "Custom Post"
 msgstr "Brugerdefineret Indlæg"
 
-#: library/custom-post-type.php:26
+#: libs/custom-post-type.php:26
 msgid "Add New"
 msgstr "Tilføj Nyt"
 
-#: library/custom-post-type.php:27
+#: libs/custom-post-type.php:27
 msgid "Add New Custom Type"
 msgstr "Tilføj Ny Brugerdefineret Type"
 
-#: library/custom-post-type.php:28
+#: libs/custom-post-type.php:28
 msgid "Edit"
 msgstr "Rediger"
 
-#: library/custom-post-type.php:29
+#: libs/custom-post-type.php:29
 msgid "Edit Post Types"
 msgstr "Rediger Indlæg Typer"
 
-#: library/custom-post-type.php:30
+#: libs/custom-post-type.php:30
 msgid "New Post Type"
 msgstr "Ny Indlæg Type"
 
-#: library/custom-post-type.php:31
+#: libs/custom-post-type.php:31
 msgid "View Post Type"
 msgstr "Se Indlæg Type "
 
-#: library/custom-post-type.php:32
+#: libs/custom-post-type.php:32
 msgid "Search Post Type"
 msgstr "Søg Indlæg Type"
 
-#: library/custom-post-type.php:33
+#: libs/custom-post-type.php:33
 msgid "Nothing found in the Database."
 msgstr "Intet fundet i Databasen."
 
-#: library/custom-post-type.php:34
+#: libs/custom-post-type.php:34
 msgid "Nothing found in Trash"
 msgstr "Intet fundet i Papirkurven"
 
-#: library/custom-post-type.php:37
+#: libs/custom-post-type.php:37
 msgid "This is the example custom post type"
 msgstr "Dette er et ekempel på en brugerdefineret indlæg type."
 
-#: library/custom-post-type.php:73
+#: libs/custom-post-type.php:73
 msgid "Custom Categories"
 msgstr "Brugerdefinerede Kategorier"
 
-#: library/custom-post-type.php:74
+#: libs/custom-post-type.php:74
 msgid "Custom Category"
 msgstr "Brugerdefineret Kategori"
 
-#: library/custom-post-type.php:75
+#: libs/custom-post-type.php:75
 msgid "Search Custom Categories"
 msgstr "Søg Brugerdefinerede Kategorier"
 
-#: library/custom-post-type.php:76
+#: libs/custom-post-type.php:76
 msgid "All Custom Categories"
 msgstr "Alle Brugerdefinerede Kategorier"
 
-#: library/custom-post-type.php:77
+#: libs/custom-post-type.php:77
 msgid "Parent Custom Category"
 msgstr "Forældre Brugerdefineret Kategori"
 
-#: library/custom-post-type.php:78
+#: libs/custom-post-type.php:78
 msgid "Parent Custom Category:"
 msgstr "Forældre Brugerdefineret Kategori:"
 
-#: library/custom-post-type.php:79
+#: libs/custom-post-type.php:79
 msgid "Edit Custom Category"
 msgstr "Rediger Brugerdefineret Kategori"
 
-#: library/custom-post-type.php:80
+#: libs/custom-post-type.php:80
 msgid "Update Custom Category"
 msgstr "Updater brugerdefineret Kategori"
 
-#: library/custom-post-type.php:81
+#: libs/custom-post-type.php:81
 msgid "Add New Custom Category"
 msgstr "Tilføj Nyt Brugerdefineret Kategori"
 
-#: library/custom-post-type.php:82
+#: libs/custom-post-type.php:82
 msgid "New Custom Category Name"
 msgstr "Nyt Brugerdefineret Kategori Navn"
 
-#: library/custom-post-type.php:95
+#: libs/custom-post-type.php:95
 msgid "Custom Tag"
 msgstr "Brugerdefineret Tag"
 
-#: library/custom-post-type.php:96
+#: libs/custom-post-type.php:96
 msgid "Search Custom Tags"
 msgstr "Søg Brugerdefinerede Tags"
 
-#: library/custom-post-type.php:97
+#: libs/custom-post-type.php:97
 msgid "All Custom Tags"
 msgstr "Alle Brugerdefinerede Tags"
 
-#: library/custom-post-type.php:98
+#: libs/custom-post-type.php:98
 msgid "Parent Custom Tag"
 msgstr "Forældre Brugerdefineret Tag"
 
-#: library/custom-post-type.php:99
+#: libs/custom-post-type.php:99
 msgid "Parent Custom Tag:"
 msgstr "Forældre Brugerdefineret Tag:"
 
-#: library/custom-post-type.php:100
+#: libs/custom-post-type.php:100
 msgid "Edit Custom Tag"
 msgstr "Rediger Brugerdefineret Tag"
 
-#: library/custom-post-type.php:101
+#: libs/custom-post-type.php:101
 msgid "Update Custom Tag"
 msgstr "Opdater Brugerdefineret Tag"
 
-#: library/custom-post-type.php:102
+#: libs/custom-post-type.php:102
 msgid "Add New Custom Tag"
 msgstr "Tilføj Nyt Brugerdefineret Tag"
 
-#: library/custom-post-type.php:103
+#: libs/custom-post-type.php:103
 msgid "New Custom Tag Name"
 msgstr "Nyt Brugerdefineret Tag Navn"

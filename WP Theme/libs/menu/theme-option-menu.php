@@ -15,7 +15,7 @@ function setup_theme_admin_menus()
         'manage_options',
         'ics_theme_settings',
         'ics_page',
-        get_bloginfo('template_directory') . '/library/images/ics.png',
+        get_bloginfo('template_directory') . '/libs/images/ics.png',
         4
     );
 }
@@ -27,9 +27,9 @@ function ics_page()
     <script>
         var base_url = "<?php bloginfo('template_directory'); ?>/";
     </script>
-    <link href="<?php bloginfo('template_directory'); ?>/library/css/tytabs.css" rel="stylesheet"
+    <link href="<?php bloginfo('template_directory'); ?>/libs/css/tytabs.css" rel="stylesheet"
           type="text/css"/>
-    <link href="<?php bloginfo('template_directory'); ?>/library/css/icon.css" rel="stylesheet"
+    <link href="<?php bloginfo('template_directory'); ?>/libs/css/icon.css" rel="stylesheet"
           type="text/css"/>
     <div class="wrap">
     <div id="icon-themes" class="icon32"><br/></div>

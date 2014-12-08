@@ -118,7 +118,7 @@ if ($arrayContact) {
 
 <script>
     var str_loading = '<div class="img_loading" style="position: fixed; top: 40%; left: 50%;"><img src="<?php
-    bloginfo('template_directory'); ?>/library/images/loading.gif" width="64"/></div>';
+    bloginfo('template_directory'); ?>/libs/images/loading.gif" width="64"/></div>';
 
     function showImgLoading() {
         $("body").append(str_loading);

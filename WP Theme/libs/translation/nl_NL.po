@@ -255,7 +255,7 @@ msgstr "Dit is de foutmelding in het page.php sjabloon."
 msgid "Search Results for:"
 msgstr "Zoekresultaten voor:"
 
-#: ../../search.php:24 ../../library/bones.php:350
+#: ../../search.php:24 ../../libs/bones.php:350
 msgid "Read more &raquo;"
 msgstr "Lees meer &raquo;"
 
@@ -306,15 +306,15 @@ msgstr "Lees meer &raquo;"
 msgid "This is the error message in the taxonomy-custom_cat.php template."
 msgstr "Dit is de foutmelding in het taxonomy-custom_cat.php sjabloon."
 
-#: ../../library/admin.php:66
+#: ../../libs/admin.php:66
 msgid "j F Y @ g:i a"
 msgstr ""
 
-#: ../../library/admin.php:78
+#: ../../libs/admin.php:78
 msgid "Recently on Themble (Customize on admin.php)"
 msgstr "Onlangs op Themble (Pas aan in admin.php)"
 
-#: ../../library/admin.php:125
+#: ../../libs/admin.php:125
 msgid ""
 "<span id=\"footer-thankyou\">Developed by <a href=\"http://yoursite.com\" "
 "target=\"_blank\">Your Site Name</a></span>. Built using <a href=\"http://"
@@ -324,156 +324,156 @@ msgstr ""
 "target=\"_blank\">Naam Van Jouw Website</a></span>. Gemaakt met <a href="
 "\"http://themble.com/bones\" target=\"_blank\">Bones</a>."
 
-#: ../../library/bones.php:213 ../../library/bones.php:230
+#: ../../libs/bones.php:213 ../../libs/bones.php:230
 msgid "The Main Menu"
 msgstr "Het Hoofd Menu"
 
-#: ../../library/bones.php:214 ../../library/bones.php:248
+#: ../../libs/bones.php:214 ../../libs/bones.php:248
 msgid "Footer Links"
 msgstr "Voeter Links"
 
-#: ../../library/bones.php:302
+#: ../../libs/bones.php:302
 msgid "No Related Posts Yet!"
 msgstr "Nog Geen Gerelateerde Berichten!"
 
-#: ../../library/bones.php:350
+#: ../../libs/bones.php:350
 msgid "Read"
 msgstr "Lezen"
 
-#: ../../library/bones.php:365
+#: ../../libs/bones.php:365
 #, php-format
 msgid "Posts by %s"
 msgstr "Berichten door %s"
 
-#: ../../library/custom-post-type.php:24
+#: ../../libs/custom-post-type.php:24
 msgid "Custom Types"
 msgstr "Maatwerk Berichttypes"
 
-#: ../../library/custom-post-type.php:25
+#: ../../libs/custom-post-type.php:25
 msgid "Custom Post"
 msgstr "Maatwerk Bericht"
 
-#: ../../library/custom-post-type.php:26
+#: ../../libs/custom-post-type.php:26
 msgid "All Custom Posts"
 msgstr "Alle Maatwerk Berichten"
 
-#: ../../library/custom-post-type.php:27
+#: ../../libs/custom-post-type.php:27
 msgid "Add New"
 msgstr "Nieuwe toevoegen"
 
-#: ../../library/custom-post-type.php:28
+#: ../../libs/custom-post-type.php:28
 msgid "Add New Custom Type"
 msgstr "Nieuw custom type toevoegen"
 
-#: ../../library/custom-post-type.php:29
+#: ../../libs/custom-post-type.php:29
 msgid "Edit"
 msgstr "Bewerken"
 
-#: ../../library/custom-post-type.php:30
+#: ../../libs/custom-post-type.php:30
 msgid "Edit Post Types"
 msgstr "Berichttypes bewerken"
 
-#: ../../library/custom-post-type.php:31
+#: ../../libs/custom-post-type.php:31
 msgid "New Post Type"
 msgstr "Nieuw berichttype"
 
-#: ../../library/custom-post-type.php:32
+#: ../../libs/custom-post-type.php:32
 msgid "View Post Type"
 msgstr "Bekijk berichttype"
 
-#: ../../library/custom-post-type.php:33
+#: ../../libs/custom-post-type.php:33
 msgid "Search Post Type"
 msgstr "Zoek berichttype"
 
-#: ../../library/custom-post-type.php:34
+#: ../../libs/custom-post-type.php:34
 msgid "Nothing found in the Database."
 msgstr "Niets gevonden in de database."
 
-#: ../../library/custom-post-type.php:35
+#: ../../libs/custom-post-type.php:35
 msgid "Nothing found in Trash"
 msgstr "Niets gevonden in de prullenbak."
 
-#: ../../library/custom-post-type.php:38
+#: ../../libs/custom-post-type.php:38
 msgid "This is the example custom post type"
 msgstr "Dit is het voorbeeld maatwerk berichttype"
 
-#: ../../library/custom-post-type.php:75
+#: ../../libs/custom-post-type.php:75
 msgid "Custom Categories"
 msgstr "Custom categorieën"
 
-#: ../../library/custom-post-type.php:76
+#: ../../libs/custom-post-type.php:76
 msgid "Custom Category"
 msgstr "Custom categorie"
 
-#: ../../library/custom-post-type.php:77
+#: ../../libs/custom-post-type.php:77
 msgid "Search Custom Categories"
 msgstr "Zoek custos categorie"
 
-#: ../../library/custom-post-type.php:78
+#: ../../libs/custom-post-type.php:78
 msgid "All Custom Categories"
 msgstr "Alle custom categorieën"
 
-#: ../../library/custom-post-type.php:79
+#: ../../libs/custom-post-type.php:79
 msgid "Parent Custom Category"
 msgstr "Parent custom categorie"
 
-#: ../../library/custom-post-type.php:80
+#: ../../libs/custom-post-type.php:80
 msgid "Parent Custom Category:"
 msgstr "Parent custom categorie"
 
-#: ../../library/custom-post-type.php:81
+#: ../../libs/custom-post-type.php:81
 msgid "Edit Custom Category"
 msgstr "Custom categorie bewerken"
 
-#: ../../library/custom-post-type.php:82
+#: ../../libs/custom-post-type.php:82
 msgid "Update Custom Category"
 msgstr "Custom categorie aanpassen"
 
-#: ../../library/custom-post-type.php:83
+#: ../../libs/custom-post-type.php:83
 msgid "Add New Custom Category"
 msgstr "Custom categorie toevoegen"
 
-#: ../../library/custom-post-type.php:84
+#: ../../libs/custom-post-type.php:84
 msgid "New Custom Category Name"
 msgstr "Naam nieuwe custom categorie"
 
-#: ../../library/custom-post-type.php:98
+#: ../../libs/custom-post-type.php:98
 msgid "Custom Tags"
 msgstr "Maatwerk Tags"
 
-#: ../../library/custom-post-type.php:99
+#: ../../libs/custom-post-type.php:99
 msgid "Custom Tag"
 msgstr "Maatwerk Tag"
 
-#: ../../library/custom-post-type.php:100
+#: ../../libs/custom-post-type.php:100
 msgid "Search Custom Tags"
 msgstr "Zoek Maatwerk Tags"
 
-#: ../../library/custom-post-type.php:101
+#: ../../libs/custom-post-type.php:101
 msgid "All Custom Tags"
 msgstr "Alle Maatwerk Tags"
 
-#: ../../library/custom-post-type.php:102
+#: ../../libs/custom-post-type.php:102
 msgid "Parent Custom Tag"
 msgstr ""
 
-#: ../../library/custom-post-type.php:103
+#: ../../libs/custom-post-type.php:103
 msgid "Parent Custom Tag:"
 msgstr ""
 
-#: ../../library/custom-post-type.php:104
+#: ../../libs/custom-post-type.php:104
 msgid "Edit Custom Tag"
 msgstr "Maatwerk Tag Bewerken"
 
-#: ../../library/custom-post-type.php:105
+#: ../../libs/custom-post-type.php:105
 msgid "Update Custom Tag"
 msgstr "Maatwerk Tag Bijwerken"
 
-#: ../../library/custom-post-type.php:106
+#: ../../libs/custom-post-type.php:106
 msgid "Add New Custom Tag"
 msgstr "Nieuwe Maatwerk Tag Toevoegen"
 
-#: ../../library/custom-post-type.php:107
+#: ../../libs/custom-post-type.php:107
 msgid "New Custom Tag Name"
 msgstr "Nieuwe Maatwerk Tag Naam"
 

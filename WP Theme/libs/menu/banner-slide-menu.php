@@ -189,19 +189,19 @@ function theme_banner_slide_page()
 {
     global $webSiteName;
     ?>
-    <link href="<?php bloginfo('template_directory'); ?>/library/css/tytabs.css" rel="stylesheet" type="text/css"/>
-    <link href="<?php bloginfo('template_directory'); ?>/library/css/icon.css" rel="stylesheet" type="text/css"/>
+    <link href="<?php bloginfo('template_directory'); ?>/libs/css/tytabs.css" rel="stylesheet" type="text/css"/>
+    <link href="<?php bloginfo('template_directory'); ?>/libs/css/icon.css" rel="stylesheet" type="text/css"/>
     <link href="<?php echo includes_url(); ?>css/editor.min.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/library/js/banner_slide.js"></script>
+    <script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/libs/js/banner_slide.js"></script>
 
     <!--Sortable-->
     <script type="text/javascript"
-            src="<?php bloginfo('template_directory'); ?>/library/js/sortable/jquery-1.10.2.js"></script>
+            src="<?php bloginfo('template_directory'); ?>/libs/js/sortable/jquery-1.10.2.js"></script>
     <script type="text/javascript"
-            src="<?php bloginfo('template_directory'); ?>/library/js/sortable/jquery-ui.js"></script>
+            src="<?php bloginfo('template_directory'); ?>/libs/js/sortable/jquery-ui.js"></script>
     <!--End Sortable-->
 
-    <input type="hidden" value="<?php bloginfo('template_directory'); ?>/library/js/jquery.min.js" id="getjqpath"/>
+    <input type="hidden" value="<?php bloginfo('template_directory'); ?>/libs/js/jquery.min.js" id="getjqpath"/>
     <input type="hidden" value="<?php bloginfo('template_directory'); ?>/" id="getbasepath"/>
     <div class="wrap">
     <div id="icon-themes" class="icon32"><br/></div>

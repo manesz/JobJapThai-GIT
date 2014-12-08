@@ -48,7 +48,7 @@ function render_contact_page()
     }
     ?>
     <script type="text/javascript"
-            src="<?php bloginfo('template_directory'); ?>/library/js/contact.js"></script>
+            src="<?php bloginfo('template_directory'); ?>/libs/js/contact.js"></script>
     <form id="contact-post" method="post">
         <input type="hidden" name="contact_post" id="contact_post" value="true"/>
 
