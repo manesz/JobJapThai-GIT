@@ -78,12 +78,34 @@ function adminUpdatePage(){
 	echo json_encode($arr);
 	exit();
 }
+function jj_login($username,$pass,$remember=false) {
+	$creds = array();
+	$creds['user_login'] = $username;
+	$creds['user_password'] = $pass;
+	$creds['remember'] = $remember;
+	$user = wp_signon( $creds, false );
+	if ( is_wp_error($user) ){
+            echo $user->get_error_message();
+        }else{
+            wp_redirect(get_site_url().'/edit-resume/');
+        }
+        exit();
+}
 $adminPage = isset($_GET['adminPage'])?$_GET['adminPage']:false;
 if($adminPage){
 $getCheckAdminMenu = htmlentities($adminPage);
 if ($getCheckAdminMenu == "updatepage") {	
     adminUpdatePage();
     exit();
+}else if($getCheckAdminMenu == "checklogin"){
+    $username = isset($_POST['username'])?$_POST['username']:FALSE;
+    $pass = isset($_POST['password'])?$_POST['password']:FALSE;
+    $remember = isset($_POST['remember'])?$_POST['remember']:FALSE;
+    if($username){
+        jj_login($username, $pass,$remember);
+    }else{
+        echo 'userlogin null';
+    }
 }
 
 }
