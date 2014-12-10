@@ -16,7 +16,15 @@ require_once( 'libs/class/init-admin.php' );
 
 // CUSTOMIZE THE WORDPRESS ADMIN (off by default)
 // require_once( 'libs/admin.php' );
+function restrict_admin_with_redirect() {
 
+	if ( ! current_user_can( 'manage_options' ) && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
+		wp_redirect( site_url() ); 
+		exit;
+	}
+}
+
+add_action( 'admin_init', 'restrict_admin_with_redirect', 1 );
 /*********************
 LAUNCH BONES
 Let's get everything up and running.

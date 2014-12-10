@@ -32,7 +32,7 @@ class inittheme{
   `GEO_ID` int(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`PROVINCE_ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=78 ;";
- dbDelta($sql);
+ dbDelta($sql); 
  $sql = "INSERT INTO `jj_province` (`PROVINCE_ID`, `PROVINCE_CODE`, `PROVINCE_NAME`, `PROVINCE_NAME_ENG`, `GEO_ID`) VALUES
 (1, '10', 'กรุงเทพมหานคร   ', 'Bangkok', 2),
 (2, '11', 'สมุทรปราการ   ', 'Samut Prakan', 2),
@@ -112,7 +112,7 @@ class inittheme{
 (76, '96', 'นราธิวาส   ', 'Narathiwat', 6),
 (77, '97', 'บึงกาฬ', 'buogkan', 3);";
 $wpdb->query($sql);
-$sql = "INSERT INTO `jj_amphur` (`AMPHUR_ID`, `AMPHUR_CODE`, `AMPHUR_NAME`, `AMPHUR_NAME_ENG`, `GEO_ID`, `PROVINCE_ID`) VALUES
+$sql = "INSERT INTO `jj_amphur`(`AMPHUR_ID`, `AMPHUR_CODE`, `AMPHUR_NAME`, `AMPHUR_NAME_ENG`, `GEO_ID`, `PROVINCE_ID`) VALUES
 (1, '1001', 'เขตพระนคร   ', 'Khet Phra Nakhon', 2, 1),
 (2, '1002', 'เขตดุสิต   ', 'Khet Dusit', 2, 1),
 (3, '1003', 'เขตหนองจอก   ', 'Khet  Nong Chok', 2, 1),

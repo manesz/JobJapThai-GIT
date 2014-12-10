@@ -5,4 +5,5 @@
                             <a class="btn btn-default <?php if(is_page("Contact Candidate")){?> active<?php }?>" href="<?php echo get_site_url(); ?>/contact-candidate/" role="button"><?php if(is_page("Contact Candidate")){?><strong>Contact Candidate</strong><?php }else{?>Contact Candidate<?php }?></a>
                             <a class="btn btn-default <?php if(is_page("Search Candidate")){?> active<?php }?>" href="<?php echo get_site_url(); ?>/search-candidate/" role="button"><?php if(is_page("Search Candidate")){?><strong>Search Candidate</strong><?php }else{?>Search Candidate<?php }?></a>
                             <a class="btn btn-default <?php if(is_page("Candidate List")){?> active<?php }?>" href="<?php echo get_site_url(); ?>/candidate-list/" role="button"><?php if(is_page("Candidate List")){?><strong>Candidate List</strong><?php }else{?>Candidate List<?php }?></a>
+                            <a class="btn btn-default" href="<?php echo wp_logout_url( home_url() ); ?>" role="button">Logout</a>
                             </div></div>
