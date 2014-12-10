@@ -138,7 +138,7 @@ function custom_post_job()
                 </td>
             </tr>
         </table>
-    <?
+    <?php
     }
 
     function save_details_job()
@@ -165,7 +165,7 @@ function custom_post_job()
 add_action('init', 'custom_post_job');
 
 add_action("admin_init", "admin_init_job");
-add_action('init', 'job_register');
+//add_action('init', 'job_register');
 add_action('save_post', 'save_details_job');
 //    add_action("manage_posts_custom_column", "job_custom_columns");
 //    add_filter("manage_edit-job_columns", "job_edit_columns");
@@ -232,6 +232,3 @@ register_taxonomy('custom_job_cat',
     check out this fantastic tool:
     https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress
 */
-
-
-?>
