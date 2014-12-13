@@ -1,5 +1,5 @@
 <section class="container-fluid" style="margin-top: 10px;">
-
+<script src="<?php echo get_template_directory_uri(); ?>/libs/js/employer-register.js"></script>
         <div class="container wrapper">
             <div class="row">
                 <div class="col-md-12">
@@ -11,8 +11,8 @@
                             <span class="font-color-BF2026" style="" ><?php the_title()?></span>
                         </h5>
                         <div class="clearfix" style="margin-top: 20px;"></div>
-
-                        <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post">
+<div id="show_messave"></div>
+                        <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post" id="frm_employer_register">
                             <!-- ---------------------------------------------------------------- Section : username --><?php if(is_user_logged_in()){global $current_user;
       get_currentuserinfo(); include_once('emp_menu.php'); }?>
                             
