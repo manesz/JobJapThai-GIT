@@ -51,8 +51,8 @@ $mapSrc = "http://maps.google.com/maps?z=12&t=m&q=loc:$latitude+-$longitude";
                     <div class="col-md-6">
                         <img src="<?php echo get_template_directory_uri(); ?>/libs/img/nav-logo-big.png" class=""/>
                         <h4 class="font-color-BF2026 margin-top-20" style="">เกี่ยวกับทีมงานผู้ก่อตั้งเว็บไซต์
-                            Jobjapthai.com</h4><?php if (have_posts()) : while (have_posts()) : the_post();
-                            the_content(); endwhile; endif; ?>
+                            Jobjapthai.com</h4>
+							<?php the_content(); ?>
                     </div>
                     <div class="col-md-6">
                         <?php $_SESSION['captcha_contact_us'] = contact_us_captcha();?>

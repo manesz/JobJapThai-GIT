@@ -116,6 +116,8 @@ if ($arrayContact) {
 
 </footer><!-- END : footers.container-fluid -->
 
+<?php include_once('libs/pages/modal.php'); ?>
+
 <script>
     var str_loading = '<div class="img_loading" style="position: fixed; top: 40%; left: 50%;"><img src="<?php
     bloginfo('template_directory'); ?>/libs/images/loading.gif" width="64"/></div>';
@@ -162,6 +164,7 @@ if ($arrayContact) {
         }
     };
     $(document).ready(wppage.onready);
+
 </script>
 
 </body>

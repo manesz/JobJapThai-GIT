@@ -11,6 +11,10 @@
                 <div class="col-md-8"><input id="password" name="password" type="password" class="form-control"></div>
             </div>
             <div class="form-group clearfix text-right" style="margin-bottom: 10px; padding-right: 15px;">
+			<div class="col-md-6"><input type="button" class=" btn btn-default" value="Candidate Register"/></div>
+			<div class="col-md-6"><input type="button" class=" btn btn-default" value="Employer Register"/></div>
+			</div>
+            <div class="form-group clearfix text-right" style="margin-bottom: 10px; padding-right: 15px;">
                 <a>Forget your email</a> /
                 <a>Forget password</a>
             </div>
