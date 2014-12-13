@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <div class="col-md-6 btn">User</div>
                 <div class="col-md-6 btn">
-                    <a href="http://demo.ideacorners.com/jobjapthai/employer-register/">Employer</a>
+                    <a href="<?php echo get_site_url();?>/employer-register/">Employer</a>
                 </div>
                 <div class="clearfix"></div>
             </div>
