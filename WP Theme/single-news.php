@@ -24,7 +24,7 @@ include_once("libs/nav.php");
 
                 </div>
 <?php endwhile; endif;?>
-                <?php include_once(get_template_directory()."/libs/sidebar.php"); ?>
+                <?php include_once('libs/sidebar.php'); ?>
             </div>
         </div>
 
