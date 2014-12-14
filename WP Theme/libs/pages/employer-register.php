@@ -255,33 +255,45 @@ if (is_user_logged_in()) {
     <div class="col-md-2 text-right clearfix"><label for="employerContactProvince">Province<span
                 class="font-color-red">*</span></label></div>
     <div class="col-md-10">
-        <select id="employerContactProvince" name="employerContactProvince"
+        <!--<select id="employerContactProvince" name="employerContactProvince"
                 class="form-control" required>
             <option value="">---------------- Please select ----------------</option>
             <option value="1" <?php if (isset($province)) echo $province == '1' ? "selected" : ""; ?>>กทม</option>
-        </select>
+        </select>-->
+        <?php
+                                $provices = $wpdb->get_results(
+                                        "SELECT * FROM `province` ORDER BY PROVINCE_NAME ASC"
+                                );
+                                if ($provices) {
+                                    ?>
+                                    <select id="employerContactProvince" name="employerContactProvince" class="form-control"><option value="0" selected="selected">---------------- Please select ----------------</option>
+                                        <?php foreach ($provices as $provice) {
+                                            ?>
+                                            <option value="<?= $provice->PROVINCE_ID; ?>"><?php echo $provice->PROVINCE_NAME; ?></option><?php } ?>
+                                    </select>
+<?php } else { ?> ลงฐานข้อมูล จังหวัดที่ <?= get_template_directory() . '/libs/res/thailand.sql' ?><?php } ?>
     </div>
 </div>
-<div class="form-group col-md-12">
+<div class="form-group col-md-12" id="aupher-select">
     <div class="col-md-2 text-right clearfix"><label for="employerContactDistinct">District<span
                 class="font-color-red">*</span></label></div>
     <div class="col-md-10">
         <select id="employerContactDistinct" name="employerContactDistinct"
                 class="form-control" required>
-            <option value="">---------------- Please select ----------------</option>
-            <option value="1" <?php if (isset($district)) echo $district == '1' ? "selected" : ""; ?>>กทม</option>
+            <option value="0">---------------- Please select ----------------</option>
+            <!--<option value="1" <?php if (isset($district)) echo $district == '1' ? "selected" : ""; ?>>กทม</option>-->
         </select>
     </div>
 </div>
-<div class="form-group col-md-12">
+<div class="form-group col-md-12" id="distinct-select">
     <div class="col-md-2 text-right clearfix"><label for="employerContactSubDistinct">Sub
             district<span class="font-color-red">*</span></label></div>
     <div class="col-md-10">
         <select id="employerContactSubDistinct" name="employerContactSubDistinct"
                 class="form-control" required>
-            <option value="">---------------- Please select ----------------</option>
-            <option value="1" <?php if (isset($sub_district)) echo $sub_district == '1' ? "selected" : ""; ?>>กทม
-            </option>
+            <option value="0">---------------- Please select ----------------</option>
+            <!--<option value="1" <?php if (isset($sub_district)) echo $sub_district == '1' ? "selected" : ""; ?>>กทม
+            </option>-->
         </select>
     </div>
 </div>
@@ -542,6 +554,9 @@ if (is_user_logged_in()) {
         </div>
     </div>
 </div>
+<style type="text/css">
+    #aupher-select{display:none}#distinct-select{display:none}
+</style>
 <script type="text/javascript">
     var ajaxPageurl = '<?php echo get_home_url() ?>/';
     var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
