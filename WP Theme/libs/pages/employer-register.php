@@ -543,6 +543,83 @@ if (is_user_logged_in()) {
     </div>
 </div>
 <script type="text/javascript">
+    var ajaxPageurl = '<?php echo get_home_url() ?>/';
+    var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
+    var proselect = {
+        proval: 0,
+        amval: 0,
+        init: function () {
+            proselect.proval = $('#employerContactProvince').val();
+            proselect.selectProvince();
+            proselect.setEvent();
+        },
+        setEvent: function () {
+            $('#employerContactProvince').on('change', proselect.selectProvince);
+        },
+        selectProvince: function () {
+            proselect.proval = $('#employerContactProvince').val();
+            proselect.clearampporSelect();
+            $('#aupher-select').slideUp('fast', function () {
+                if (proselect.proval !== '0') {
+                    $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
+                        if (typeof data['hasfile'] === 'undefined') {
+                            proselect.createSelect(data);
+                            $('#aupher-select').slideDown('fast');
+                        } else {
+                            $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
+                                proselect.createSelect(data);
+                                $('#aupher-select').slideDown('fast');
+                            });
+                        }
+                    });
+                }
+            });
+
+        },
+        createSelect: function (data) {
+            $.each(data, function (index, dat) {
+                var mytxt = '<option value="' + dat.AMPHUR_ID + '">' + dat.AMPHUR_NAME + '</option>';
+                $('#employerContactDistinct').append(mytxt);
+            });
+            $('#employerContactDistinct').unbind('change');
+            $('#employerContactDistinct').on('change', proselect.selectAmphor);
+        },
+        clearampporSelect: function () {
+            $('#employerContactDistinct option[value!=0]').remove();
+            $('#employerContactDistinct').val(0);
+            proselect.clearDistinctSelect();
+        },
+        clearDistinctSelect: function () {
+            $('#employerContactSubDistinct option[value!=0]').remove();
+            $('#employerContactSubDistinct').val(0);
+            $('#distinct-select').css('display', 'none');
+        },
+        selectAmphor: function () {
+            proselect.amval = $('#employerContactDistinct').val();
+            proselect.clearDistinctSelect();
+            $('#distinct-select').slideUp('fast', function () {
+                if (proselect.amval != '0') {
+                    $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
+                        if (typeof data['hasfile'] === 'undefined') {
+                            proselect.createDistinctSelect(data);
+                            $('#distinct-select').slideDown('fast');
+                        } else {
+                            $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
+                                proselect.createDistinctSelect(data);
+                                $('#distinct-select').slideDown('fast');
+                            });
+                        }
+                    });
+                }
+            });
+        },
+        createDistinctSelect: function (data) {
+            $.each(data, function (index, dat) {
+                var mytxt = '<option value="' + dat.DISTRICT_ID + '">' + dat.DISTRICT_NAME + '</option>';
+                $('#employerContactSubDistinct').append(mytxt);
+            });
+        }
+    };
     var jshook = {
         jobpackage: 600,
         jobpackagedate: 1,
@@ -555,6 +632,7 @@ if (is_user_logged_in()) {
         init: function () {
             jshook.updateVal();
             jshook.addEvent();
+            proselect.init();
         },
         addEvent: function () {
             $('#employerCalPositionAmount').on('change', function () {
