@@ -46,7 +46,8 @@ if (is_user_logged_in()) {
         <div class="form-group clearfix" style="margin-bottom: 10px;">
             <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Hello! :</label>
 
-            <div class="col-md-8"><?php echo $displayName; ?></div>
+            <div class="col-md-8"><a
+                    href="<?php echo get_site_url(); ?>/edit-resume/"><?php echo $displayName; ?></a></div>
         </div>
 
         <hr/>
