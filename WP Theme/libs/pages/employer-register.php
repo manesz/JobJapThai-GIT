@@ -266,25 +266,21 @@ if (is_user_logged_in()) {
         <div class="col-md-2 text-right clearfix"><label for="employerContactProvince">Province<span
                     class="font-color-red">*</span></label></div>
         <div class="col-md-10">
-            <!--<select id="employerContactProvince" name="employerContactProvince"
-                class="form-control" required>
-            <option value="">---------------- Please select ----------------</option>
-            <option value="1" <?php if (isset($province)) echo $province == '1' ? "selected" : ""; ?>>กทม</option>
-        </select>-->
             <?php
-            $provices = $wpdb->get_results(
+            $provinces = $wpdb->get_results(
                 "SELECT * FROM `province` ORDER BY PROVINCE_NAME ASC"
             );
-            if ($provices) {
+            if ($provinces) {
                 ?>
-                <select id="employerContactProvince" name="employerContactProvince" class="form-control">
+                <select id="employerContactProvince" name="employerContactProvince" class="form-control"
+                        required>
                     <option value="0" selected="selected">---------------- Please select ----------------</option>
-                    <?php foreach ($provices as $provice) {
+                    <?php foreach ($provinces as $value) {
                         ?>
-                        <option
-                        value="<?= $provice->PROVINCE_ID; ?>"><?php echo $provice->PROVINCE_NAME; ?></option><?php } ?>
+                        <option <?php if (isset($province)) echo $value->PROVINCE_ID == $province ? "selected" : ""; ?>
+                        value="<?php echo $value->PROVINCE_ID; ?>"><?php echo $value->PROVINCE_NAME; ?></option><?php } ?>
                 </select>
-            <?php } else { ?> ลงฐานข้อมูล จังหวัดที่ <?= get_template_directory() . '/libs/res/thailand.sql' ?><?php } ?>
+            <?php } else { ?> ลงฐานข้อมูล จังหวัดที่ <?php echo get_template_directory() . '/libs/res/thailand.sql' ?><?php } ?>
         </div>
     </div>
     <div class="form-group col-md-12" id="aupher-select">
@@ -423,203 +419,203 @@ if (is_user_logged_in()) {
     <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-body">
-    <h4 class="bg-BF2026 font-color-fff padding-10" id="myModalLabel">Business Package</h4>
+        <h4 class="bg-BF2026 font-color-fff padding-10" id="myModalLabel">Business Package</h4>
 
-    <form class="clearfix">
-        <table style="width: 100%;">
-            <?php
-            $saveName = "";
-            $savePosition = 0;
-            foreach ($arrayPackage as $key => $value):
+        <form class="clearfix">
+            <table style="width: 100%;">
+                <?php
+                $saveName = "";
+                $savePosition = 0;
+                foreach ($arrayPackage as $key => $value):
 
-                ?>
+                    ?>
 
-                <?php if ($savePosition != $value->position && $key != 0): ?>
+                    <?php if ($savePosition != $value->position && $key != 0): ?>
+                    <tr>
+                        <td colspan="3">
+                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                    <?php if ($savePosition != $value->position):
+                    $strTitle = "";
+                    $countName = 0;
+                    switch ($value->position) {
+                        case 1:
+                            $strTitle = "เลือกจำนวนตำแหน่ง และระยะเวลา";
+                            $countName = 1;
+                            break;
+                        case 2:
+                            $strTitle = 'เลือกระยะเวลา <span class="font-color-BF2026">Super Hotjob</span>';
+                            $countName = 2;
+                            break;
+                        case 3:
+                            $strTitle = 'เลือกประเภท และระยะเวลาของ <span
+                    class="font-color-BF2026">Hotjob</span>';
+                            $countName = 3;
+                            break;
+                        case 4:
+                            $strTitle = 'เลือกระยะเวลาของ <span class="font-color-BF2026">Urgent</span>
+                                        (บนเว็บไซต์ และ Mobile Application)';
+                            $countName = 4;
+                            break;
+                    }
+                    ?>
+                    <tr>
+                        <td colspan="3"><h5><?php echo "$countName. $strTitle"; ?></h5></td>
+                    </tr>
+                    <tr class="padding-bottom-10" style="">
+                        <?php echo $classPackage->buildTd1($arrayPackage, $value->position); ?>
+                        <?php echo $classPackage->buildTd2($arrayPackage, $value->position); ?>
+                        <?php echo $classPackage->buildTd3($arrayPackage, $value->position); ?>
+                    </tr>
+                <?php endif; ?>
+
+                    <?php
+                    $saveName = $value->name;
+                    $savePosition = $value->position;
+                endforeach; ?>
+
                 <tr>
                     <td colspan="3">
                         <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
                     </td>
                 </tr>
-            <?php endif; ?>
-                <?php if ($savePosition != $value->position):
-                $strTitle = "";
-                $countName = 0;
-                switch ($value->position) {
-                    case 1:
-                        $strTitle = "เลือกจำนวนตำแหน่ง และระยะเวลา";
-                        $countName = 1;
-                        break;
-                    case 2:
-                        $strTitle = 'เลือกระยะเวลา <span class="font-color-BF2026">Super Hotjob</span>';
-                        $countName = 2;
-                        break;
-                    case 3:
-                        $strTitle = 'เลือกประเภท และระยะเวลาของ <span
-                    class="font-color-BF2026">Hotjob</span>';
-                        $countName = 3;
-                        break;
-                    case 4:
-                        $strTitle = 'เลือกระยะเวลาของ <span class="font-color-BF2026">Urgent</span>
-                                        (บนเว็บไซต์ และ Mobile Application)';
-                        $countName = 4;
-                        break;
-                }
-                ?>
+                <!--
                 <tr>
-                    <td colspan="3"><h5><?php echo "$countName. $strTitle"; ?></h5></td>
+                    <td colspan="3"><h5>1. เลือกจำนวนตำแหน่ง และระยะเวลา</h5></td>
                 </tr>
                 <tr class="padding-bottom-10" style="">
-                    <?php echo $classPackage->buildTd1($arrayPackage, $value->position); ?>
-                    <?php echo $classPackage->buildTd2($arrayPackage, $value->position); ?>
-                    <?php echo $classPackage->buildTd3($arrayPackage, $value->position); ?>
+                    <td class="col-md-3">
+                        <label for="employerCalPositionAmount" class=" margin-top-10">จำนวนตำแหน่ง<span
+                                class="font-color-red">*</span></label><br/>
+                        <label for="employerCalDuration" class=" margin-top-10">ระยะเวลา<span
+                                class="font-color-red">*</span></label>
+                    </td>
+                    <td class="col-md-7">
+                        <select type="text" id="employerCalPositionAmount" name="employerCalPositionAmount"
+                                class="form-control margin-top-10">
+                            <option value="600">Business Package : 1 ตำแหน่งงาน</option>
+                            <option value="800">Business Package : 3 ตำแหน่งงาน</option>
+                        </select>
+                        <select type="text" id="employerCalDuration" name="employerCalDuration"
+                                class="form-control margin-top-10">
+                            <option value="1">2 สัปดาห์</option>
+                            <option value="2">1 เดือน</option>
+                            <option value="4">2 เดือน</option>
+                        </select>
+                    </td>
+                    <td class="col-md-2"><span class="sumjobpack">600</span> บาท</td>
                 </tr>
-            <?php endif; ?>
-
-                <?php
-                $saveName = $value->name;
-                $savePosition = $value->position;
-            endforeach; ?>
-
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            <!--
-            <tr>
-                <td colspan="3"><h5>1. เลือกจำนวนตำแหน่ง และระยะเวลา</h5></td>
-            </tr>
-            <tr class="padding-bottom-10" style="">
-                <td class="col-md-3">
-                    <label for="employerCalPositionAmount" class=" margin-top-10">จำนวนตำแหน่ง<span
-                            class="font-color-red">*</span></label><br/>
-                    <label for="employerCalDuration" class=" margin-top-10">ระยะเวลา<span
-                            class="font-color-red">*</span></label>
-                </td>
-                <td class="col-md-7">
-                    <select type="text" id="employerCalPositionAmount" name="employerCalPositionAmount"
-                            class="form-control margin-top-10">
-                        <option value="600">Business Package : 1 ตำแหน่งงาน</option>
-                        <option value="800">Business Package : 3 ตำแหน่งงาน</option>
-                    </select>
-                    <select type="text" id="employerCalDuration" name="employerCalDuration"
-                            class="form-control margin-top-10">
-                        <option value="1">2 สัปดาห์</option>
-                        <option value="2">1 เดือน</option>
-                        <option value="4">2 เดือน</option>
-                    </select>
-                </td>
-                <td class="col-md-2"><span class="sumjobpack">600</span> บาท</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3"><h5>2. เลือกระยะเวลา <span class="font-color-BF2026">Super Hotjob</span>
-                    </h5></td>
-            </tr>
-            <tr>
-                <td class="col-md-3">
-                    <label for="employerCalSuperHotJobDuration">ระยะเวลา</label>
-                </td>
-                <td class="col-md-7">
-                    <select id="employerCalSuperHotJobDuration" name="employerCalSuperHotJobDuration"
-                            class="form-control">
-                        <option value="0">--------------------</option>
-                        <option value="1500">3 วัน</option>
-                        <option value="1800">6 วัน</option>
-                    </select>
-                </td>
-                <td class="col-md-2"><span class="superhotjobduration">0</span> บาท</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3"><h5>3. เลือกประเภท และระยะเวลาของ <span
-                            class="font-color-BF2026">Hotjob</span></h5></td>
-            </tr>
-            <tr>
-                <td class="col-md-3">
-                    <label for="employerCalHotJobType" class="">ประเภท</label><br/><br/>
-                    <label for="employerCalHotJobDuration" class="">ระยะเวลา</label>
-                </td>
-                <td class="col-md-7">
-                    <select type="text" id="employerCalHotJobType" name="employerCalHotJobType"
-                            class="form-control margin-top-10">
-                        <option value="0" selected="selected">-----------------------</option>
-                        <option value="600">Business Package : 1 ตำแหน่งงาน</option>
-                        <option value="800">Business Package : 3 ตำแหน่งงาน</option>
-                    </select>
-                    <select type="text" id="employerCalHotJobDuration" name="employerCalHotJobDuration"
-                            class="form-control margin-top-10">
-                        <option value="1">2 สัปดาห์</option>
-                        <option value="2">1 เดือน</option>
-                        <option value="4">2 เดือน</option>
-                    </select>
-                </td>
-                <td class="col-md-2"><span class="hotjobduration">0</span> บาท</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3"><h5>4. เลือกระยะเวลาของ <span class="font-color-BF2026">Urgent</span>
-                        (บนเว็บไซต์ และ Mobile Application)</h5></td>
-            </tr>
-            <tr>
-                <td class="col-md-3">
-                    <label for="employerCalUrgentDuration" class="">ระยะเวลา</label>
-                </td>
-                <td class="col-md-7">
-                    <select type="text" id="employerCalUrgentDuration" name="employerCalUrgentDuration"
-                            class="form-control margin-top-10">
-                        <option>---------------------</option>
-                    </select>
-                </td>
-                <td class="col-md-2"> 0 บาท</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            -->
-            <tr>
-                <td class="col-md-10 text-right" colspan="2">Sub Total</td>
-                <td class="col-md-2"><span class="jj-allsum">600</span> บาท</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-10 text-right" colspan="2">+ Vat (7%)</td>
-                <td class="col-md-2"><span class="jj-taxsum">0</span> บาท</td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-10 text-right" colspan="2"><strong>ยอดสุทธิ</strong></td>
-                <td class="col-md-2"><span class="jj-alltaxsum">0</span> บาท</td>
-            </tr>
-            <tr>
-                <td class="col-md-3"></td>
-                <td class="col-md-7"></td>
-                <td class="col-md-2"></td>
-            </tr>
-        </table>
-    </form>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><h5>2. เลือกระยะเวลา <span class="font-color-BF2026">Super Hotjob</span>
+                        </h5></td>
+                </tr>
+                <tr>
+                    <td class="col-md-3">
+                        <label for="employerCalSuperHotJobDuration">ระยะเวลา</label>
+                    </td>
+                    <td class="col-md-7">
+                        <select id="employerCalSuperHotJobDuration" name="employerCalSuperHotJobDuration"
+                                class="form-control">
+                            <option value="0">--------------------</option>
+                            <option value="1500">3 วัน</option>
+                            <option value="1800">6 วัน</option>
+                        </select>
+                    </td>
+                    <td class="col-md-2"><span class="superhotjobduration">0</span> บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><h5>3. เลือกประเภท และระยะเวลาของ <span
+                                class="font-color-BF2026">Hotjob</span></h5></td>
+                </tr>
+                <tr>
+                    <td class="col-md-3">
+                        <label for="employerCalHotJobType" class="">ประเภท</label><br/><br/>
+                        <label for="employerCalHotJobDuration" class="">ระยะเวลา</label>
+                    </td>
+                    <td class="col-md-7">
+                        <select type="text" id="employerCalHotJobType" name="employerCalHotJobType"
+                                class="form-control margin-top-10">
+                            <option value="0" selected="selected">-----------------------</option>
+                            <option value="600">Business Package : 1 ตำแหน่งงาน</option>
+                            <option value="800">Business Package : 3 ตำแหน่งงาน</option>
+                        </select>
+                        <select type="text" id="employerCalHotJobDuration" name="employerCalHotJobDuration"
+                                class="form-control margin-top-10">
+                            <option value="1">2 สัปดาห์</option>
+                            <option value="2">1 เดือน</option>
+                            <option value="4">2 เดือน</option>
+                        </select>
+                    </td>
+                    <td class="col-md-2"><span class="hotjobduration">0</span> บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><h5>4. เลือกระยะเวลาของ <span class="font-color-BF2026">Urgent</span>
+                            (บนเว็บไซต์ และ Mobile Application)</h5></td>
+                </tr>
+                <tr>
+                    <td class="col-md-3">
+                        <label for="employerCalUrgentDuration" class="">ระยะเวลา</label>
+                    </td>
+                    <td class="col-md-7">
+                        <select type="text" id="employerCalUrgentDuration" name="employerCalUrgentDuration"
+                                class="form-control margin-top-10">
+                            <option>---------------------</option>
+                        </select>
+                    </td>
+                    <td class="col-md-2"> 0 บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                -->
+                <tr>
+                    <td class="col-md-10 text-right" colspan="2">Sub Total</td>
+                    <td class="col-md-2"><span class="jj-allsum">600</span> บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-10 text-right" colspan="2">+ Vat (7%)</td>
+                    <td class="col-md-2"><span class="jj-taxsum">0</span> บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-10 text-right" colspan="2"><strong>ยอดสุทธิ</strong></td>
+                    <td class="col-md-2"><span class="jj-alltaxsum">0</span> บาท</td>
+                </tr>
+                <tr>
+                    <td class="col-md-3"></td>
+                    <td class="col-md-7"></td>
+                    <td class="col-md-2"></td>
+                </tr>
+            </table>
+        </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -640,6 +636,8 @@ if (is_user_logged_in()) {
     <script type="text/javascript">
         var ajaxPageurl = '<?php echo get_home_url() ?>/';
         var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
+        var distinct = <?php if (isset($district)) echo $district ? $district : 0; ?>;
+        var sub_district = <?php if (isset($sub_district)) echo $sub_district ? $sub_district : 0; ?>;
         var proselect = {
             proval: 0,
             amval: 0,
@@ -673,9 +671,14 @@ if (is_user_logged_in()) {
             },
             createSelect: function (data) {
                 $.each(data, function (index, dat) {
-                    var mytxt = '<option value="' + dat.AMPHUR_ID + '">' + dat.AMPHUR_NAME + '</option>';
+                    var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
+                    var mytxt = '<option value="' + dat.AMPHUR_ID + '" '+checkSelect+'>' +
+                        dat.AMPHUR_NAME + '</option>';
                     $('#employerContactDistinct').append(mytxt);
                 });
+                if ($('#employerContactDistinct').html()) {
+                    proselect.selectAmphor();
+                }
                 $('#employerContactDistinct').unbind('change');
                 $('#employerContactDistinct').on('change', proselect.selectAmphor);
             },
@@ -708,9 +711,10 @@ if (is_user_logged_in()) {
                     }
                 });
             },
-            createDistinctSelect: function (data) {
+            createDistinctSelect: function (data) {//console.log(data);
                 $.each(data, function (index, dat) {
-                    var mytxt = '<option value="' + dat.DISTRICT_ID + '">' + dat.DISTRICT_NAME + '</option>';
+                    var checkSelect = dat.DISTRICT_ID == sub_district  ? 'selected' : '';
+                    var mytxt = '<option value="' + dat.DISTRICT_ID + '" '+ checkSelect +'> ' + dat.DISTRICT_NAME + '</option>';
                     $('#employerContactSubDistinct').append(mytxt);
                 });
             }
