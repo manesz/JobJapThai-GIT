@@ -35,6 +35,8 @@ if (have_posts()) :
             echo $_REQUEST['company'];
         } else if (is_page("contact")) {
             include_once('libs/pages/contact.php');
+        }else if (is_page("candidate-register")) {
+            include_once('libs/pages/candidate-register.php');
         }
 
     endwhile;
