@@ -192,7 +192,7 @@ if (is_user_logged_in()) {
         <select id="employerContactBusinessType" name="employerContactBusinessType" required
                 class="form-control">
             <option value="">---------------- Please select type ----------------</option>
-            <option value="1" <?php if (isset($business_type)) echo $business_type == '1' ? "selected" : ""; ?>>
+            <option value="1" <?php if (!empty($business_type)) echo $business_type == '1' ? "selected" : ""; ?>>
                 Business
                 type
             </option>
@@ -246,7 +246,7 @@ if (is_user_logged_in()) {
         <div class="col-md-6">
             <input type="radio" id="employerContactCountryThailand" required
                    name="employerContactCountry" value="thailand" <?php
-            if (isset($contact_country)) echo $contact_country == 'thailand' ? "checked" : "";
+            if (!empty($contact_country)) echo $contact_country == 'thailand' ? "checked" : "";
             ?>/>
             <label for="employerContactCountryThailand">Thailand</label>
         </div>
@@ -254,7 +254,7 @@ if (is_user_logged_in()) {
             <input type="radio" id="employerContactCountryOversea" required
                    name="employerContactCountry"
                    value="oversea" <?php
-            if (isset($contact_country)) echo $contact_country == 'oversea' ? "checked" : "";
+            if (!empty($contact_country)) echo $contact_country == 'oversea' ? "checked" : "";
             ?>/>
             <label for="employerContactCountryOversea" class="text-left">Oversea</label>
         </div>
@@ -262,7 +262,7 @@ if (is_user_logged_in()) {
             <input type="checkbox" id="employerContactIndustrialPark"
                    name="employerContactIndustrialPark"
                    onclick="this.value=$(this).prop('checked')?1:0;"
-                <?php if (isset($contact_industrial_park))
+                <?php if (!empty($contact_industrial_park))
                     echo $contact_industrial_park ? 'checked value="1"' : 'value="0"'; ?>/>
             <label for="employerContactIndustrialPark">Within and industrial park</label>
         </div>
@@ -283,7 +283,7 @@ if (is_user_logged_in()) {
                 <option value="0" selected="selected">---------------- Please select ----------------</option>
                 <?php foreach ($provinces as $value) {
                     ?>
-                    <option <?php if (isset($province)) echo $value->PROVINCE_ID == $province ? "selected" : ""; ?>
+                    <option <?php if (!empty($province)) echo $value->PROVINCE_ID == $province ? "selected" : ""; ?>
                     value="<?php echo $value->PROVINCE_ID; ?>"><?php echo $value->PROVINCE_NAME; ?></option><?php } ?>
             </select>
         <?php } else { ?> ลงฐานข้อมูล จังหวัดที่ <?php echo get_template_directory() . '/libs/res/thailand.sql' ?><?php } ?>
@@ -296,7 +296,6 @@ if (is_user_logged_in()) {
         <select id="employerContactDistinct" name="employerContactDistinct"
                 class="form-control" required>
             <option value="0">---------------- Please select ----------------</option>
-            <!--<option value="1" <?php if (isset($district)) echo $district == '1' ? "selected" : ""; ?>>กทม</option>-->
         </select>
     </div>
 </div>
@@ -307,8 +306,6 @@ if (is_user_logged_in()) {
         <select id="employerContactSubDistinct" name="employerContactSubDistinct"
                 class="form-control" required>
             <option value="0">---------------- Please select ----------------</option>
-            <!--<option value="1" <?php if (isset($sub_district)) echo $sub_district == '1' ? "selected" : ""; ?>>กทม
-            </option>-->
         </select>
     </div>
 </div>
@@ -373,7 +370,7 @@ if (is_user_logged_in()) {
 
 <div class="form-group col-md-12">
     <?php
-    if (isset($options)) {
+    if (!empty($options)) {
         list($option1, $option2, $option3) = explode(',', $options);
     } else {
         list($option1, $option2, $option3) = array(0, 0, 0);
@@ -441,8 +438,8 @@ if (is_user_logged_in()) {
     var employer_id = <?php echo $userID; ?>;
     var ajaxPageurl = '<?php echo get_home_url() ?>/';
     var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
-    var distinct = <?php if (isset($district)) echo $district ? $district : 0; ?>;
-    var sub_district = <?php if (isset($sub_district)) echo $sub_district ? $sub_district : 0; ?>;
+    var distinct = <?php echo empty($district) ? 0: $district; ?>;
+    var sub_district = <?php echo empty($sub_district) ? 0: $sub_district; ?>;
     var proselect = {
         proval: 0,
         amval: 0,
