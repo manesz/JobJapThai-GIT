@@ -8,7 +8,9 @@
                 <h4 class="modal-title" id="myModalLabel">What are you want to register.</h4>
             </div>
             <div class="modal-body">
-                <div class="col-md-6 btn">User</div>
+                <div class="col-md-6 btn">
+                    <a href="<?php echo get_site_url();?>/candidate-register/">User</a>
+                </div>
                 <div class="col-md-6 btn">
                     <a href="<?php echo get_site_url();?>/employer-register/">Employer</a>
                 </div>

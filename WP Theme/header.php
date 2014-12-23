@@ -20,7 +20,7 @@
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/jquery.1.11.1.min.js"></script>
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap.min.js"></script>
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrapValidator.min.js"></script>
-<script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap-modal.js"></script>
+<!--<script src="--><?php //echo get_template_directory_uri(); ?><!--/libs/js/bootstrap-modal.js"></script>-->
 
 <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
 <!--[if lt IE 9]>

@@ -116,7 +116,10 @@ if ($arrayContact) {
 
 </footer><!-- END : footers.container-fluid -->
 
-<?php include_once('libs/pages/modal.php'); ?>
+<?php
+if (!is_user_logged_in())
+    include_once('libs/pages/modal.php');
+?>
 
 <script>
     var str_loading = '<div class="img_loading" style="position: fixed; top: 40%; left: 50%;"><img src="<?php
