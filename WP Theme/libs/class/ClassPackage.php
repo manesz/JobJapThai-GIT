@@ -50,6 +50,22 @@ class Package
         return $myRows;
     }
 
+    public function getSelectPackage($employer_id = 0, $id = 0)
+    {
+        $strAnd = $employer_id ? " AND employer_id=$employer_id" : "";
+        $strAnd .= $id ? " AND id=$id" : "";
+        $sql = "
+            SELECT
+              *
+            FROM `$this->tableSelectPackage`
+            WHERE 1
+            AND publish=1
+            $strAnd
+        ";
+        $myRows = $this->wpdb->get_results($sql);
+        return $myRows;
+    }
+
     public function buildTd1($array_package, $position)
     {
         if (!$array_package)
@@ -78,29 +94,36 @@ class Package
         return $strTd;
     }
 
-    public function buildTd2($array_package, $position)
+    public function buildTd2($array_package, $position, $str_select_package)
     {
         if (!$array_package)
             return '';
         $strTd = '<td class="col-md-7">';
         $checkAddHead1 = false;
         $checkAddHead2 = false;
+        $selectPosition = explode('|', $str_select_package);
         foreach ($array_package as $key => $value) {
             if ($value->position == $position) {
+                $isSelect = '';
+                foreach ($selectPosition as $value2) {
+                    list($selectIsMulti) = explode(',', $value2);
+                    list($selectID) = explode(':', $selectIsMulti);
+                    if ($selectID == $value->id) $isSelect = 'selected';
+                }
                 if ($value->type == 1) {
                     if (!$checkAddHead1) {
                         $checkAddHead1 = true;
                         $strTd .= '<select id="' . $value->name . '" name="' . $value->name . '"
                         class="form-control margin-top-10">';
                     }
-                    $strTd .= '<option value="' . $value->id . '">' . $value->text . '</option>';
+                    $strTd .= '<option value="' . $value->id . '" ' . $isSelect . '>' . $value->text . '</option>';
                 } else if ($value->type == 2) {
                     if (!$checkAddHead2) {
                         $checkAddHead2 = true;
                         $strTd .= '</select><select id="' . $value->name . '" name="' . $value->name . '"
                         class="form-control margin-top-10">';
                     }
-                    $strTd .= '<option value="' . $value->id . '">' . $value->text . '</option>';
+                    $strTd .= '<option value="' . $value->id . '" ' . $isSelect . '>' . $value->text . '</option>';
                 }
             }
         }
@@ -133,10 +156,18 @@ class Package
             return '';
         $strJs = '';
         $saveName = '';
+//        $selectPosition = explode('|', $str_select_package);
         foreach ($array_package as $key => $value) {
             if ($value->name != $saveName) {
-                $strPrice = str_replace('.00', '', $value->price);
-                $strJs .= "$value->name: $strPrice,";
+//                $price = $value->price;
+//                foreach($selectPosition as $value2) {
+//                    list($selectIsMulti) = explode(',', $value2);
+//                    list($selectID) = explode(':', $selectIsMulti);
+//                    if ($selectID == $value->id) $price = 'selected';
+//                }
+//                $strPrice = str_replace('.00', '', $price);
+                $strJs .= "$value->name: array_price[$('#$value->name').val()],
+                ";
             }
             $saveName = $value->name;
         }
@@ -153,8 +184,8 @@ class Package
             if ($value->name != $saveName) {
                 $strJs .= "
                 $('#$value->name').on('change', function () {
-                    jshook.$value->name = array_price[$(this).val()];
-                    jshook.updateVal();
+                    jsHookCalPackage.$value->name = array_price[$(this).val()];
+                    jsHookCalPackage.updateVal();
                     return false;
                 });
                 ";
@@ -173,15 +204,47 @@ class Package
             if ($value2->position == $position) {
                 if ($value2->type == 1 && !$checkType1) {
                     $checkType1 = true;
-                    $strJs = "jshook.$value2->name";
+                    $strJs = "jsHookCalPackage.$value2->name";
                 }
                 if ($value2->type == 2 && !$checkType2) {
                     $checkType2 = true;
-                    $strJs = "($strJs * jshook.$value2->name)";
+                    $strJs = "($strJs * jsHookCalPackage.$value2->name)";
                 }
             }
         }
         return $strJs;
+    }
+
+    public function buildJsStrSelectPackage($array_package)
+    {
+        if (!$array_package)
+            return 0;
+        $arrJs = array();
+        $savePosition = '';
+        foreach ($array_package as $value1) {
+            if ($value1->position != $savePosition) {
+                $checkType1 = false;
+                $checkType2 = false;
+                $strJs = "";
+                foreach ($array_package as $value2) {
+                    if ($value2->position == $value1->position) {
+                        if ($value2->type == 1 && !$checkType1) {
+                            $checkType1 = true;
+                            $strJs = "$('#$value2->name').val() + ':' + array_price[$('#$value2->name').val()]";
+                        }
+                        if ($value2->type == 2 && !$checkType2) {
+                            $checkType2 = true;
+                            $strJs = "$strJs + ',' + $('#$value2->name').val() + ':' + array_price[$('#$value2->name').val()]";
+                        }
+                    }
+                }
+                if ($strJs)
+                    $arrJs[] = $strJs;
+            }
+            $savePosition = $value1->position;
+        }
+        $strReturn = implode(" + '|' + ", $arrJs);
+        return $strReturn ? $strReturn : "''";
     }
 
     public function buildJsCalValue($array_package)
@@ -223,53 +286,92 @@ class Package
             if ($value1->position != $savePosition) {
                 $strCal = $this->buildStrCalTime($array_package, $value1->position);
                 $strReturn .= $strCal ? "
-                $('.sum_position$value1->position').text(jshook.formatDollar($strCal));" : "";
+                $('.sum_position$value1->position').text(jsHookCalPackage.formatDollar($strCal));" : "";
             }
             $savePosition = $value1->position;
         }
         return $strReturn;
     }
 
-    public function addPackage($post)
+    private function getPricePackageByID($array_package, $id)
+    {
+        foreach ($array_package as $value) {
+            if ($value->id == $id) {
+                return $value->price;
+            }
+        }
+        return false;
+    }
+
+    private function getTextPackageByID($array_package, $id)
+    {
+        $strReturn = "";
+        foreach ($array_package as $value) {
+            if ($value->id == $id) {
+                return $value->text;
+            }
+        }
+        return $strReturn;
+    }
+
+    public function buildTdList($array_package, $str_select_package, $package_id)
+    {
+        $strTd = "";
+        $arrPosition = explode('|', $str_select_package);
+        foreach ($arrPosition as $value) {
+            list($text, $time) = explode(',', $value);
+            list($idText) = explode(':', $text);
+            if ($time) {
+                list($idTime) = explode(':', $time);
+                $strTime = $this->getTextPackageByID($array_package, $idTime);
+            } else {
+                $strTime = "";
+            }
+            $strText = $this->getTextPackageByID($array_package, $idText);
+            $strTd .= "<td>$strText";
+            $strTd .= $strTime ? "/$strTime</td>" : "</td>";
+        }
+        $strTd .= "<td>--</td>";
+        $strTd .= "<td><a href='#' data-toggle=\"modal\"
+        class='edit_package' data='$package_id' data-target=\"#modal_package\">Edit</a></td>";
+        return $strTd;
+    }
+
+    public function addSelectPackage($post)
     {
         extract($post);
+
+        $array_package = $this->getPackage();
+        $arrPosition = explode('|', $select_package);
+        $arraySavePosition = array();
+        foreach($arrPosition as $value) {
+            list($text, $time) = explode(',', $value);
+            list($idText) = explode(':', $text);
+            $getValPrice = $this->getPricePackageByID($array_package, $idText);
+            $strSelect = "$idText:$getValPrice";
+            if ($time) {
+                list($idTime) = explode(':', $time);
+                $getValTime = $this->getPricePackageByID($array_package, $idTime);
+                $strSelect = "$strSelect,$idTime:$getValTime";
+            }
+            $arraySavePosition[] = $strSelect;
+        }
+        $newStrSelectPackage = implode('|', $arraySavePosition);
         $result = $this->wpdb->insert(
-            $this->tablePackage,
+            $this->tableSelectPackage,
             array(
-                'massage' => @$massage,
-                'tel' => @$tel,
-                'email' => @$email,
-                'fax' => @$fax,
-                'address' => @$address,
-                'title_facebook' => @$title_facebook,
-                'link_facebook' => @$link_facebook,
-                'title_twitter' => @$title_twitter,
-                'link_twitter' => @$link_twitter,
-                'title_line' => @$title_line,
-                'link_line' => @$link_line,
-                'qr_code_line' => @$qr_code_line,
-                'title_ggp' => @$title_ggp,
-                'link_ggp' => @$link_ggp,
-                'latitude' => @$latitude,
-                'longitude' => @$longitude,
+                'employer_id' => $employer_id,
+                'string_package' => $newStrSelectPackage,
+                'create_datetime' => date_i18n('Y-m-d H:i:s'),
+                'update_datetime' => '0000-00-00 00:00:00',
+                'publish' => 1,
             ),
             array(
+                '%d',
                 '%s',
                 '%s',
                 '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
+                '%d',
             )
         );
         if ($result) {
@@ -278,50 +380,47 @@ class Package
         return false;
     }
 
-    public function editPackage($post)
+    public function editSelectPackage($post)
     {
         extract($post);
-        $this->wpdb->update(
-            $this->tablePackage,
+        if (empty($employer_id))
+            return false;
+        $array_package = $this->getPackage();
+        $arrPosition = explode('|', $select_package);
+        $arraySavePosition = array();
+        foreach($arrPosition as $value) {
+            list($text, $time) = explode(',', $value);
+            list($idText) = explode(':', $text);
+            $getValPrice = $this->getPricePackageByID($array_package, $idText);
+            $strSelect = "$idText:$getValPrice";
+            if ($time) {
+                list($idTime) = explode(':', $time);
+                $getValTime = $this->getPricePackageByID($array_package, $idTime);
+                $strSelect = "$strSelect,$idTime:$getValTime";
+            }
+            $arraySavePosition[] = $strSelect;
+        }
+        $newStrSelectPackage = implode('|', $arraySavePosition);
+        $result = $this->wpdb->update(
+            $this->tableSelectPackage,
             array(
-                'massage' => @$massage,
-                'tel' => @$tel,
-                'fax' => @$fax,
-                'address' => @$address,
-                'email' => @$email,
-                'title_facebook' => @$title_facebook,
-                'link_facebook' => @$link_facebook,
-                'title_twitter' => @$title_twitter,
-                'link_twitter' => @$link_twitter,
-                'title_line' => @$title_line,
-                'link_line' => @$link_line,
-                'qr_code_line' => @$qr_code_line,
-                'title_ggp' => @$title_ggp,
-                'link_ggp' => @$link_ggp,
-                'latitude' => @$latitude,
-                'longitude' => @$longitude,
+                'employer_id' => $employer_id,
+                'string_package' => $newStrSelectPackage,
+                'update_datetime' => date_i18n('Y-m-d H:i:s'),
+                'publish' => 1,
             ),
-            array('id' => 1),
+            array('id' => $package_id),
             array(
+                '%d',
                 '%s',
                 '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
+                '%d',
             ),
             array('%d')
         );
-        return 1;
+        if ($result) {
+            return true;
+        }
+        return false;
     }
 }

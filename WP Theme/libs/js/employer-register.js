@@ -43,6 +43,11 @@
 //    return false;
 //});
 
+$(document).on("click", ".edit_package", function (e) {
+    var packageID = $(this).attr('data');
+    showAddPackage(packageID);
+});
+
 $(document).ready(function () {
     $('#frm_employer_register')
         .bootstrapValidator()
@@ -62,7 +67,7 @@ $(document).ready(function () {
                 ids.push($(this).val());
             });
 //            data = data + "&employerContactOption=" + ids;
-            data += "&"+ $.param({
+            data += "&" + $.param({
                 employerContactOption: ids
             });
             // Use Ajax to submit form data
@@ -85,14 +90,29 @@ $(document).ready(function () {
                 }
             });
         })
-        .on('error.field.bv', function(e, data) {
+        .on('error.field.bv', function (e, data) {
             if (data.bv.getSubmitButton()) {
                 data.bv.disableSubmitButtons(false);
             }
         })
-        .on('success.field.bv', function(e, data) {
+        .on('success.field.bv', function (e, data) {
             if (data.bv.getSubmitButton()) {
                 data.bv.disableSubmitButtons(false);
             }
         });
+
+    $("#new_package").click(function () {
+        showAddPackage();
+    });
 });
+
+function showAddPackage(package_id) {
+    package_id = package_id | false;
+    var strUrl = ajaxPageurl + "?new_package=true";
+    strUrl += package_id ? "&package_id=" + package_id : "";
+    $(".modal-content").load(strUrl);
+}
+
+function showListPackage() {
+    $("#list_package").load(ajaxPageurl + "?list_package=true");
+}

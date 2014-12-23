@@ -27,4 +27,26 @@ if ($_REQUEST) {
         }
         exit;
     }
+    if ($_REQUEST['new_package'] == 'true') {
+        require_once("pages/package-new.php");
+        exit;
+    } else if ($_REQUEST['list_package'] == 'true') {
+        require_once("pages/package-list.php");
+        exit;
+    } else if ($_REQUEST['post_package'] == 'true') {
+        $classPackage = new Package($wpdb);
+        $postType = $_REQUEST['type_post'];
+        if ($postType == 'add') {
+            $result = $classPackage->addSelectPackage($_REQUEST);
+            if ($result)
+                echo 'success';
+            else echo 'fail';
+        } else if ($postType == 'edit') {
+            $result = $classPackage->editSelectPackage($_REQUEST);
+            if ($result)
+                echo 'success';
+            else echo 'fail';
+        }
+        exit;
+    }
 }
