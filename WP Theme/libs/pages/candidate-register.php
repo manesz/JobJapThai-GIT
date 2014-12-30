@@ -167,6 +167,12 @@ if (is_user_logged_in()) {
     </form>
 <?php else: ?>
 
+    <script>
+        var information_id = <?php echo empty($objInformation)?0:$objInformation[0]->id;?>;
+        var career_profile_id = <?php echo empty($objCareerProfile)?0:$objCareerProfile[0]->id;?>;
+        var desired_job_id = <?php echo empty($objDesiredJob)?0:$objDesiredJob[0]->id;?>;
+        var skill_languages_id = <?php echo empty($objSkillLanguage)?0:$objSkillLanguage[0]->id;?>;
+    </script>
     <div id="div_step2" class="col-md-12">
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
@@ -270,7 +276,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-8">
                             <input type="text" id="date_of_birth" name="date_of_birth" class="form-control datepicker"
                                    required placeholder="dd/mm/yyyy"
-                                   value="<?php echo empty($date_of_birth) ? '' : $date_of_birth; ?>"/>
+                                   value="<?php echo empty($date_of_birth) ? '' : date("d/m/Y", strtotime($date_of_birth)); ?>"/>
                         </div>
                     </div>
                     <div class="form-group col-md-12">
@@ -344,7 +350,8 @@ if (is_user_logged_in()) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" id="year_of_work_exp" name="year_of_work_exp" class="form-control"
-                                   placeholder="Year(s)"/>
+                                   placeholder="Year(s)"
+                                   value="<?php echo empty($year_of_work_exp) ? "" : $year_of_work_exp; ?>"/>
                             <span class="font-color-red">please enter only number No.(-) or (.) and space.</span>
                         </div>
                     </div>
@@ -453,7 +460,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-8">
                             <input type="text" id="start_date" name="start_date"
                                    class="form-control datepicker" placeholder="dd/mm/yyyy"
-                                   value="<?php echo empty($start_date) ? "" : $start_date; ?>"/>
+                                   value="<?php echo empty($start_date) ? "" : date("d/m/Y", strtotime($start_date)); ?>"/>
                         </div>
                     </div>
                 </div>
@@ -472,6 +479,8 @@ if (is_user_logged_in()) {
         </div>
         <div id="candEDUCATION" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <form method="post" id="form_candidate4" class="form-horizontal form_candidate">
+                <input type="hidden" id="post_type" name="post_type" value="add_education" />
+                <input type="hidden" id="education_id" name="education_id" value="0" />
                 <div class="panel-body">
                     <div id="education_list"></div>
                     <span>Please provide details of education institutions, dates attended and qualification attained.</span>
@@ -519,10 +528,10 @@ if (is_user_logged_in()) {
                     <div class="form-group col-md-12 text-right">
                         <input type="button" class="btn btn-default"
                                value="Reset"
-                               onclick="resetPanelEducationValue()"/>
-                        <input type="button" class="btn btn-success"
+                               onclick="resetPanelEducationValue('reset');"/>
+                        <input type="button" class="btn btn-info"
                                id="btn_cancel_education" value="Cancel" style="display: none;"
-                               onclick="$(this).hide();$(this).closest('.panel').find('input[type=text], textarea').val('');"/>
+                               onclick="$(this).hide();resetPanelEducationValue('cancel');"/>
                         <input type="submit" class="btn btn-success"
                                id="btn_add_education" value="Add Education"/>
                     </div>
@@ -543,6 +552,8 @@ if (is_user_logged_in()) {
         </div>
         <div id="candWorkExperience" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <form method="post" id="form_candidate5" class="form-horizontal form_candidate">
+                <input type="hidden" id="post_type" name="post_type" value="add_work_experience" />
+                <input type="hidden" id="work_experience_id" name="work_experience_id" value="0" />
                 <div class="panel-body">
                     <div id="work_experience_list"></div>
                     <div class="form-group col-md-12">
@@ -592,6 +603,12 @@ if (is_user_logged_in()) {
                         </div>
                     </div>
                     <div class="form-group col-md-12 text-right">
+                        <input type="button" class="btn btn-default"
+                               value="Reset"
+                               onclick="resetPanelWorkExperienceValue('reset');"/>
+                        <input type="button" class="btn btn-info"
+                               id="btn_cancel_work_experience" value="Cancel" style="display: none;"
+                               onclick="$(this).hide();resetPanelWorkExperienceValue('cancel');"/>
                         <input type="submit" class="btn btn-success"
                                id="btn_add_work_experience" value="Add Work Experience"/>
                     </div>

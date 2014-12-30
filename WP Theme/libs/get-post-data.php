@@ -80,6 +80,33 @@ if ($_REQUEST) {
                     echo 'success';
                 else echo 'fail';
                 break;
+
+            //Edit
+            case "edit_information":
+                $result = $classCandidate->editInformation($_REQUEST);
+                echo $result;
+                break;
+            case "edit_career_profile":
+                $result = $classCandidate->editCareerProfile($_REQUEST);
+                echo $result;
+                break;
+            case "edit_desired_job":
+                $result = $classCandidate->editDesiredJob($_REQUEST);
+                echo $result;
+                break;
+            case "edit_education":
+                $result = $classCandidate->editEducation($_REQUEST);
+                echo $result;
+                break;
+            case "edit_work_experience":
+                $result = $classCandidate->editWorkExperience($_REQUEST);
+                echo $result;
+                break;
+            case "edit_skill_languages":
+                $result = $classCandidate->editSkillLanguages($_REQUEST);
+                echo $result;
+                break;
+            //End edit
         }
         exit;
     }

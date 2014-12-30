@@ -28,7 +28,7 @@ function scrollToTop(fade_in) {
 }
 
 function showModalMessage(msg, title) {
-    title = title | "Error";
+    title = title || "Success";
     $("#modal_show_message .modal-body").html(msg);
     $("#modal_show_message #myModalMassage").html(title);
     $('#modal_show_message').modal('show');

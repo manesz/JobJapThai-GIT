@@ -111,7 +111,9 @@ class Candidate
                     <td>From: <?php echo $value->education_period_from; ?>
                         To: <?php echo $value->education_period_to; ?></td>
                     <td><?php echo $value->grade_gpa; ?></td>
-                    <td><a href="javascript:educationSetValue(<?php echo $strSetValueForEdit; ?>);">Edit</a>|<a>Delete</a></td>
+                    <td>
+                        <a href="javascript:educationSetValue(<?php echo $strSetValueForEdit; ?>);">Edit</a>|<a>Delete</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>
@@ -156,16 +158,21 @@ class Candidate
             </tr>
             <?php foreach ($objEducation as $key => $value):
                 $id = $key + 1;
+                $strSetValueForEdit = "{id:$value->id,employment_period_from:'$value->employment_period_from',employment_period_to:'$value->employment_period_to'" .
+                    ",company_name:'$value->company_name',position:'$value->position',month_salary:'$value->month_salary',job_duties:'$value->job_duties'}";
                 ?>
                 <tr>
                     <td><?php echo $id; ?></td>
                     <td>From: <?php echo $value->employment_period_from; ?>
-                    To: <?php echo $value->employment_period_to; ?></td>
+                        To: <?php echo $value->employment_period_to; ?></td>
                     <td><?php echo $value->company_name; ?></td>
                     <td><?php echo $value->position; ?></td>
                     <td><?php echo number_format($value->month_salary); ?></td>
                     <td><?php echo $value->job_duties; ?></td>
-                    <td><a>Edit</a>|<a>Delete</a></td>
+                    <td>
+                        <a href="javascript:workExperienceSetValue(<?php echo $strSetValueForEdit; ?>);">Edit</a>|
+                        <a>Delete</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>
@@ -615,62 +622,216 @@ class Candidate
         return $this->wpdb->insert_id;
     }
 
-    public function editCompanyInfo($post)
+    public function editInformation($post)
     {
-        $employer_id = isset($post['employer_id']) ? $post['employer_id'] : false;
-        $contact_person = isset($post['employerContactPerson']) ? $post['employerContactPerson'] : false;
-        $company_name = isset($post['employerContactCompanyName']) ? $post['employerContactCompanyName'] : false;
-        $business_type = isset($post['employerContactBusinessType']) ? $post['employerContactBusinessType'] : false;
-        $company_profile_and_business_oparation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
-        $walfare_and_benefit = isset($post['employerContactWalfare']) ? $post['employerContactWalfare'] : false;
-        $apply_method = isset($post['employerContactApplyMedtod']) ? $post['employerContactApplyMedtod'] : false;
-        $address = isset($post['employerContactAddress']) ? $post['employerContactAddress'] : false;
-        $contact_country = isset($post['employerContactCountry']) ? $post['employerContactCountry'] : false;
-        $contact_industrial_park = isset($post['employerContactIndustrialPark']) ? $post['employerContactIndustrialPark'] : 0;
-        $province = isset($post['employerContactProvince']) ? $post['employerContactProvince'] : false;
-        $district = isset($post['employerContactDistinct']) ? $post['employerContactDistinct'] : false;
-        $sub_district = isset($post['employerContactSubDistinct']) ? $post['employerContactSubDistinct'] : false;
-        $postcode = isset($post['employerContactPostcode']) ? $post['employerContactPostcode'] : false;
-        $tel = isset($post['employerContactTel']) ? $post['employerContactTel'] : false;
-        $fax = isset($post['employerContactFax']) ? $post['employerContactFax'] : false;
-        $email = isset($post['employerContactEmail']) ? $post['employerContactEmail'] : false;
-        $website = isset($post['employerContactWebsite']) ? $post['employerContactWebsite'] : false;
-        $directions = isset($post['employerContactDirections']) ? $post['employerContactDirections'] : false;
-        $options = isset($post['employerContactOption']) ? $post['employerContactOption'] : false;
-        if ($options) {
-            $options = implode(',', $options);
+        extract($post);
+        $information_id = empty($information_id) ? false : $information_id;
+        $title = empty($title) ? false : $title;
+        $first_name = empty($first_name) ? false : $first_name;
+        $last_name = empty($last_name) ? false : $last_name;
+        $gender = empty($gender) ? false : $gender;
+        if (!empty($date_of_birth)) {
+            list($dd, $mm, $yyyy) = explode('/', $date_of_birth);
+            if (checkdate($mm, $dd, $yyyy)) {
+                $date_of_birth = explode('/', $date_of_birth); //DateTime::createFromFormat('d/m/Y', $check_in);
+                $date_of_birth = $date_of_birth[2] . "-" . $date_of_birth[1] . "-" . $date_of_birth[0];
+            } else {
+                $date_of_birth = false;
+            }
+        } else {
+            $date_of_birth = false;
         }
-        if (!$employer_id)
-            return false;
+        $phone = empty($phone) ? false : $phone;
+        $nationality = empty($nationality) ? false : $nationality;
+        $county = empty($county) ? false : $county;
+        $province = empty($province) ? false : $province;
+        $district = empty($district) ? false : $district;
+        $city = empty($city) ? false : $city;
+        if (!$information_id)
+            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
         $sql = "
-            UPDATE `ics_company_information_for_contact`
+            UPDATE `$this->tableInformation`
             SET
-              `contact_person` = '{$contact_person}',
-              `company_name` = '{$company_name}',
-              `business_type` = '{$business_type}',
-              `company_profile_and_business_oparation` = '{$company_profile_and_business_oparation}',
-              `walfare_and_benefit` = '{$walfare_and_benefit}',
-              `apply_method` = '{$apply_method}',
-              `address` = '{$address}',
-              `contact_country` = '{$contact_country}',
-              `contact_industrial_park` = '{$contact_industrial_park}',
+              `title` = '{$title}',
+              `first_name` = '{$first_name}',
+              `last_name` = '{$last_name}',
+              `gender` = '{$gender}',
+              `date_of_birth` = '{$date_of_birth}',
+              `phone` = '{$phone}',
+              `nationality` = '{$nationality}',
+              `county` = '{$county}',
               `province` = '{$province}',
               `district` = '{$district}',
-              `sub_district` = '{$sub_district}',
-              `postcode` = '{$postcode}',
-              `tel` = '{$tel}',
-              `fax` = '{$fax}',
-              `email` = '{$email}',
-              `website` = '{$website}',
-              `directions` = '{$directions}',
-              `options` = '{$options}',
+              `city` = '{$city}',
               `update_datetime` = NOW()
-            WHERE `employer_id` = '{$employer_id}';
+            WHERE `candidate_id` = '$information_id';
         ";
         $result = $this->wpdb->query($sql);
         if (!$result)
-            return false;
-        return true;
+            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+    }
+
+    public function editCareerProfile($post)
+    {
+        extract($post);
+        $career_profile_id = empty($career_profile_id) ? false : $career_profile_id;
+        $year_of_work_exp = empty($year_of_work_exp) ? false : $year_of_work_exp;
+        $last_position = empty($last_position) ? false : $last_position;
+        $last_industry = empty($last_industry) ? false : $last_industry;
+        $last_function = empty($last_function) ? false : $last_function;
+        $last_month_salary = empty($last_month_salary) ? false : $last_month_salary;
+        if (!$career_profile_id)
+            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+        $sql = "
+            UPDATE `$this->tableCareerProfile`
+            SET
+              `year_of_work_exp` = '{$year_of_work_exp}',
+              `last_position` = '{$last_position}',
+              `last_industry` = '{$last_industry}',
+              `last_function` = '{$last_function}',
+              `last_month_salary` = '{$last_month_salary}',
+              `update_datetime` = NOW()
+            WHERE `id` = '$career_profile_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+    }
+
+    public function editDesiredJob($post)
+    {
+        extract($post);
+        $desired_job_id = empty($desired_job_id) ? false : $desired_job_id;
+        $industry = empty($industry) ? false : $industry;
+        $jop_function = empty($jop_function) ? false : $jop_function;
+        $job_type = empty($job_type) ? false : $job_type;
+        $expect_month_salary = empty($expect_month_salary) ? false : $expect_month_salary;
+        $available_to_work = empty($available_to_work) ? false : $available_to_work;
+        if (!empty($start_date)) {
+            list($dd, $mm, $yyyy) = explode('/', $start_date);
+            if (checkdate($mm, $dd, $yyyy)) {
+                $start_date = explode('/', $start_date); //DateTime::createFromFormat('d/m/Y', $check_in);
+                $start_date = $start_date[2] . "-" . $start_date[1] . "-" . $start_date[0];
+            } else {
+                $start_date = false;
+            }
+        } else {
+            $start_date = false;
+        }
+        if (!$desired_job_id)
+            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+        $sql = "
+            UPDATE `$this->tableDesiredJob`
+            SET
+              `industry` = '{$industry}',
+              `jop_function` = '{$jop_function}',
+              `job_type` = '{$job_type}',
+              `expect_month_salary` = '{$expect_month_salary}',
+              `available_to_work` = '{$available_to_work}',
+              `start_date` = '{$start_date}',
+              `update_datetime` = NOW()
+            WHERE `id` = '$desired_job_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+    }
+
+    public function editEducation($post)
+    {
+        extract($post);
+        $education_id = empty($education_id) ? false : $education_id;
+        $degree = empty($degree) ? false : $degree;
+        $university = empty($university) ? false : $university;
+        $education_period_from = empty($education_period_from) ? false : $education_period_from;
+        $education_period_to = empty($education_period_to) ? false : $education_period_to;
+        $grade_gpa = empty($grade_gpa) ? false : $grade_gpa;
+        if (!$education_id)
+            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+        $sql = "
+            UPDATE `$this->tableEducation`
+            SET
+              `degree` = '{$degree}',
+              `university` = '{$university}',
+              `education_period_from` = '{$education_period_from}',
+              `education_period_to` = '{$education_period_to}',
+              `grade_gpa` = '{$grade_gpa}',
+              `update_datetime` = NOW()
+            WHERE `id` = '$education_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+    }
+
+    public function editWorkExperience($post)
+    {
+        extract($post);
+        $work_experience_id = empty($work_experience_id) ? false : $work_experience_id;
+        $employment_period_from = empty($employment_period_from) ? false : $employment_period_from;
+        $employment_period_to = empty($employment_period_to) ? false : $employment_period_to;
+        $company_name = empty($company_name) ? false : $company_name;
+        $position = empty($position) ? false : $position;
+        $month_salary = empty($month_salary) ? false : $month_salary;
+        $job_duties = empty($job_duties) ? false : $job_duties;
+        if (!$work_experience_id)
+            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+        $sql = "
+            UPDATE `$this->tableWorkExperience`
+            SET
+              `employment_period_from` = '{$employment_period_from}',
+              `employment_period_to` = '{$employment_period_to}',
+              `company_name` = '{$company_name}',
+              `position` = '{$position}',
+              `month_salary` = '{$month_salary}',
+              `job_duties` = '{$job_duties}',
+              `update_datetime` = NOW()
+            WHERE `id` = '$work_experience_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+    }
+
+    public function editSkillLanguages($post)
+    {
+        extract($post);
+        $skill_languages_id = empty($skill_languages_id) ? false : $skill_languages_id;
+        $japanese_skill = empty($japanese_skill) ? false : $japanese_skill;
+        $japanese_speaking = empty($japanese_speaking) ? false : $japanese_speaking;
+        $japanese_reading = empty($japanese_reading) ? false : $japanese_reading;
+        $japanese_writing = empty($japanese_writing) ? false : $japanese_writing;
+        $toeic_toefl_ielts = empty($toeic_toefl_ielts) ? false : $toeic_toefl_ielts;
+        $toeic_toefl_ielts_score = empty($toeic_toefl_ielts_score) ? false : $toeic_toefl_ielts_score;
+        $english_speaking = empty($english_speaking) ? false : $english_speaking;
+        $english_reading = empty($english_reading) ? false : $english_reading;
+        $english_writing = empty($english_writing) ? false : $english_writing;
+        if (!$skill_languages_id)
+            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+        $sql = "
+            UPDATE `$this->tableSkillLanguages`
+            SET
+              `japanese_skill` = '{$japanese_skill}',
+              `japanese_speaking` = '{$japanese_speaking}',
+              `japanese_reading` = '{$japanese_reading}',
+              `japanese_writing` = '{$japanese_writing}',
+              `toeic_toefl_ielts` = '{$toeic_toefl_ielts}',
+              `toeic_toefl_ielts_score` = '{$toeic_toefl_ielts_score}',
+              `english_speaking` = '{$english_speaking}',
+              `english_reading` = '{$english_reading}',
+              `english_writing` = '{$english_writing}',
+              `update_datetime` = NOW()
+            WHERE `id` = '$skill_languages_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
     }
 
 

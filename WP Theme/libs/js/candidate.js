@@ -119,22 +119,21 @@ $(document).ready(function () {
                     url: '',
                     data: data,
                     success: function (result) {
-                        if (result != 'success') {
-                            $("#show_message").html(result);
-                        } else {
-                            if (!is_login)
-                                window.location.reload();
-
+                        if (!is_login)
+                            window.location.reload();
+                        else {
+                            showModalMessage(result, "Message Edit Candidate");
                         }
+
                         if (check_education_post) {
                             getEducation();
-                            $("#panel_education").find('input[type=text], textarea').val('');
-                            $('#panel_education:input[type=text]:first').select();
+//                            $("#panel_education").find('input[type=text], textarea').val('');
+//                            $('#panel_education:input[type=text]:first').select();
                         }
                         if (check_work_experience_post) {
                             getWorkExperience();
-                            $("#panel_work_experience").find('input[type=text], textarea').val('');
-                            $('#panel_work_experience:input[type=text]:first').select();
+//                            $("#panel_work_experience").find('input[type=text], textarea').val('');
+//                            $('#panel_work_experience:input[type=text]:first').select();
                         }
 
                         check_from_post = false;
@@ -169,7 +168,8 @@ $(document).ready(function () {
         .on('changeDate', function (e) {
             var $frm = $(this).closest('form');
             // Revalidate the date when user change it
-            $($frm).bootstrapValidator('revalidateField', this.id);
+            if ($(this).attr("required"))
+                $($frm).bootstrapValidator('revalidateField', this.id);
         });
 
     $(".tab_panel").click(function () {
@@ -182,42 +182,46 @@ $(document).ready(function () {
             case 1:
                 data_for_post = $.param({
                     candidate_post: 'true',
-                    post_type: 'edit_information'
+                    post_type: 'edit_information',
+                    candidate_id: candidate_id,
+                    information_id: information_id
                 });
                 $frm.submit();break;
             case 2:
                 data_for_post = $.param({
                     candidate_post: 'true',
-                    post_type: 'edit_career_profile'
+                    post_type: 'edit_career_profile',
+                    candidate_id: candidate_id,
+                    career_profile_id: career_profile_id
                 });
                 $frm.submit(); break;
             case 3:
                 data_for_post = $.param({
                     candidate_post: 'true',
-                    post_type: 'edit_desired_job'
+                    post_type: 'edit_desired_job',
+                    candidate_id: candidate_id,
+                    desired_job_id: desired_job_id
                 });
                 $frm.submit(); break;
-            case 4: break;
-            case 5: break;
             case 6:
                 data_for_post = $.param({
                     candidate_post: 'true',
-                    post_type: 'edit_skill_language'
+                    post_type: 'edit_skill_languages',
+                    candidate_id: candidate_id,
+                    skill_languages_id: skill_languages_id
                 });
                 $frm.submit(); break;
         }
     });
     $("#btn_add_education").click(function () {
         data_for_post = $.param({
-            candidate_post: 'true',
-            post_type: 'add_education'
+            candidate_post: 'true'
         });
         check_education_post = true;
     });
     $("#btn_add_work_experience").click(function () {
         data_for_post = $.param({
-            candidate_post: 'true',
-            post_type: 'add_work_experience'
+            candidate_post: 'true'
         });
         check_work_experience_post = true;
     });
@@ -277,6 +281,7 @@ function getWorkExperience() {
 }
 
 function educationSetValue(data) {
+    $("#education_id").val(data.id);
     $("#degree").val(data.degree);
     $("#university").val(data.university);
     $("#education_period_from").val(data.education_period_from);
@@ -284,22 +289,58 @@ function educationSetValue(data) {
     $("#grade_gpa").val(data.grade_gpa);
 
     $("#btn_cancel_education").show();
+    $("#btn_add_education").val('Edit Education');
+    $("#form_candidate4 #post_type").val('edit_education');
+
+    var $frm = $("#form_candidate4");
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
 }
 
 function workExperienceSetValue(data) {
+    $("#work_experience_id").val(data.id);
     $("#employment_period_from").val(data.employment_period_from);
     $("#employment_period_to").val(data.employment_period_to);
     $("#company_name").val(data.company_name);
     $("#position").val(data.position);
     $("#month_salary").val(data.month_salary);
     $("#job_duties").val(data.job_duties);
+
+    $("#btn_cancel_work_experience").show();
+    $("#btn_add_work_experience").val('Edit work_experience');
+    $("#form_candidate5 #post_type").val('edit_work_experience');
+
+    var $frm = $("#form_candidate5");
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
 }
 
-function resetPanelEducationValue() {
-    $("#panel_education").each(function () {
-//        $('input', this).val('');
-//        $('form').bootstrapValidator('updateStatus', $('input', this).name, 'NOT_VALIDATED')
-//            .bootstrapValidator('validateField', $('input', this).name);
-        console.log($('input', this).attr('name'))
-    })
+function resetPanelEducationValue(type) {
+    var $frm = $("#form_candidate4");
+    $($frm).closest('form').find('input[type=text], textarea').val('');
+    if (type == 'cancel') {
+        $('#form_candidate4 #post_type').val('add_education');
+        $('#btn_add_education').val('Add Education');
+    }
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
+
+function resetPanelWorkExperienceValue(type) {
+    var $frm = $("#form_candidate5");
+    $($frm).closest('form').find('input[type=text], textarea').val('');
+    if (type == 'cancel') {
+        $('#form_candidate5 #post_type').val('add_work_experience');
+        $('#btn_add_work_experience').val('Add Work Experience');
+    }
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
 }
