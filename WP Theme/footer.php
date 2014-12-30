@@ -117,9 +117,10 @@ if ($arrayContact) {
 </footer><!-- END : footers.container-fluid -->
 
 <?php
-if (!is_user_logged_in())
     include_once('libs/pages/modal.php');
 ?>
+
+<!-- Modal -->
 <style type="text/css">
     .blockDiv {
         position: absolute;
@@ -138,59 +139,8 @@ if (!is_user_logged_in())
 <script>
     var str_loading = '<div class="img_loading"><img src="<?php
     bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
-
-    function showImgLoading() {
-        hideImgLoading();
-        $("body").append(str_loading);
-        $('<div id="screenBlock"></div>').appendTo('body');
-        $('#screenBlock').css( { opacity: 0, width: $(document).width(), height: $(document).height() } );
-        $('#screenBlock').addClass('blockDiv');
-        $('#screenBlock').animate({opacity: 0.7}, 200);
-    }
-
-    function hideImgLoading() {
-        $(".img_loading").remove();
-        $('#screenBlock').animate({opacity: 0}, 200, function() {
-            $('#screenBlock').remove();
-        });
-    }
-
-    function scrollToTop(fade_in) {
-        fade_in = fade_in || false;
-        $("body, html").animate({
-                scrollTop: $("body").position().top
-            },
-            500,
-            function () {
-                if (fade_in)
-                    $(fade_in).fadeIn();
-            });
-    }
-
-    var wppage = {
-        init: function () {
-            wppage.addEvent();
-            if (typeof jshook !== 'undefined') {
-                jshook.init();
-            }
-        },
-        addEvent: function () {
-            $('.carousel').carousel({
-                interval: 5000
-            });
-            $('#myTab a').on('click', function (e) {
-                e.preventDefault()
-                $(this).tab('show', 'fast');
-            });
-        },
-        onready: function () {
-            wppage.init();
-            return false;
-        }
-    };
-    $(document).ready(wppage.onready);
-
 </script>
+<script src="<?php echo get_template_directory_uri(); ?>/libs/js/footer.js"></script>
 
 </body>
 </html>
