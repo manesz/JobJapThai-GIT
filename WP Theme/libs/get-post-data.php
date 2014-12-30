@@ -2,6 +2,7 @@
 
 if (!session_id())
     session_start();
+global $wpdb;
 if ($_REQUEST) {
     $sendTo = 'ruxchuk@gmail.com'; //email info
     if ($_REQUEST['send_email_contact_us'] == 'true') {
@@ -46,6 +47,39 @@ if ($_REQUEST) {
             if ($result)
                 echo 'success';
             else echo 'fail';
+        }
+        exit;
+    }
+    if ($_REQUEST['candidate_post'] == 'true') {
+        $classCandidate = new Candidate($wpdb);
+        $postType = $_REQUEST['post_type'];
+        switch ($postType) {
+            case "add":
+                $result = $classCandidate->addCandidate($_REQUEST);
+                echo $result;
+                break;
+            case "edit":
+                break;
+            case "get_education":
+                $result = $classCandidate->buildEducationTable($_REQUEST['candidate_id']);
+                echo $result;
+                break;
+            case "get_work_experience":
+                $result = $classCandidate->buildWorkExperienceTable($_REQUEST['candidate_id']);
+                echo $result;
+                break;
+            case "add_education":
+                $result = $classCandidate->addEducation($_REQUEST);
+                if ($result)
+                    echo 'success';
+                else echo 'fail';
+                break;
+            case "add_work_experience":
+                $result = $classCandidate->addWorkExperience($_REQUEST);
+                if ($result)
+                    echo 'success';
+                else echo 'fail';
+                break;
         }
         exit;
     }

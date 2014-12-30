@@ -14,7 +14,7 @@ if ($employerPost == 'true') {
 
 $signInPost = isset($_POST['sign_in_post']) ? $_POST['sign_in_post'] : false;
 if ($signInPost == "true") {
-    employerSignIn();
+    userSignIn();
     exit;
 }
 function registerEmp()
@@ -91,9 +91,10 @@ function setUserLogin($user_id)
     $auth_secure_cookie = $secure_cookie;
     wp_set_current_user($user_id);
     wp_set_auth_cookie($user_id, true, $secure_cookie);
+    update_usermeta($user_id, 'last_login', current_time('mysql'));
 }
 
-function employerSignIn()
+function userSignIn()
 {
     $userName = isset($_POST['username']) ? $_POST['username'] : false;
     $pass = isset($_POST['password']) ? $_POST['password'] : false;
@@ -102,15 +103,23 @@ function employerSignIn()
         $userName = $user->user_login;
     }
 
-    $creds = array();
-    $creds['user_login'] = $userName;
-    $creds['user_password'] = $pass;
-    $creds['remember'] = false;
-    $user = wp_signon($creds, false);
+    $dateSignOn = array();
+    $dateSignOn['user_login'] = $userName;
+    $dateSignOn['user_password'] = $pass;
+    $dateSignOn['remember'] = false;
+    $user = wp_signon($dateSignOn, false);
     if (is_wp_error($user))
         echo $user->get_error_message();
     else {
 //        setUserLogin($user);
-        header('Location: ' . get_site_url() . '/edit-resume/');
+        update_usermeta($user->ID, 'last_login', current_time('mysql'));
+        $userType = get_user_meta($user->ID, 'user_type', true);
+        if ($userType == "employer")
+            header('Location: ' . get_site_url() . '/edit-resume/');
+        else if ($userType == 'candidate') {
+            header('Location: ' . get_site_url() . '/candidate/');
+        } else {
+            header('Location: ' . get_site_url() . '/');
+        }
     }
 }

@@ -102,6 +102,13 @@ $init_page = array(
 		  'post_author'=> 1
 	),
         array(
+		  'post_title' => 'Candidate',
+		  'post_content'  => '',
+		  'post_status'=> 'publish',
+		  'post_type'=>'page',
+		  'post_author'=> 1
+	),
+        array(
 		  'post_title' => 'Candidate Register',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',

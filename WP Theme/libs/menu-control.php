@@ -3,6 +3,7 @@
 require_once("class/ClassBannerSlide.php");
 require_once("class/ClassContact.php");
 require_once("class/ClassEmployer.php");
+require_once("class/ClassCandidate.php");
 require_once("class/ClassPackage.php");
 require_once("class/simple-php-captcha-master/contact-us-captcha.php");
 

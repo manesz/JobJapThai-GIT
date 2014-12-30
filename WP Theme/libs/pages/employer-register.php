@@ -3,7 +3,6 @@ if (is_user_logged_in()) {
     global $current_user;
     get_currentuserinfo();
     $userID = $current_user->ID;
-    $key = 'last_name';
     $single = true;
     $userType = get_user_meta($userID, 'user_type', $single);
     if ($userType) {

@@ -3,7 +3,15 @@
 if (is_user_logged_in()) {
     $isLogin = true;
     global $current_user;
+    $userID = $current_user->ID;
     $displayName = $current_user->display_name;
+    $userType = get_user_meta($userID, 'user_type', true);
+    if ($userType == 'employer') {
+        $urlEditResume = get_site_url() . "/edit-resume";
+    } else if ($userType == "candidate") {
+        $urlEditResume = get_site_url() . "/candidate";
+    } else
+        $urlEditResume = get_site_url() . "/wp-admin";
 } else {
     $isLogin = false;
 }
@@ -47,7 +55,7 @@ if (is_user_logged_in()) {
             <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Hello! :</label>
 
             <div class="col-md-8"><a
-                    href="<?php echo get_site_url(); ?>/edit-resume/"><?php echo $displayName; ?></a></div>
+                    href="<?php echo $urlEditResume; ?>"><?php echo $displayName; ?></a></div>
         </div>
 
         <hr/>
