@@ -328,6 +328,11 @@ if (is_user_logged_in()) {
                             </select>
                         </div>
                     </div>
+
+                    <div class="form-group col-md-12" style="">
+                        <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -392,6 +397,11 @@ if (is_user_logged_in()) {
                                    value="<?php echo empty($last_month_salary) ? "" : $last_month_salary; ?>"/>
                             <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
                         </div>
+                    </div>
+
+                    <div class="form-group col-md-12" style="">
+                        <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
                     </div>
                 </div>
             </form>
@@ -462,6 +472,11 @@ if (is_user_logged_in()) {
                                    class="form-control datepicker" placeholder="dd/mm/yyyy"
                                    value="<?php echo empty($start_date) ? "" : date("d/m/Y", strtotime($start_date)); ?>"/>
                         </div>
+                    </div>
+
+                    <div class="form-group col-md-12" style="">
+                        <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
                     </div>
                 </div>
             </form>
@@ -635,7 +650,7 @@ if (is_user_logged_in()) {
                                 Skill</label><span
                                 class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="japanese_skill" name="japanese_skill" class="form-control">
+                            <select id="japanese_skill" name="japanese_skill" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -644,7 +659,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="japanese_speaking">Japanese
                                 Speaking</label><span class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="japanese_speaking" name="japanese_speaking" class="form-control">
+                            <select id="japanese_speaking" name="japanese_speaking" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -653,7 +668,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="japanese_reading">Japanese
                                 Reading</label><span class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="japanese_reading" name="japanese_reading" class="form-control">
+                            <select id="japanese_reading" name="japanese_reading" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -662,7 +677,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="japanese_writing">Japanese
                                 Writing</label><span class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="japanese_writing" name="japanese_writing" class="form-control">
+                            <select id="japanese_writing" name="japanese_writing" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -671,7 +686,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="toeic_toefl_ielts">TOEIC / TOEFL /
                                 IELTS</label><span class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="toeic_toefl_ielts" name="toeic_toefl_ielts" class="form-control">
+                            <select id="toeic_toefl_ielts" name="toeic_toefl_ielts" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -680,7 +695,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"></div>
                         <div class="col-md-8">
                             <input type="text" id="toeic_toefl_ielts_score" name="toeic_toefl_ielts_score"
-                                   class="form-control" placeholder="Your Score: 999"
+                                   class="form-control" placeholder="Your Score: 999" required=""
                                    value="<?php echo empty($toeic_toefl_ielts_score) ? "" : $toeic_toefl_ielts_score; ?>"/>
                         </div>
                     </div>
@@ -689,7 +704,7 @@ if (is_user_logged_in()) {
                                 Speaking</label><span
                                 class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="english_speaking" name="english_speaking" class="form-control">
+                            <select id="english_speaking" name="english_speaking" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -698,7 +713,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="english_reading">English
                                 Reading</label><span class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="english_reading" name="english_reading" class="form-control">
+                            <select id="english_reading" name="english_reading" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
@@ -707,21 +722,21 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="english_writing">English
                                 Writing</label><span class="font-color-red">*</span></div>
                         <div class="col-md-8">
-                            <select id="english_writing" name="english_writing" class="form-control">
+                            <select id="english_writing" name="english_writing" class="form-control" required="">
                                 <option>xxxx</option>
                             </select>
                         </div>
                     </div>
 
+                    <div class="form-group col-md-12" style="">
+                        <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
-    </div>
-    <div class="form-group col-md-12" style="">
-        <button type="button" class="btn btn-primary col-md-6 pull-right" id="btn_submit_form">Submit Form</button>
-        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
     </div>
     </div>
 <?php endif; ?>

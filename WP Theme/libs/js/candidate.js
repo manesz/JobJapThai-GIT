@@ -38,6 +38,13 @@ $(document).ready(function () {
                     }
                 }
             },
+            expect_month_salary: {
+                validators: {
+                    integer: {
+                        message: 'The value is not an number'
+                    }
+                }
+            },
             month_salary: {
                 validators: {
                     integer: {
@@ -176,7 +183,7 @@ $(document).ready(function () {
         index_post = $(this).index(".tab_panel") + 1;
     });
 
-    $("#btn_submit_form").click(function () {
+    $(".btn_submit_form").click(function () {
         var $frm = $('#form_candidate' + index_post);
         switch (index_post) {
             case 1:
@@ -186,7 +193,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     information_id: information_id
                 });
-                $frm.submit();break;
+                break;
             case 2:
                 data_for_post = $.param({
                     candidate_post: 'true',
@@ -194,7 +201,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     career_profile_id: career_profile_id
                 });
-                $frm.submit(); break;
+                 break;
             case 3:
                 data_for_post = $.param({
                     candidate_post: 'true',
@@ -202,7 +209,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     desired_job_id: desired_job_id
                 });
-                $frm.submit(); break;
+                 break;
             case 6:
                 data_for_post = $.param({
                     candidate_post: 'true',
@@ -210,7 +217,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     skill_languages_id: skill_languages_id
                 });
-                $frm.submit(); break;
+                 break;
         }
     });
     $("#btn_add_education").click(function () {
@@ -230,6 +237,10 @@ $(document).ready(function () {
         var $frm = $('#form_candidate' + index_post);
         $frm.find(':input[type=text]:not([type=hidden]), textarea').val('');
         $frm.find('input:first').focus().select();
+        $("input[type=text], select, textarea", $frm).each(function () {
+            if ($(this).attr("required"))
+                $($frm).bootstrapValidator('revalidateField', this.id);
+        });
     });
 
     if (is_login) {
