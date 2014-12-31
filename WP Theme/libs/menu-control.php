@@ -12,6 +12,7 @@ require_once('menu/theme-option-menu.php');
 require_once('menu/banner-slide-menu.php');
 require_once('menu/contact-menu.php');
 require_once('menu/job-menu.php');
+require_once('menu/news-menu.php');
 
 /*
 //require class for post data

@@ -8,6 +8,17 @@
 
 get_template_part("header");
 get_template_part("libs/nav");
+
+$postID = get_the_id();
+$url = wp_get_attachment_url(get_post_thumbnail_id($postID));
+    $customField = get_post_custom($postID);
+$qualification = empty($customField["qualification"][0]) ? '' : $customField["qualification"][0];
+$job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
+$jlpt_level = empty($customField["jlpt_level"][0]) ? '' : $customField["jlpt_level"][0];
+$job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
+$japanese_skill = empty($customField["japanese_skill"][0]) ? '' : $customField["japanese_skill"][0];
+$salary = empty($customField["salary"][0]) ? '' : $customField["salary"][0];
+$working_day = empty($customField["working_day"][0]) ? '' : $customField["working_day"][0];
 ?>
 
     <section class="container-fluid" style="margin-top: 10px;">
@@ -47,66 +58,53 @@ get_template_part("libs/nav");
                             <table style="width: 100%">
                                 <tr>
                                     <td style="50%">Date Posted :</td>
-                                    <td style="50%">29 September, 2014</td>
+                                    <td style="50%"><?php the_date('d F, Y'); ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">Category :</td>
-                                    <td style="50%">Secretary</td>
+                                    <td style="50%"><?php $categories = get_the_category();
+                                        $separator = ' ';
+                                        $output = '';
+                                        if($categories){
+                                            foreach($categories as $category) {
+                                                $output .= '<a href="'.get_category_link( $category->term_id ).'" title="' . esc_attr( sprintf( __( "View all posts in %s" ), $category->name ) ) . '">'.$category->cat_name.'</a>'.$separator;
+                                            }
+                                            echo trim($output, $separator);
+                                        } ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">Job Type :</td>
-                                    <td style="50%">Permanent </td>
+                                    <td style="50%"><?php echo $job_type; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">JLPT LEVEL :</td>
-                                    <td style="50%">N2</td>
+                                    <td style="50%"><?php echo $jlpt_level; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">JOB LOCATION :</td>
-                                    <td style="50%">Bangkok</td>
+                                    <td style="50%"><?php echo $job_location; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">JAPANESE SKILLS :</td>
-                                    <td style="50%">Good</td>
+                                    <td style="50%"><?php echo $japanese_skill; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">Salary :</td>
-                                    <td style="50%">Negotiable</td>
+                                    <td style="50%"><?php echo $salary; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">Working Day :</td>
-                                    <td style="50%">Mon-Fri 8.00 – 17.00</td>
+                                    <td style="50%"><?php echo $working_day; ?></td>
                                 </tr>
                             </table>
                         </div>
 
                         <h5><strong>Job Description</strong></h5>
                         <p>
-                            Handle all secretarial and administrative work, responsible for incoming and outgoing documents and reports, check the correctness of documents for signature, take note and prepare minutes of meeting, prepare presentation      on Power Point and also arrange meetings and appointments.<br/>
-
-                        <ol>
-                            <li>Liaising with Oversea staff in Japan by telephone, and email</li>
-                            <li>Responsible for all administration and secretarial jobs</li>
-                            <li>Manage and be proactive for schedule</li>
-                            <li>Prepare meeting agenda,  take minutes of meeting, and arrange appointment</li>
-                            <li>Coordinate with all department and outside people</li>
-                            <li>Maintains customer confidence and protects operations by keeping information confidential.</li>
-                            <li>Prepares reports by collecting information</li>
-                        </ol>
-                        **Job Location : BJC Sukhumvit  42, Bangkok**
+                            <?php the_content(); ?>
                         </p>
                         <h5 class="margin-top-20"><strong>Qualification</strong></h5>
-                        <p>
-                        <ol>
-                            <li>Thai nationality</li>
-                            <li>Bachelor's Degree in any field</li>
-                            <liGood communication and interpersonal skills</ol>
-                        <li>Strong knowledge of written and spoken English and Japanese at least JLPT 2</li>
-                        <li>Ability to use personal computer (MS office / Outlook)</li>
-                        <li>Hard-working and high service mind.</li>
-                        <li>Other tasks following Manager’s assignment</li>
-                        </ol>
-                        </p>
+                        <p><?php echo nl2br($qualification); ?></p>
                         <h5 class="margin-top-20"><strong>Contact</strong></h5>
                         <p>
                             Berli Jucker Public Co.,Ltd.<br/>

@@ -90,7 +90,8 @@ function custom_post_job()
                 <td>
                     <label for="qualification">Qualification:</label></td>
                 <td>
-                    <textarea name="qualification"><?php echo $qualification; ?></textarea>
+                    <textarea style="margin: 0px; width: 700px; height: 150px;"
+                        name="qualification"><?php echo $qualification; ?></textarea>
                 </td>
             </tr>
             <tr>
@@ -98,6 +99,8 @@ function custom_post_job()
                 <td>
                     <select name="job_type">
                         <option value="">--Select--</option>
+                        <option value="Permanent" <?php echo $job_type == 'Permanent'? 'selected': '';?>
+                            >Permanent</option>
                     </select>
                 </td>
             </tr>
@@ -106,6 +109,8 @@ function custom_post_job()
                 <td>
                     <select name="jlpt_level">
                         <option value="">--Select--</option>
+                        <option value="N2" <?php echo $jlpt_level == 'N2'? 'selected': '';?>
+                            >N2</option>
                     </select>
                 </td>
             </tr>
@@ -114,6 +119,8 @@ function custom_post_job()
                 <td>
                     <select name="job_location">
                         <option value="">--Select--</option>
+                        <option value="Bangkok" <?php echo $job_location == 'Bangkok'? 'selected': '';?>
+                            >Bangkok</option>
                     </select>
                 </td>
             </tr>
@@ -122,6 +129,8 @@ function custom_post_job()
                 <td>
                     <select name="japanese_skill">
                         <option value="">--Select--</option>
+                        <option value="Good" <?php echo $japanese_skill == 'Good'? 'selected': '';?>
+                            >Good</option>
                     </select>
                 </td>
             </tr>
@@ -134,6 +143,9 @@ function custom_post_job()
                 <td>
                     <select name="working_day">
                         <option value="">--Select--</option>
+                        <option value="Mon-Fri 8.00 – 17.00"
+                            <?php echo $working_day == 'Mon-Fri 8.00 – 17.00'? 'selected': '';?>
+                            >Mon-Fri 8.00 – 17.00</option>
                     </select>
                 </td>
             </tr>
