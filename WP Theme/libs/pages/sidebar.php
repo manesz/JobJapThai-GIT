@@ -64,23 +64,47 @@
             Top 5 Hilight Job
         </h4>
 
-        <ul class="job-list no-padding margin-top-10">
-            <?php for($i=0;$i<=4;$i++):?>
+            <?php
+            $argc = array(
+                'post_type' => 'job',
+//                                        'category_name' => 'highlight-jobs',
+                //'orderby' => 'date', //name of category by slug
+                //'order' => 'ASC',
+                'post_status' => 'publish',
+                'posts_per_page' => 10
+            );
+            $loopHighlightJobs = new WP_Query($argc);
+            $i = 0;
+            if ($loopHighlightJobs->have_posts()):
+            ?>
+            <ul class="job-list no-padding margin-top-10">
+                <?php while ($loopHighlightJobs->have_posts()) :
+                    $loopHighlightJobs->the_post();
+                    $postID = get_the_id();
+                    $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
+                    if (empty($url)) {
+                        $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
+                    } else {
+                        $thumbnail = $url;
+                    }
+                    ?>
                 <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
                     <div class="col-md-12">
-                        <div class="col-md-4" style="padding: 0px"><img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-logo.png" style="width: 100%;"/> </div>
+                        <div class="col-md-4" style="padding: 0px">
+                            <a href="<?php the_permalink(); ?>"><img src="<?php echo $thumbnail; ?>" style="width: 100%;"/> </div></a>
                         <div class="col-md-8">
-                            <h5 class="font-color-BF2026 no-margin">Japanese Interpreter (JLPT Level 2 or 1)</h5>
+                            <a href="<?php the_permalink(); ?>"><h5 class="font-color-BF2026 no-margin"><?php the_title(); ?></h5></a>
                             <p class="font-size-12">
                                 <span class="font-color-4D94CC">Bangkok</span><br/>
                                 Permanent<br/>
-                                <span class="font-color-ddd">Aug 14, 2014</span><br/>
+                                <span class="font-color-ddd"><?php the_date('M d, Y'); ?></span><br/>
                             </p>
                         </div>
                     </div>
                 </li>
-            <?php endfor; ?>
-        </ul>
+            <?php endwhile;?>
+            </ul>
+                <?php endif; ?>
     </div>
 
     <div id="fb-root"></div>
