@@ -62,7 +62,8 @@ if ($getDataCompany) {
                                 </tr>
                                 <tr>
                                     <td style="50%">Category :</td>
-                                    <td style="50%"><?php $categories = get_the_category();
+                                    <td style="50%"><?php
+                                        $categories = get_the_category();
                                         $separator = ' ';
                                         $output = '';
                                         if ($categories) {

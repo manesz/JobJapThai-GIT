@@ -101,31 +101,6 @@ $classEmployer = new Employer($wpdb);
                     <?php
                     endif;
                     ?>
-
-                    <?php /*for($i=0; $i<=2; $i++): ?>
-                            <div class="item <?php if($i == 0): echo "active"; endif?>">
-
-                                <ul class="job-list" style="padding: 0px;">
-                                    <?php for($j=0; $j<=3; $j++):?>
-                                    <li class="col-md-6 clearfix">
-                                        <div class="col-md-4" style="padding: 0px;">
-                                            <a href="job-desc.php" target="_blank"><img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-logo.png" style="width: 100%"/></a>
-                                        </div>
-                                        <div class="col-md-8" style="padding: 0 0 0 10px;">
-                                            <h4 style="font-size: 14px !important; color: #BF2026"><a href="job-desc.php" target="_blank">Call Center Representative (Japanese/English) JLPT Level 2</a></h4>
-                                            <p class="font-size-12">
-                                                <span class="font-color-4D94CC">Bangkok</span><br/>
-                                                Permanent<br/>
-                                                4 August, 2014
-                                            </p>
-                                        </div>
-                                    </li>
-                                    <?php endfor; ?>
-                                </ul>
-
-                            </div>
-                            <?php endfor; */
-                    ?>
                 </div>
 
                 <!-- Controls -->
