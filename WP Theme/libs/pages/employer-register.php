@@ -340,9 +340,7 @@ if (is_user_logged_in()) {
     <div class="col-md-10">
         <input type="text" id="employerContactEmail" name="employerContactEmail"
                class="form-control"
-               value="<?php echo empty($email) ? "" : $email; ?>"
-               data-bv-emailaddress="true"
-               data-bv-emailaddress-message="The input is not a valid email address"/>
+               value="<?php echo empty($email) ? "" : $email; ?>"/>
     </div>
 </div>
 <div class="form-group col-md-12">

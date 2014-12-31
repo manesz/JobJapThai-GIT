@@ -32,7 +32,7 @@ if (have_posts()) :
         } else if (is_page("employer")) {
             include_once('libs/pages/employer.php');
         } else if (is_page("company-profile")) {
-            echo $_REQUEST['company'];
+            get_template_part('libs/pages/company-profile', get_post_format());
         } else if (is_page("contact")) {
             include_once('libs/pages/contact.php');
         }else if (is_page("candidate-register") || is_page("candidate")) {
