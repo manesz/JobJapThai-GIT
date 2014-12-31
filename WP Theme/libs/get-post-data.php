@@ -28,86 +28,90 @@ if ($_REQUEST) {
         }
         exit;
     }
-    if ($_REQUEST['new_package'] == 'true') {
-        require_once("pages/package-new.php");
-        exit;
-    } else if ($_REQUEST['list_package'] == 'true') {
-        require_once("pages/package-list.php");
-        exit;
-    } else if ($_REQUEST['post_package'] == 'true') {
-        $classPackage = new Package($wpdb);
-        $postType = $_REQUEST['type_post'];
-        if ($postType == 'add') {
-            $result = $classPackage->addSelectPackage($_REQUEST);
-            if ($result)
-                echo 'success';
-            else echo 'fail';
-        } else if ($postType == 'edit') {
-            $result = $classPackage->editSelectPackage($_REQUEST);
-            if ($result)
-                echo 'success';
-            else echo 'fail';
-        }
-        exit;
-    }
-    if ($_REQUEST['candidate_post'] == 'true') {
-        $classCandidate = new Candidate($wpdb);
-        $postType = $_REQUEST['post_type'];
-        switch ($postType) {
-            case "add":
-                $result = $classCandidate->addCandidate($_REQUEST);
-                echo $result;
-                break;
-            case "edit":
-                break;
-            case "get_education":
-                $result = $classCandidate->buildEducationTable($_REQUEST['candidate_id']);
-                echo $result;
-                break;
-            case "get_work_experience":
-                $result = $classCandidate->buildWorkExperienceTable($_REQUEST['candidate_id']);
-                echo $result;
-                break;
-            case "add_education":
-                $result = $classCandidate->addEducation($_REQUEST);
-                if ($result)
-                    echo 'success';
-                else echo 'fail';
-                break;
-            case "add_work_experience":
-                $result = $classCandidate->addWorkExperience($_REQUEST);
-                if ($result)
-                    echo 'success';
-                else echo 'fail';
-                break;
 
-            //Edit
-            case "edit_information":
-                $result = $classCandidate->editInformation($_REQUEST);
-                echo $result;
-                break;
-            case "edit_career_profile":
-                $result = $classCandidate->editCareerProfile($_REQUEST);
-                echo $result;
-                break;
-            case "edit_desired_job":
-                $result = $classCandidate->editDesiredJob($_REQUEST);
-                echo $result;
-                break;
-            case "edit_education":
-                $result = $classCandidate->editEducation($_REQUEST);
-                echo $result;
-                break;
-            case "edit_work_experience":
-                $result = $classCandidate->editWorkExperience($_REQUEST);
-                echo $result;
-                break;
-            case "edit_skill_languages":
-                $result = $classCandidate->editSkillLanguages($_REQUEST);
-                echo $result;
-                break;
-            //End edit
+    if (is_user_logged_in()) {
+        if ($_REQUEST['new_package'] == 'true') {
+            require_once("pages/package-new.php");
+            exit;
+        } else if ($_REQUEST['list_package'] == 'true') {
+            require_once("pages/package-list.php");
+            exit;
+        } else if ($_REQUEST['post_package'] == 'true') {
+            $classPackage = new Package($wpdb);
+            $postType = $_REQUEST['type_post'];
+            if ($postType == 'add') {
+                $result = $classPackage->addSelectPackage($_REQUEST);
+                if ($result)
+                    echo 'success';
+                else echo 'fail';
+            } else if ($postType == 'edit') {
+                $result = $classPackage->editSelectPackage($_REQUEST);
+                if ($result)
+                    echo 'success';
+                else echo 'fail';
+            }
+            exit;
         }
-        exit;
+
+        if ($_REQUEST['candidate_post'] == 'true') {
+            $classCandidate = new Candidate($wpdb);
+            $postType = $_REQUEST['post_type'];
+            switch ($postType) {
+                case "add":
+                    $result = $classCandidate->addCandidate($_REQUEST);
+                    echo $result;
+                    break;
+                case "edit":
+                    break;
+                case "get_education":
+                    $result = $classCandidate->buildEducationTable($_REQUEST['candidate_id']);
+                    echo $result;
+                    break;
+                case "get_work_experience":
+                    $result = $classCandidate->buildWorkExperienceTable($_REQUEST['candidate_id']);
+                    echo $result;
+                    break;
+                case "add_education":
+                    $result = $classCandidate->addEducation($_REQUEST);
+                    if ($result)
+                        echo 'success';
+                    else echo 'fail';
+                    break;
+                case "add_work_experience":
+                    $result = $classCandidate->addWorkExperience($_REQUEST);
+                    if ($result)
+                        echo 'success';
+                    else echo 'fail';
+                    break;
+
+                //Edit
+                case "edit_information":
+                    $result = $classCandidate->editInformation($_REQUEST);
+                    echo $result;
+                    break;
+                case "edit_career_profile":
+                    $result = $classCandidate->editCareerProfile($_REQUEST);
+                    echo $result;
+                    break;
+                case "edit_desired_job":
+                    $result = $classCandidate->editDesiredJob($_REQUEST);
+                    echo $result;
+                    break;
+                case "edit_education":
+                    $result = $classCandidate->editEducation($_REQUEST);
+                    echo $result;
+                    break;
+                case "edit_work_experience":
+                    $result = $classCandidate->editWorkExperience($_REQUEST);
+                    echo $result;
+                    break;
+                case "edit_skill_languages":
+                    $result = $classCandidate->editSkillLanguages($_REQUEST);
+                    echo $result;
+                    break;
+                //End edit
+            }
+            exit;
+        }
     }
 }
