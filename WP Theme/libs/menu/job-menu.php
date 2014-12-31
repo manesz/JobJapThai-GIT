@@ -22,6 +22,9 @@ URL: http://themble.com/bones/
 	flush_rewrite_rules();
 }*/
 
+
+$classEmployer = new Employer($wpdb);
+
 // let's create the function for the custom type
 function custom_post_job()
 {
@@ -74,7 +77,7 @@ function custom_post_job()
 
     function meta_job_option()
     {
-        global $post;
+        global $post, $classEmployer;
         $custom = get_post_custom($post->ID);
         $qualification = $custom["qualification"][0];
         $job_type = $custom["job_type"][0];
@@ -83,69 +86,103 @@ function custom_post_job()
         $japanese_skill = $custom["japanese_skill"][0];
         $salary = $custom["salary"][0];
         $working_day = $custom["working_day"][0];
-//        $recommend_price = get_post_meta($post->ID, 'recommend_price', true);
+        $company_id = $custom["company_id"][0];
+
+        $objCompany = $classEmployer->getCompanyInfo();
         ?>
+        <style>
+            .select-width {
+                width: 300px;
+            }
+        </style>
+        <link href="<?php echo get_template_directory_uri(); ?>/libs/js/libs/select2/select2.css" rel="stylesheet"/>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/libs/select2/select2.js"></script>
+        <script>
+            jQuery(document).ready(function () {
+                jQuery("#company_id").select2();
+            });
+        </script>
         <table>
+            <tr>
+                <td><label for="company_id">Company:</label></td>
+                <td>
+                    <select id="company_id" name="company_id" class="select-width">
+                        <option value="">--Select--</option>
+                        <?php if ($objCompany):foreach ($objCompany as $value): ?>
+                            <option value="<?php echo $value->employer_id ?>"
+                                <?php echo $company_id == $value->employer_id ? "selected" : ""; ?>
+                                ><?php echo $value->company_name; ?></option>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </td>
+            </tr>
             <tr>
                 <td>
                     <label for="qualification">Qualification:</label></td>
                 <td>
                     <textarea style="margin: 0px; width: 700px; height: 150px;"
-                        name="qualification"><?php echo $qualification; ?></textarea>
+                              name="qualification"><?php echo $qualification; ?></textarea>
                 </td>
             </tr>
             <tr>
                 <td><label for="job_type">Job Type:</label></td>
                 <td>
-                    <select name="job_type">
+                    <select name="job_type" class="select-width">
                         <option value="">--Select--</option>
-                        <option value="Permanent" <?php echo $job_type == 'Permanent'? 'selected': '';?>
-                            >Permanent</option>
+                        <option value="Permanent" <?php echo $job_type == 'Permanent' ? 'selected' : ''; ?>
+                            >Permanent
+                        </option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td><label for="jlpt_level">JLPT Level:</label></td>
                 <td>
-                    <select name="jlpt_level">
+                    <select name="jlpt_level" class="select-width">
                         <option value="">--Select--</option>
-                        <option value="N2" <?php echo $jlpt_level == 'N2'? 'selected': '';?>
-                            >N2</option>
+                        <option value="N2" <?php echo $jlpt_level == 'N2' ? 'selected' : ''; ?>
+                            >N2
+                        </option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td><label for="job_location">Job Location:</label></td>
                 <td>
-                    <select name="job_location">
+                    <select name="job_location" class="select-width">
                         <option value="">--Select--</option>
-                        <option value="Bangkok" <?php echo $job_location == 'Bangkok'? 'selected': '';?>
-                            >Bangkok</option>
+                        <option value="Bangkok" <?php echo $job_location == 'Bangkok' ? 'selected' : ''; ?>
+                            >Bangkok
+                        </option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td><label for="japanese_skill">Japanese Skill:</label></td>
                 <td>
-                    <select name="japanese_skill">
+                    <select name="japanese_skill" class="select-width">
                         <option value="">--Select--</option>
-                        <option value="Good" <?php echo $japanese_skill == 'Good'? 'selected': '';?>
-                            >Good</option>
+                        <option value="Good" <?php echo $japanese_skill == 'Good' ? 'selected' : ''; ?>
+                            >Good
+                        </option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td><label for="salary">Salary:</label></td>
-                <td><input id="salary" name="salary" value="<?php echo $salary; ?>"/></td>
+                <td><input id="salary" class="select-width"
+                           name="salary" value="<?php echo $salary; ?>"/></td>
             </tr>
             <tr>
                 <td><label for="working_day">Working Day:</label></td>
                 <td>
-                    <select name="working_day">
+                    <select name="working_day" class="select-width">
                         <option value="">--Select--</option>
                         <option value="Mon-Fri 8.00 – 17.00"
-                            <?php echo $working_day == 'Mon-Fri 8.00 – 17.00'? 'selected': '';?>
-                            >Mon-Fri 8.00 – 17.00</option>
+                            <?php echo $working_day == 'Mon-Fri 8.00 – 17.00' ? 'selected' : ''; ?>
+                            >Mon-Fri 8.00 – 17.00
+                        </option>
                     </select>
                 </td>
             </tr>
@@ -163,6 +200,7 @@ function custom_post_job()
         update_post_meta($post->ID, "japanese_skill", $_POST["japanese_skill"]);
         update_post_meta($post->ID, "salary", $_POST["salary"]);
         update_post_meta($post->ID, "working_day", $_POST["working_day"]);
+        update_post_meta($post->ID, "company_id", $_POST["company_id"]);
         return true;
     }
 
