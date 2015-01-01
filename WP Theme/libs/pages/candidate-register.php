@@ -47,6 +47,11 @@ if (is_user_logged_in()) {
     var is_login = <?php echo $isLogin ? 'true': 'false'; ?>;
     var post_type = '<?php echo $isLogin ? 'edit': 'add'; ?>';
     var candidate_id = <?php echo $userID; ?>;
+
+    var information_id = <?php echo empty($objInformation)?0:$objInformation[0]->id;?>;
+    var career_profile_id = <?php echo empty($objCareerProfile)?0:$objCareerProfile[0]->id;?>;
+    var desired_job_id = <?php echo empty($objDesiredJob)?0:$objDesiredJob[0]->id;?>;
+    var skill_languages_id = <?php echo empty($objSkillLanguage)?0:$objSkillLanguage[0]->id;?>;
 </script>
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/candidate.js"></script>
 <section class="container-fluid" style="margin-top: 10px;">
@@ -166,13 +171,6 @@ if (is_user_logged_in()) {
         <!-- END: step 1 -->
     </form>
 <?php else: ?>
-
-    <script>
-        var information_id = <?php echo empty($objInformation)?0:$objInformation[0]->id;?>;
-        var career_profile_id = <?php echo empty($objCareerProfile)?0:$objCareerProfile[0]->id;?>;
-        var desired_job_id = <?php echo empty($objDesiredJob)?0:$objDesiredJob[0]->id;?>;
-        var skill_languages_id = <?php echo empty($objSkillLanguage)?0:$objSkillLanguage[0]->id;?>;
-    </script>
     <div id="div_step2" class="col-md-12">
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 

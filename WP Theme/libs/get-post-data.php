@@ -29,7 +29,7 @@ if ($_REQUEST) {
         exit;
     }
 
-    if (is_user_logged_in()) {
+//    if (is_user_logged_in()) {
         if ($_REQUEST['new_package'] == 'true') {
             require_once("pages/package-new.php");
             exit;
@@ -137,5 +137,5 @@ if ($_REQUEST) {
             exit;
         }
         //End Favorite
-    }
+//    }
 }

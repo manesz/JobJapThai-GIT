@@ -1,7 +1,10 @@
 /**
  * Created by Administrator on 13/12/2557.
  */
-var data_for_post = null;
+var data_for_post = $.param({
+    candidate_post: 'true',
+    post_type: 'add'
+});
 var check_from_post = false;
 var check_education_post = false;
 var check_work_experience_post = false;
@@ -120,14 +123,17 @@ $(document).ready(function () {
                 var data = $form.serialize();
                 data += "&" + data_for_post;
                 // Use Ajax to submit form data
+//                alert(data);return;
                 showImgLoading();
                 $.ajax({
                     type: "POST",
                     url: '',
                     data: data,
                     success: function (result) {
-                        if (!is_login)
+                        if (!is_login) {
+                            showModalMessage(result, "Message Add Candidate");
                             window.location.reload();
+                        }
                         else {
                             showModalMessage(result, "Message Edit Candidate");
                         }
@@ -184,7 +190,7 @@ $(document).ready(function () {
     });
 
     $(".btn_submit_form").click(function () {
-        var $frm = $('#form_candidate' + index_post);
+//        var $frm = $('#form_candidate' + index_post);
         switch (index_post) {
             case 1:
                 data_for_post = $.param({

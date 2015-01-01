@@ -535,7 +535,7 @@ class Candidate
             return '<div class="font-color-BF2026"><p>' . $error_string . '</p></div>';
         }
         $this->setUserLogin($user_id);
-        return 'success';
+        return '<div class="font-color-4BB748"><p>Add Success.</p></div>';
     }
 
     public function addCompanyInfo($post)
