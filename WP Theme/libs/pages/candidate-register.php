@@ -62,13 +62,7 @@ if (is_user_logged_in()) {
 <div class="col-md-8">
 <?php if ($isLogin) { ?>
     <div id="sectProfile" class="col-md-12">
-        <div class="btn-group">
-            <a href="#" class="btn btn-default active">Edit Resume</a>
-            <a href="#" class="btn btn-default">Applied Job</a>
-            <a href="#" class="btn btn-default">Favorite Job</a>
-            <a href="#" class="btn btn-default">View by Company</a>
-            <a href="#" class="btn btn-default">Account Setting</a>
-        </div>
+        <?php include_once('candidate-menu.php'); ?>
         <div class="col-md-8" style="padding-top: 10px;">
             Resume Code: <span class=".font-color-BF2026" style=""><?php echo $resumeCode; ?></span><br/>
             Status: <span class="font-color-BF2026" style="">Under verification process</span><br/>

@@ -3,40 +3,44 @@
 if (have_posts()) :
     while (have_posts()) : the_post();
         if (is_page('Apply Employer Register')) {
-            get_template_part("libs/pages/apply-employer-register", get_post_format());
+            get_template_part("libs/pages/apply-employer-register");
             exit();
         }
 
-        get_template_part("header", get_post_format());
-        get_template_part("libs/nav", get_post_format());
-		
+        get_template_part("header");
+        get_template_part("libs/nav");
+
         if (is_page("about-us")) {
-            include_once('libs/pages/about-us.php');//change to call full page UI
-			//get_template_part('post-formats/format.php');
+            get_template_part('libs/pages/about-us'); //change to call full page UI
+            //get_template_part('post-formats/format');
         } else if (is_page("news")) {
-            include_once('libs/pages/news.php');
+            get_template_part('libs/pages/news');
         } else if (is_page("employer-register")) {
-            include_once('libs/pages/employer-register.php');
+            get_template_part('libs/pages/employer-register');
         } else if (is_page("Edit Resume")) {
-            include_once('libs/pages/employer-register.php');
+            get_template_part('libs/pages/employer-register');
         } else if (is_page("request-resume")) {
-            include_once('libs/pages/request-resume.php');
+            get_template_part('libs/pages/request-resume');
         } else if (is_page("favorite-candidate")) {
-            include_once('libs/pages/favorite-candidate.php');
+            get_template_part('libs/pages/favorite-candidate');
         } else if (is_page("contact-candidate")) {
-            include_once('libs/pages/contact-candidate.php');
+            get_template_part('libs/pages/contact-candidate');
         } else if (is_page("search-candidate")) {
-            include_once('libs/pages/search-candidate.php');
+            get_template_part('libs/pages/search-candidate');
         } else if (is_page("candidate-list")) {
-            include_once('libs/pages/candidate-list.php');
+            get_template_part('libs/pages/candidate-list');
         } else if (is_page("employer")) {
-            include_once('libs/pages/employer.php');
+            get_template_part('libs/pages/employer');
         } else if (is_page("company-profile")) {
-            get_template_part('libs/pages/company-profile', get_post_format());
+            get_template_part('libs/pages/company-profile');
         } else if (is_page("contact")) {
-            include_once('libs/pages/contact.php');
-        }else if (is_page("candidate-register") || is_page("candidate")) {
-            include_once('libs/pages/candidate-register.php');
+            get_template_part('libs/pages/contact');
+        } else if (is_page("candidate-register") || is_page("candidate")) {
+            get_template_part('libs/pages/candidate-register');
+        } else if (is_page("favorite-job")) {
+            get_template_part('libs/pages/favorite-job');
+        } else if (is_page("applied-job")) {
+            get_template_part('libs/pages/applied-job');
         }
 
     endwhile;
@@ -56,4 +60,4 @@ else :
 <?php
 endif;
 
-include_once('footer.php');?>
+get_template_part('footer');?>
