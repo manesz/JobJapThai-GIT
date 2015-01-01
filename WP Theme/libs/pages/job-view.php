@@ -13,6 +13,7 @@ global $current_user, $wpdb;
 $userID = $current_user->ID;
 $classEmployer = new Employer($wpdb);
 $classFavorite = new Favorite($wpdb);
+$classApply = new Apply($wpdb);
 $postID = get_the_id();
 $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
 if (empty($url)) {
@@ -36,8 +37,11 @@ if ($getDataCompany) {
 }
 if (is_user_logged_in()) {
     $isJobFavorite = $classFavorite->checkJobIsFavorite($userID, $postID);
+    $isJobApply = $classApply->checkJobIsApply($userID, $postID);
+    $userType = get_user_meta($userID, 'user_type', true);
 } else {
     $isJobFavorite = false;
+    $isJobApply = false;
 }
 ?>
     <section class="container-fluid" style="margin-top: 10px;">
@@ -54,22 +58,28 @@ if (is_user_logged_in()) {
 
                         <h4 class="font-color-3 clearfix" style="">
                             <span class="pull-left"><?php the_title(); ?></span>
-                            <?php if ($isJobFavorite): ?>
-                                <span class="pull-right"><i
-                                        class="glyphicon glyphicon-star font-color-BF2026"></i></span>
-                            <?php endif; ?>
+                                <span class="pull-right" id="icon_fav" style="<?php
+                                if ($userType == "candidate" || is_admin()) {
+                                    if (!$isJobFavorite){
+                                        echo 'display: none;';
+                                    }
+                                }
+                                ?>">
+                                    <i class="glyphicon glyphicon-star font-color-BF2026"></i>
+                                </span>
                         </h4>
                         <h5 class="font-color-BF2026 clearfix"
                             style=""><?php echo empty($company_name) ? "" : $company_name; ?>
                             <a href="<?php echo get_site_url(); ?>/company-profile?id=<?php echo $company_id; ?>"
                                target="_blank">(View company profile)</a></h5>
                         <hr/>
-                        <h5><strong>Company Profile</strong></h5>
+                        <?php if (!empty($company_profile_and_business_operation)): ?>
+                            <h5><strong>Company Profile</strong></h5>
 
-                        <p>
-                            <?php echo empty($company_profile_and_business_oparation) ? "" : nl2br($company_profile_and_business_oparation); ?>
-                        </p>
-
+                            <p>
+                                <?php echo empty($company_profile_and_business_operation) ? "" : nl2br($company_profile_and_business_operation); ?>
+                            </p>
+                        <?php endif; ?>
                         <div class="jumbotron clearfix">
                             <h5><strong>Job Detail</strong></h5>
                             <table style="width: 100%">
@@ -108,7 +118,7 @@ if (is_user_logged_in()) {
                                 </tr>
                                 <tr>
                                     <td style="50%">Salary :</td>
-                                    <td style="50%"><?php echo $salary; ?></td>
+                                    <td style="50%"><?php echo is_numeric($salary) ? number_format($salary) : $salary; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="50%">Working Day :</td>
@@ -122,9 +132,11 @@ if (is_user_logged_in()) {
                         <p>
                             <?php the_content(); ?>
                         </p>
-                        <h5 class="margin-top-20"><strong>Qualification</strong></h5>
+                        <?php if ($qualification): ?>
+                            <h5 class="margin-top-20"><strong>Qualification</strong></h5>
 
-                        <p><?php echo nl2br($qualification); ?></p>
+                            <p><?php echo nl2br($qualification); ?></p>
+                        <?php endif; ?>
                         <h5 class="margin-top-20">
                             <strong>Contact</strong></h5>
 
@@ -144,21 +156,24 @@ if (is_user_logged_in()) {
                         <?php
                         if (is_user_logged_in()): ?>
                             <div class="col-md-12 margin-top-20">
-                                <button type="button" id="applyNow" name="applyNow"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-ok"></span>
-                                    apply now
-                                </button>
-                                <button type="button" id="addFavorite" name="addFavorite"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    add favorite
-                                </button>
-                                <button type="button" id="viewAllFavorite" name="viewAllFavorite"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-folder-open"></span>
-                                    all favorite
-                                </button>
+                                <?php if ($userType == 'candidate' || is_admin()): ?>
+                                    <button type="button" id="applyNow" name="applyNow"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                        apply now
+                                    </button>
+                                    <button type="button" id="addFavorite" name="addFavorite"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        add favorite
+                                    </button>
+                                    <a href="<?php echo get_site_url(); ?>/favorite-job" id="viewAllFavorite"
+                                       name="viewAllFavorite"
+                                       class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-folder-open"></span>
+                                        all favorite
+                                    </a>
+                                <?php endif; ?>
                                 <button type="button" id="map" name="map" class="btn btn-default no-border col-md-2">
                                     <span class="glyphicon glyphicon-map-marker"></span>
                                     map
@@ -189,6 +204,7 @@ if (is_user_logged_in()) {
     </section>
     <script>
         var is_job_favorite = <?php echo $isJobFavorite? "true": "false"; ?>;
+        var is_job_apply = <?php echo $isJobApply ? "true": "false"; ?>;
         $(document).ready(function () {
             $("#addFavorite").click(function () {
                 if (is_job_favorite) {
@@ -198,7 +214,7 @@ if (is_user_logged_in()) {
                     showImgLoading();
                     $.ajax({
                         type: "POST",
-                        cache: false,
+                        dataType: 'json',
                         url: '',
                         data: {
                             favorite: 'true',
@@ -207,14 +223,51 @@ if (is_user_logged_in()) {
                             id: <?php echo $postID; ?>,
                             is_favorite: 'true'
                         },
-                        success: function (data) {
+                        success: function (result) {
                             hideImgLoading();
-                            showModalMessage(data, "Message Job View");
+                            showModalMessage(result.msg, "Message Job View");
+                            if (!result.error) {
+                                is_job_favorite = true;
+                                $("#icon_fav").show();
+                            }
                         }
                     })
                         .fail(function () {
                             hideImgLoading();
                             showModalMessage('<div class="font-color-BF2026"><p>Sorry Favorite Error.</p></div>',
+                                "Message Job View");
+                        });
+                }
+                return false;
+            });
+
+            $("#applyNow").click(function () {
+                if (is_job_apply) {
+                    showModalMessage('<div class="font-color-4BB748"><p>Apply Success.</p></div>',
+                        "Message Job View");
+                } else {
+                    showImgLoading();
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: '',
+                        data: {
+                            apply_post: 'true',
+                            apply_type: 'job',
+                            user_id: <?php echo $userID; ?>,
+                            id: <?php echo $postID; ?>,
+                            is_apply: 'true'
+                        },
+                        success: function (result) {
+                            hideImgLoading();
+                            showModalMessage(result.msg, "Message Job View");
+                            if (!result.error)
+                                is_job_apply = true;
+                        }
+                    })
+                        .fail(function () {
+                            hideImgLoading();
+                            showModalMessage('<div class="font-color-BF2026"><p>Sorry Apply Error.</p></div>',
                                 "Message Job View");
                         });
                 }

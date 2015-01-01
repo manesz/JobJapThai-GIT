@@ -71,7 +71,7 @@ if ($company_id):
                             <h5><strong>Company Profile</strong></h5>
 
                             <p>
-                                <?php echo empty($company_profile_and_business_oparation) ? "" : nl2br($company_profile_and_business_oparation); ?>
+                                <?php echo empty($company_profile_and_business_operation) ? "" : nl2br($company_profile_and_business_operation); ?>
                             </p>
                             <hr/>
                             <h5 class="font-color-BF2026">All Job List</h5>

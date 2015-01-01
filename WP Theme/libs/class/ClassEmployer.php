@@ -42,7 +42,7 @@ class Employer
               `contact_person` varchar(50) DEFAULT NULL,
               `company_name` varchar(50) DEFAULT NULL,
               `business_type` text,
-              `company_profile_and_business_oparation` text,
+              `company_profile_and_business_operation` text,
               `walfare_and_benefit` text,
               `apply_method` text,
               `address` text,
@@ -133,7 +133,7 @@ class Employer
         $contact_person = isset($post['employerContactPerson']) ? $post['employerContactPerson'] : false;
         $company_name = isset($post['employerContactCompanyName']) ? $post['employerContactCompanyName'] : false;
         $business_type = isset($post['employerContactBusinessType']) ? $post['employerContactBusinessType'] : false;
-        $company_profile_and_business_oparation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
+        $company_profile_and_business_operation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
         $walfare_and_benefit = isset($post['employerContactWalfare']) ? $post['employerContactWalfare'] : false;
         $apply_method = isset($post['employerContactApplyMedtod']) ? $post['employerContactApplyMedtod'] : false;
         $address = isset($post['employerContactAddress']) ? $post['employerContactAddress'] : false;
@@ -160,7 +160,7 @@ class Employer
               `contact_person`,
               `company_name`,
               `business_type`,
-              `company_profile_and_business_oparation`,
+              `company_profile_and_business_operation`,
               `walfare_and_benefit`,
               `apply_method`,
               `address`,
@@ -185,7 +185,7 @@ class Employer
                 '{$contact_person}',
                 '{$company_name}',
                 '{$business_type}',
-                '{$company_profile_and_business_oparation}',
+                '{$company_profile_and_business_operation}',
                 '{$walfare_and_benefit}',
                 '{$apply_method}',
                 '{$address}',
@@ -222,7 +222,7 @@ class Employer
         $contact_person = isset($post['employerContactPerson']) ? $post['employerContactPerson'] : false;
         $company_name = isset($post['employerContactCompanyName']) ? $post['employerContactCompanyName'] : false;
         $business_type = isset($post['employerContactBusinessType']) ? $post['employerContactBusinessType'] : false;
-        $company_profile_and_business_oparation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
+        $company_profile_and_business_operation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
         $walfare_and_benefit = isset($post['employerContactWalfare']) ? $post['employerContactWalfare'] : false;
         $apply_method = isset($post['employerContactApplyMedtod']) ? $post['employerContactApplyMedtod'] : false;
         $address = isset($post['employerContactAddress']) ? $post['employerContactAddress'] : false;
@@ -249,7 +249,7 @@ class Employer
               `contact_person` = '{$contact_person}',
               `company_name` = '{$company_name}',
               `business_type` = '{$business_type}',
-              `company_profile_and_business_oparation` = '{$company_profile_and_business_oparation}',
+              `company_profile_and_business_operation` = '{$company_profile_and_business_operation}',
               `walfare_and_benefit` = '{$walfare_and_benefit}',
               `apply_method` = '{$apply_method}',
               `address` = '{$address}',

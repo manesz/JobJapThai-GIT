@@ -200,12 +200,12 @@ if (is_user_logged_in()) {
 </div>
 <div class="form-group col-md-12">
     <div class="col-md-2 text-right clearfix"><label for="employerContactCompanyProfile">Company
-            profile<br/>and business oparation</label></div>
+            profile<br/>and business operation</label></div>
     <div class="col-md-10">
         <textarea id="employerContactCompanyProfile"
                   name="employerContactCompanyProfile" class="form-control"
-                  rows="10"><?php echo empty($company_profile_and_business_oparation) ?
-                "" : $company_profile_and_business_oparation; ?></textarea>
+                  rows="10"><?php echo empty($company_profile_and_business_operation) ?
+                "" : $company_profile_and_business_operation; ?></textarea>
     </div>
 </div>
 <div class="form-group col-md-12">

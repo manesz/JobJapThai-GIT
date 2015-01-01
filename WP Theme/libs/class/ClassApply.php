@@ -2,22 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: Rux
- * Date: 11/01/2558
- * Time: 10:03 น.
+ * Date: 01/01/2558
+ * Time: 13:34 น.
  */
 
-class Favorite
+class Apply
 {
     private $wpdb;
-    public $tableFavoriteJob = "ics_favorite_job";
-    public $tableFavoriteCompany = "ics_favorite_company";
+    public $tableApplyJob = "ics_apply_job";
+    public $tableApplyCompany = "ics_apply_company";
 
     public function __construct($wpdb)
     {
         $this->wpdb = $wpdb;
     }
 
-    public function listFavJob($id = 0, $job_id = 0, $user_id = 0)
+    public function listApplyJob($id = 0, $job_id = 0, $user_id = 0)
     {
         $strAnd = $id ? " AND id=$id": "";
         $strAnd .= $job_id ? " AND job_id=$job_id": "";
@@ -26,7 +26,7 @@ class Favorite
             SELECT
               *
             FROM
-              $this->tableFavoriteJob
+              $this->tableApplyJob
             WHERE 1
             AND publish = 1
             $strAnd
@@ -35,7 +35,7 @@ class Favorite
         return $result;
     }
 
-    public function listFavCompany($id = 0, $company_id = 0, $user_id = 0)
+    public function listApplyCompany($id = 0, $company_id = 0, $user_id = 0)
     {
         $strAnd = $id ? " AND id=$id": "";
         $strAnd .= $company_id ? " AND company_id=$company_id": "";
@@ -44,7 +44,7 @@ class Favorite
             SELECT
               *
             FROM
-              $this->tableFavoriteCompany
+              $this->tableApplyCompany
             WHERE 1
             AND publish = 1
             $strAnd
@@ -53,11 +53,11 @@ class Favorite
         return $result;
     }
 
-    public function addFavJob($user_id, $job_id) {
+    public function addApplyJob($user_id, $job_id) {
         if (!$user_id || !$job_id)
             return $this->returnMessage('Fail No id.', true);
         $sql = "
-            INSERT INTO `$this->tableFavoriteJob`
+            INSERT INTO `$this->tableApplyJob`
             (
              `user_id`,
              `job_id`,
@@ -74,16 +74,16 @@ class Favorite
         ";
         $result = $this->wpdb->query($sql);
         if (!$result)
-            $this->returnMessage('Favorite Fail.', true);
+            $this->returnMessage('Apply Fail.', true);
 //        return $this->wpdb->insert_id;
-        return $this->returnMessage('Favorite Success.', false);
+        return $this->returnMessage('Apply Success.', false);
     }
 
-    public function addFavCompany($user_id, $company_id) {
+    public function addApplyCompany($user_id, $company_id) {
         if (!$user_id || !$company_id)
             return $this->returnMessage('Fail No id.', true);
         $sql = "
-            INSERT INTO `$this->tableFavoriteCompany`
+            INSERT INTO `$this->tableApplyCompany`
             (
              `user_id`,
              `company_id`,
@@ -102,13 +102,13 @@ class Favorite
         if (!$result)
             return false;
 //        return $this->wpdb->insert_id;
-        return $this->returnMessage('Favorite Success.', false);
+        return $this->returnMessage('Apply Success.', false);
     }
 
     public function setPublishJob($id)
     {
         $sql = "
-            UPDATE `$this->tableFavoriteJob`
+            UPDATE `$this->tableApplyJob`
             SET
               `publish` = 0,
               `update_datetime` = NOW()
@@ -123,7 +123,7 @@ class Favorite
     public function setPublishCompany($id)
     {
         $sql = "
-            UPDATE `$this->tableFavoriteCompany`
+            UPDATE `$this->tableApplyCompany`
             SET
               `publish` = 0,
               `update_datetime` = NOW()
@@ -135,8 +135,8 @@ class Favorite
         return $this->returnMessage('Edit Success.', false);
     }
 
-    public function checkJobIsFavorite($user_id, $job_id) {
-        $result = $this->listFavJob(0, $job_id, $user_id);
+    public function checkJobIsApply($user_id, $job_id) {
+        $result = $this->listApplyJob(0, $job_id, $user_id);
         if ($result) {
             return true;
         } else {
@@ -144,20 +144,20 @@ class Favorite
         }
     }
 
-    public function checkCompanyIsFavorite($user_id, $company_id) {
-        $result = $this->listFavCompany(0, $company_id, $user_id);
+    public function checkCompanyIsApply($user_id, $company_id) {
+        $result = $this->listApplyCompany(0, $company_id, $user_id);
         if ($result) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     private function returnMessage($msg, $error) {
         if ($error) {
             return json_encode(array('msg' => '<div class="font-color-BF2026"><p>'.$msg.'</p></div>', 'error' => $error));
         } else {
             return json_encode(array('msg' => '<div class="font-color-4BB748"><p>' .$msg. '</p></div>', 'error' => $error));
-        }        
+        }
     }
 }

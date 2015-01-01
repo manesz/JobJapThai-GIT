@@ -544,7 +544,7 @@ class Candidate
         $contact_person = isset($post['employerContactPerson']) ? $post['employerContactPerson'] : false;
         $company_name = isset($post['employerContactCompanyName']) ? $post['employerContactCompanyName'] : false;
         $business_type = isset($post['employerContactBusinessType']) ? $post['employerContactBusinessType'] : false;
-        $company_profile_and_business_oparation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
+        $company_profile_and_business_operation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
         $walfare_and_benefit = isset($post['employerContactWalfare']) ? $post['employerContactWalfare'] : false;
         $apply_method = isset($post['employerContactApplyMedtod']) ? $post['employerContactApplyMedtod'] : false;
         $address = isset($post['employerContactAddress']) ? $post['employerContactAddress'] : false;
@@ -571,7 +571,7 @@ class Candidate
               `contact_person`,
               `company_name`,
               `business_type`,
-              `company_profile_and_business_oparation`,
+              `company_profile_and_business_operation`,
               `walfare_and_benefit`,
               `apply_method`,
               `address`,
@@ -596,7 +596,7 @@ class Candidate
                 '{$contact_person}',
                 '{$company_name}',
                 '{$business_type}',
-                '{$company_profile_and_business_oparation}',
+                '{$company_profile_and_business_operation}',
                 '{$walfare_and_benefit}',
                 '{$apply_method}',
                 '{$address}',
