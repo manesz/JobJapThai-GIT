@@ -113,5 +113,29 @@ if ($_REQUEST) {
             }
             exit;
         }
+
+        //Favorite
+        if ($_REQUEST['favorite'] == 'true') {
+            $classFavorite = new Favorite($wpdb);
+            if ($_REQUEST['favorite_type'] == 'job') {
+                if ($_REQUEST['is_favorite'] == 'true') {
+                    $result = $classFavorite->addFavJob($_REQUEST['user_id'], $_REQUEST['id']);
+                    echo $result;
+                } else {
+                    $result = $classFavorite->setPublishJob($_REQUEST['fav_id']);
+                    echo $result;
+                }
+            } else if ($_REQUEST['favorite_type'] == 'company') {
+                if ($_REQUEST['is_favorite'] == 'true') {
+                    $result = $classFavorite->addFavCompany($_REQUEST['user_id'], $_REQUEST['id']);
+                    echo $result;
+                } else {
+                    $result = $classFavorite->setPublishCompany($_REQUEST['fav_id']);
+                    echo $result;
+                }
+            }
+            exit;
+        }
+        //End Favorite
     }
 }

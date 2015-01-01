@@ -1,5 +1,8 @@
 <?php
+global $current_user, $wpdb;
+$userID = $current_user->ID;
 $classEmployer = new Employer($wpdb);
+$classFavorite = new Favorite($wpdb);
 $company_id = empty($_REQUEST['id']) ? false : $_REQUEST['id'];
 if ($company_id):
     $getDataCompany = $company_id ? $classEmployer->getCompanyInfo($company_id) : false;
@@ -7,6 +10,12 @@ if ($company_id):
         if ($getDataCompany) {
             extract((array)$getDataCompany[0]);
             $empEmail = $getDataCompany[0]->email;
+        }
+
+        if (is_user_logged_in()) {
+            $isCompanyFavorite = $classFavorite->checkJobIsFavorite($userID, $company_id);
+        } else {
+            $isCompanyFavorite = false;
         }
         ?>
         <section class="container-fluid" style="margin-top: 10px;">
@@ -24,7 +33,9 @@ if ($company_id):
                             <h4 class="font-color-BF2026 clearfix" style="">
                                 <span class="pull-left"><?php echo empty($company_name) ? "" : $company_name; ?></span>
                             <span class="pull-right">
-                                <i class="glyphicon glyphicon-star font-color-BF2026"></i>
+                                <?php if ($isCompanyFavorite): ?>
+                                    <i class="glyphicon glyphicon-star font-color-BF2026"></i>
+                                <?php endif; ?>
                                 <button class="btn btn-warning" style="background: #BF2026; border: none;">Edit</button>
                             </span>
                             </h4>
@@ -149,38 +160,42 @@ if ($company_id):
                                     <?php endwhile; ?>
                                 </ul>
                             <?php endif; ?>
-                            <div class="col-md-12 margin-top-20">
-                                <button type="button" id="applyNow" name="applyNow"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-ok"></span>
-                                    apply now
-                                </button>
-                                <button type="button" id="addFavorite" name="addFavorite"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    add favorite
-                                </button>
-                                <button type="button" id="viewAllFavorite" name="viewAllFavorite"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-folder-open"></span>
-                                    all favorite
-                                </button>
-                                <button type="button" id="map" name="map" class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-map-marker"></span>
-                                    map
-                                </button>
-                                <button type="button" id="print" name="print"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-print"></span>
-                                    print
-                                </button>
-                                <button type="button" id="share" name="share"
-                                        class="btn btn-default no-border col-md-2">
-                                    <span class="glyphicon glyphicon-share"></span>
-                                    share
-                                </button>
-                            </div>
 
+                            <?php
+                            if (is_user_logged_in()): ?>
+                                <div class="col-md-12 margin-top-20">
+                                    <button type="button" id="applyNow" name="applyNow"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                        apply now
+                                    </button>
+                                    <button type="button" id="addFavorite" name="addFavorite"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        add favorite
+                                    </button>
+                                    <button type="button" id="viewAllFavorite" name="viewAllFavorite"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-folder-open"></span>
+                                        all favorite
+                                    </button>
+                                    <button type="button" id="map" name="map"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-map-marker"></span>
+                                        map
+                                    </button>
+                                    <button type="button" id="print" name="print"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-print"></span>
+                                        print
+                                    </button>
+                                    <button type="button" id="share" name="share"
+                                            class="btn btn-default no-border col-md-2">
+                                        <span class="glyphicon glyphicon-share"></span>
+                                        share
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
                         <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"
@@ -193,6 +208,42 @@ if ($company_id):
             </div>
 
         </section>
+
+        <script>
+            var is_company_favorite = <?php echo $isCompanyFavorite? "true": "false"; ?>;
+            $(document).ready(function () {
+                $("#addFavorite").click(function () {
+                    if (is_company_favorite) {
+                        showModalMessage('<div class="font-color-4BB748"><p>Favorite Success.</p></div>',
+                            "Message Company Profile");
+                    } else {
+                        showImgLoading();
+                        $.ajax({
+                            type: "POST",
+                            cache: false,
+                            url: '',
+                            data: {
+                                favorite: 'true',
+                                favorite_type: 'company',
+                                user_id: <?php echo $userID; ?>,
+                                id: <?php echo $company_id; ?>,
+                                is_favorite: 'true'
+                            },
+                            success: function (data) {
+                                hideImgLoading();
+                                showModalMessage(data, "Message Company Profile");
+                            }
+                        })
+                            .fail(function () {
+                                hideImgLoading();
+                                showModalMessage('<div class="font-color-BF2026"><p>Sorry Favorite Error.</p></div>',
+                                    "Message Company Profile");
+                            });
+                    }
+                    return false;
+                });
+            });
+        </script>
     <?php endif; ?>
 <?php endif; ?>
 <?php get_template_part("footer"); ?>
