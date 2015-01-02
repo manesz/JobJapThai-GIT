@@ -268,7 +268,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-8">
                             <input type="text" id="date_of_birth" name="date_of_birth" class="form-control datepicker"
                                    required placeholder="dd/mm/yyyy"
-                                   value="<?php echo empty($date_of_birth) ? '' : date("d/m/Y", strtotime($date_of_birth)); ?>"/>
+                                   value="<?php echo empty($date_of_birth) ? '' : $date_of_birth; ?>"/>
                         </div>
                     </div>
                     <div class="form-group col-md-12">

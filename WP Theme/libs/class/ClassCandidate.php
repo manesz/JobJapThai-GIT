@@ -630,26 +630,30 @@ class Candidate
         $first_name = empty($first_name) ? false : $first_name;
         $last_name = empty($last_name) ? false : $last_name;
         $gender = empty($gender) ? false : $gender;
-        if (!empty($date_of_birth)) {
-            list($dd, $mm, $yyyy) = explode('/', $date_of_birth);
-            if (checkdate($mm, $dd, $yyyy)) {
-                $date_of_birth = explode('/', $date_of_birth); //DateTime::createFromFormat('d/m/Y', $check_in);
-                $date_of_birth = $date_of_birth[2] . "-" . $date_of_birth[1] . "-" . $date_of_birth[0];
-            } else {
-                $date_of_birth = false;
-            }
-        } else {
-            $date_of_birth = false;
-        }
+        $date_of_birth = empty($date_of_birth) ? false : $date_of_birth;
+//        if (!empty($date_of_birth)) {
+//            list($dd, $mm, $yyyy) = explode('/', $date_of_birth);
+//            if (checkdate($mm, $dd, $yyyy)) {
+//                $date_of_birth = explode('/', $date_of_birth); //DateTime::createFromFormat('d/m/Y', $check_in);
+//                $date_of_birth = $date_of_birth[2] . "-" . $date_of_birth[1] . "-" . $date_of_birth[0];
+//            } else {
+//                $date_of_birth = "0000-00-00";
+//            }echo $date_of_birth;
+//        } else {
+//            $date_of_birth = "0000-00-00";
+//        }
         $phone = empty($phone) ? false : $phone;
         $nationality = empty($nationality) ? false : $nationality;
         $county = empty($county) ? false : $county;
         $province = empty($province) ? false : $province;
         $district = empty($district) ? false : $district;
         $city = empty($city) ? false : $city;
-        if (!$information_id)
-            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
-        $sql = "
+        if (!$information_id) {
+            $information_id = $this->addInformation($post);
+            if (!$information_id)
+                return '<div class="font-color-BF2026"><p>Error add Information.</p></div>';
+        } else {
+            $sql = "
             UPDATE `$this->tableInformation`
             SET
               `title` = '{$title}',
@@ -664,11 +668,12 @@ class Candidate
               `district` = '{$district}',
               `city` = '{$city}',
               `update_datetime` = NOW()
-            WHERE `candidate_id` = '$information_id';
+            WHERE `id` = '$information_id';
         ";
-        $result = $this->wpdb->query($sql);
-        if (!$result)
-            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+            $result = $this->wpdb->query($sql);
+            if (!$result)
+                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        }
         return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
     }
 
@@ -681,9 +686,12 @@ class Candidate
         $last_industry = empty($last_industry) ? false : $last_industry;
         $last_function = empty($last_function) ? false : $last_function;
         $last_month_salary = empty($last_month_salary) ? false : $last_month_salary;
-        if (!$career_profile_id)
-            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
-        $sql = "
+        if (!$career_profile_id) {
+            $career_profile_id = $this->addCareerProfile($post);
+            if (!$career_profile_id)
+                return '<div class="font-color-BF2026"><p>Error add Career Profile.</p></div>';
+        } else {
+            $sql = "
             UPDATE `$this->tableCareerProfile`
             SET
               `year_of_work_exp` = '{$year_of_work_exp}',
@@ -694,9 +702,10 @@ class Candidate
               `update_datetime` = NOW()
             WHERE `id` = '$career_profile_id';
         ";
-        $result = $this->wpdb->query($sql);
-        if (!$result)
-            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+            $result = $this->wpdb->query($sql);
+            if (!$result)
+                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        }
         return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
     }
 
@@ -715,14 +724,17 @@ class Candidate
                 $start_date = explode('/', $start_date); //DateTime::createFromFormat('d/m/Y', $check_in);
                 $start_date = $start_date[2] . "-" . $start_date[1] . "-" . $start_date[0];
             } else {
-                $start_date = false;
+                $start_date = "0000-00-00";
             }
         } else {
-            $start_date = false;
+            $start_date = "0000-00-00";
         }
-        if (!$desired_job_id)
-            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
-        $sql = "
+        if (!$desired_job_id) {
+            $desired_job_id = $this->addCareerProfile($post);
+            if (!$desired_job_id)
+                return '<div class="font-color-BF2026"><p>Error add Desired Job.</p></div>';
+        } else {
+            $sql = "
             UPDATE `$this->tableDesiredJob`
             SET
               `industry` = '{$industry}',
@@ -734,9 +746,10 @@ class Candidate
               `update_datetime` = NOW()
             WHERE `id` = '$desired_job_id';
         ";
-        $result = $this->wpdb->query($sql);
-        if (!$result)
-            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+            $result = $this->wpdb->query($sql);
+            if (!$result)
+                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        }
         return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
     }
 
@@ -811,9 +824,12 @@ class Candidate
         $english_speaking = empty($english_speaking) ? false : $english_speaking;
         $english_reading = empty($english_reading) ? false : $english_reading;
         $english_writing = empty($english_writing) ? false : $english_writing;
-        if (!$skill_languages_id)
-            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
-        $sql = "
+        if (!$skill_languages_id) {
+            $skill_languages_id = $this->addSkillLanguages($post);
+            if (!$skill_languages_id)
+                return '<div class="font-color-BF2026"><p>Error add Skill Languages.</p></div>';
+        } else {
+            $sql = "
             UPDATE `$this->tableSkillLanguages`
             SET
               `japanese_skill` = '{$japanese_skill}',
@@ -828,9 +844,10 @@ class Candidate
               `update_datetime` = NOW()
             WHERE `id` = '$skill_languages_id';
         ";
-        $result = $this->wpdb->query($sql);
-        if (!$result)
-            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+            $result = $this->wpdb->query($sql);
+            if (!$result)
+                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+        }
         return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
     }
 
