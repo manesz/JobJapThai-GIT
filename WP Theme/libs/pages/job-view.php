@@ -43,6 +43,7 @@ if (is_user_logged_in()) {
     $isJobFavorite = false;
     $isJobApply = false;
 }
+$isAdmin = current_user_can('manage_options');
 ?>
     <section class="container-fluid" style="margin-top: 10px;">
 
@@ -59,7 +60,7 @@ if (is_user_logged_in()) {
                         <h4 class="font-color-3 clearfix" style="">
                             <span class="pull-left"><?php the_title(); ?></span>
                                 <span class="pull-right" id="icon_fav" style="<?php
-                                if ($userType == "candidate" || is_admin()) {
+                                if (!$userType == "candidate" || !$isAdmin) {
                                     if (!$isJobFavorite){
                                         echo 'display: none;';
                                     }
@@ -156,7 +157,7 @@ if (is_user_logged_in()) {
                         <?php
                         if (is_user_logged_in()): ?>
                             <div class="col-md-12 margin-top-20">
-                                <?php if ($userType == 'candidate' || is_admin()): ?>
+                                <?php if ($userType == 'candidate' || $isAdmin): ?>
                                     <button type="button" id="applyNow" name="applyNow"
                                             class="btn btn-default no-border col-md-2">
                                         <span class="glyphicon glyphicon-ok"></span>

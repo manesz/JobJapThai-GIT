@@ -3,6 +3,7 @@ global $current_user, $wpdb;
 $userID = $current_user->ID;
 $classEmployer = new Employer($wpdb);
 $classFavorite = new Favorite($wpdb);
+$classApply = new Apply($wpdb);
 $company_id = empty($_REQUEST['id']) ? false : $_REQUEST['id'];
 if ($company_id):
     $getDataCompany = $company_id ? $classEmployer->getCompanyInfo($company_id) : false;
@@ -14,9 +15,13 @@ if ($company_id):
 
         if (is_user_logged_in()) {
             $isCompanyFavorite = $classFavorite->checkJobIsFavorite($userID, $company_id);
+            $isCompanyApply = $classApply->checkCompanyIsApply($userID, $company_id);
+            $userType = get_user_meta($userID, 'user_type', true);
         } else {
             $isCompanyFavorite = false;
+            $isCompanyApply = false;
         }
+        $isAdmin = current_user_can('manage_options');
         ?>
         <section class="container-fluid" style="margin-top: 10px;">
 
@@ -33,10 +38,16 @@ if ($company_id):
                             <h4 class="font-color-BF2026 clearfix" style="">
                                 <span class="pull-left"><?php echo empty($company_name) ? "" : $company_name; ?></span>
                             <span class="pull-right">
-                                <?php if ($isCompanyFavorite): ?>
-                                    <i class="glyphicon glyphicon-star font-color-BF2026"></i>
+                                    <i class="glyphicon glyphicon-star font-color-BF2026" id="icon_fav" style="<?php
+                                    if (!$userType == "employer" || !$isAdmin) {
+                                        if (!$isCompanyFavorite){
+                                            echo 'display: none;';
+                                        }
+                                    }
+                                    ?>"></i>
+                                <?php if ($userID == $company_id || $isAdmin): ?>
+                                    <button class="btn btn-warning" style="background: #BF2026; border: none;">Edit</button>
                                 <?php endif; ?>
-                                <button class="btn btn-warning" style="background: #BF2026; border: none;">Edit</button>
                             </span>
                             </h4>
                             <hr/>
@@ -164,6 +175,8 @@ if ($company_id):
                             <?php
                             if (is_user_logged_in()): ?>
                                 <div class="col-md-12 margin-top-20">
+
+                                <?php if ($userType == 'employer' || $isAdmin): ?>
                                     <button type="button" id="applyNow" name="applyNow"
                                             class="btn btn-default no-border col-md-2">
                                         <span class="glyphicon glyphicon-ok"></span>
@@ -179,6 +192,7 @@ if ($company_id):
                                         <span class="glyphicon glyphicon-folder-open"></span>
                                         all favorite
                                     </button>
+                                <?php endif; ?>
                                     <button type="button" id="map" name="map"
                                             class="btn btn-default no-border col-md-2">
                                         <span class="glyphicon glyphicon-map-marker"></span>
@@ -211,16 +225,17 @@ if ($company_id):
 
         <script>
             var is_company_favorite = <?php echo $isCompanyFavorite? "true": "false"; ?>;
+            var is_company_apply = <?php echo $isCompanyApply ? "true": "false"; ?>;
             $(document).ready(function () {
                 $("#addFavorite").click(function () {
                     if (is_company_favorite) {
                         showModalMessage('<div class="font-color-4BB748"><p>Favorite Success.</p></div>',
-                            "Message Company Profile");
+                            "Message Job View");
                     } else {
                         showImgLoading();
                         $.ajax({
                             type: "POST",
-                            cache: false,
+                            dataType: 'json',
                             url: '',
                             data: {
                                 favorite: 'true',
@@ -229,15 +244,52 @@ if ($company_id):
                                 id: <?php echo $company_id; ?>,
                                 is_favorite: 'true'
                             },
-                            success: function (data) {
+                            success: function (result) {
                                 hideImgLoading();
-                                showModalMessage(data, "Message Company Profile");
+                                showModalMessage(result.msg, "Message Job View");
+                                if (!result.error) {
+                                    is_company_favorite = true;
+                                    $("#icon_fav").show();
+                                }
                             }
                         })
                             .fail(function () {
                                 hideImgLoading();
                                 showModalMessage('<div class="font-color-BF2026"><p>Sorry Favorite Error.</p></div>',
-                                    "Message Company Profile");
+                                    "Message Job View");
+                            });
+                    }
+                    return false;
+                });
+
+                $("#applyNow").click(function () {
+                    if (is_company_apply) {
+                        showModalMessage('<div class="font-color-4BB748"><p>Apply Success.</p></div>',
+                            "Message Job View");
+                    } else {
+                        showImgLoading();
+                        $.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            url: '',
+                            data: {
+                                apply_post: 'true',
+                                apply_type: 'company',
+                                user_id: <?php echo $userID; ?>,
+                                id: <?php echo $company_id; ?>,
+                                is_apply: 'true'
+                            },
+                            success: function (result) {
+                                hideImgLoading();
+                                showModalMessage(result.msg, "Message Job View");
+                                if (!result.error)
+                                    is_company_apply = true;
+                            }
+                        })
+                            .fail(function () {
+                                hideImgLoading();
+                                showModalMessage('<div class="font-color-BF2026"><p>Sorry Apply Error.</p></div>',
+                                    "Message Job View");
                             });
                     }
                     return false;
