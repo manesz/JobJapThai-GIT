@@ -101,8 +101,8 @@ class Employer
     {
         $strAnd = $employer_id ? " AND employer_id=$employer_id" : "";
         if ($id) {
-            if (is_array($employer_id)) {
-                $strAnd .= " AND id IN (". implode(', ', $employer_id) . ")";
+            if (is_array($id)) {
+                $strAnd .= " AND id IN (". implode(', ', $id) . ")";
             } else {
                 $strAnd .= " AND id=$id";
             }

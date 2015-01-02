@@ -71,7 +71,7 @@ class QueryPostJob
                          $arrayListJobID[] = $value2->job_id;
                      }  
                    } 
-                }var_dump($arrayCompanyID);
+                }
                 if (!$arrayListJobID)
                     return null;
                 $argc['post__in'] = $arrayListJobID;
