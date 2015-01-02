@@ -14,7 +14,7 @@ if ($company_id):
         }
 
         if (is_user_logged_in()) {
-            $isCompanyFavorite = $classFavorite->checkJobIsFavorite($userID, $company_id);
+            $isCompanyFavorite = $classFavorite->checkCompanyIsFavorite($userID, $company_id);
             $isCompanyApply = $classApply->checkCompanyIsApply($userID, $company_id);
             $userType = get_user_meta($userID, 'user_type', true);
         } else {
@@ -39,7 +39,7 @@ if ($company_id):
                                 <span class="pull-left"><?php echo empty($company_name) ? "" : $company_name; ?></span>
                             <span class="pull-right">
                                     <i class="glyphicon glyphicon-star font-color-BF2026" id="icon_fav" style="<?php
-                                    if (!$userType == "employer" || !$isAdmin) {
+                                    if ($userType != "candidate" || !$isAdmin) {
                                         if (!$isCompanyFavorite){
                                             echo 'display: none;';
                                         }
@@ -176,7 +176,7 @@ if ($company_id):
                             if (is_user_logged_in()): ?>
                                 <div class="col-md-12 margin-top-20">
 
-                                <?php if ($userType == 'employer' || $isAdmin): ?>
+                                <?php if ($userType == 'candidate' || $isAdmin): ?>
                                     <button type="button" id="applyNow" name="applyNow"
                                             class="btn btn-default no-border col-md-2">
                                         <span class="glyphicon glyphicon-ok"></span>
