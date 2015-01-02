@@ -1,6 +1,10 @@
 <?php include_once('header.php');?>
 <?php include_once("libs/nav.php"); ?>
-<?php include_once("libs/front-banner.php"); ?>
+<?php include_once("libs/front-banner.php");
+
+
+$classQueryPostJob = new QueryPostJob($wpdb);
+?>
 <section class="container-fluid" style="margin-top: 10px;">
 
         <div class="container wrapper">
@@ -14,26 +18,8 @@
                             <span class="font-color-BF2026" style="" >Search Job Result</span>
                         </h5>
                         <div class="col-md-12 border-bottom-1-ddd padding-bottom-10 margin-bottom-10">
-                            <form>
-                                <div class="col-md-3">
-                                    <span class="pull-left">Positions</span>
-                                    <select id="searchList" class="pull-left form-control">
-                                        <option>10</option>
-                                        <option>50</option>
-                                        <option>100</option>
-                                        <option>All</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-push-6 col-md-3">
-                                    <span class="pull-right">Sort by</span><br/>
-                                    <select id="searchSort" class="pull-right form-control col-md-3">
-                                        <option>Last Update</option>
-                                        <option>Company Name</option>
-                                        <option>Less to more competitive jobs</option>
-                                        <option>More to less competitive jobs</option>
-                                    </select>
-                                </div>
-                            </form>
+                            <input type="hidden" id="type_query" value="search">
+                            <?php echo $classQueryPostJob->buildFormQueryJob(0, true); ?>
                         </div>
                         <div class="clearfix" style="margin-top: 20px;"></div>
 

@@ -78,59 +78,15 @@ if (is_user_logged_in()) {
 
                     <div class="col-md-12 border-bottom-1-ddd no-padding"
                          style="padding-bottom: 10px !important;">
+                        <input type="hidden" id="type_query" value="favorite">
                         <?php
-                        echo $classQueryPostJob->buildFormQueryJob();
+                        echo $classQueryPostJob->buildFormQueryJob($userID);
                         ?>
                     </div>
                     <?php
                     $argc = $classQueryPostJob->queryFavoriteJob($userID);
-                    $loopJobs = new WP_Query($argc);
-                    if ($loopJobs->have_posts()):
-                        ?>
-                        <ul class="job-list no-padding">
-                            <?php while ($loopJobs->have_posts()) :
-                                $loopJobs->the_post();
-                                $postID = get_the_id();
-                                $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
-                                if (empty($url)) {
-                                    $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
-                                } else {
-                                    $thumbnail = $url;
-                                }
-                                $customField = get_post_custom($postID);
-                                $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
-                                $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
-                                $company_id = empty($customField["company_id"][0]) ? '' : $customField["company_id"][0];
-                                $getDataCompany = $company_id ? $classEmployer->getCompanyInfo($company_id) : false;
-                                $company_name = $getDataCompany ? $getDataCompany[0]->company_name : "";
-                                ?>
-                                <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
-                                    <div class="col-md-12">
-                                        <div class="col-md-2" style="padding: 0px">
-                                            <a href="<?php the_permalink(); ?>" target="_blank"><img
-                                                    src="<?php echo $thumbnail; ?>"
-                                                    style="width: 100%;"/></a>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <h5 class="font-color-BF2026">
-                                                <a href="<?php the_permalink(); ?>"
-                                                   target="_blank"><?php the_title(); ?></a>
-                                            </h5>
-                                            <?php echo empty($company_name) ? "" : $company_name; ?><br/>
-                                            <?php echo empty($job_type) ? "" : $job_type; ?><br/>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <br/><?php the_date('M d, Y'); ?><br/>
-                                            <?php echo empty($job_location) ? "" : $job_location; ?><br/>
-                                        </div>
-                                    </div>
-                                </li>
-                            <?php endwhile; ?>
-                        </ul>
-                        <hr/>
-
-                        <?php echo $classQueryPostJob->buildPagingPostJob($loopJobs); ?>
-                    <?php endif; ?>
+                    echo $classQueryPostJob->buildListJob($argc);
+                    ?>
                 </div>
 
                 <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"
