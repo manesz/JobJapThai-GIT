@@ -21,6 +21,7 @@ if (is_user_logged_in()) {
 
         $classCandidate = new Candidate($wpdb);
         $classEmployer = new Employer($wpdb);
+        $classQueryPostJob = new QueryPostJob($wpdb);
 //        $objInformation = $classCandidate->getInformation($userID);
 //        if ($objInformation)
 //            extract((array)$objInformation[0]);
@@ -36,6 +37,8 @@ if (is_user_logged_in()) {
 //        $objSkillLanguage = $classCandidate->getSkillLanguages($userID);
 //        if ($objSkillLanguage)
 //            extract((array)$objSkillLanguage[0]);
+
+
     }
 } else {
     $isLogin = false;
@@ -76,55 +79,11 @@ if (is_user_logged_in()) {
                     <div class="col-md-12 border-bottom-1-ddd no-padding"
                          style="padding-bottom: 10px !important;">
                         <?php
-                        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-                        $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
-                        $orderby = empty($_GET['orderby']) ? 10 : $_GET['orderby'];
+                        echo $classQueryPostJob->buildFormQueryJob();
                         ?>
-                        <form method="get" id="frm_query">
-                            <input type="hidden" name="paged" value="<?php echo $paged; ?>">
-
-                            <div class="col-md-3 no-padding">
-                                <span class="pull-left">Positions</span>
-                                <select name="posts_per_page"
-                                        onchange="$('#frm_query').submit();"
-                                        class="pull-left form-control">
-                                    <option value="10" <?php echo $posts_per_page == '10' ? 'selected' : ''; ?>>10</option>
-                                    <option value="50" <?php echo $posts_per_page == '50' ? 'selected' : ''; ?>>50</option>
-                                    <option value="100" <?php echo $posts_per_page == '100' ? 'selected' : ''; ?>>100</option>
-                                    <option value="-1" <?php echo $posts_per_page == '-1' ? 'selected' : ''; ?>>All</option>
-                                </select>
-                            </div>
-                            <div class="col-md-push-6 col-md-3 no-padding">
-                                <span class="pull-right">Sort by</span><br/>
-                                <select name="orderby"
-                                        onchange="$('#frm_query').submit();"
-                                        class="pull-right form-control col-md-3">
-                                    <option value="modified" <?php echo $orderby == 'modified' ? 'selected' : ''; ?>>Last Update</option>
-                                    <option value="company" <?php echo $orderby == 'company' ? 'selected' : ''; ?>>Company Name</option>
-                                    <option value="" <?php echo $orderby == '' ? 'selected' : ''; ?>>Less to more competitive jobs</option>
-                                    <option value="" <?php echo $orderby == '' ? 'selected' : ''; ?>>More to less competitive jobs</option>
-                                </select>
-                            </div>
-                        </form>
                     </div>
                     <?php
-                    $argc = array(
-                        'post_type' => 'job',
-//                                        'category_name' => 'highlight-jobs',
-                        //'orderby' => 'date', //name of category by slug
-                        //'order' => 'DESC',
-                        'post_status' => 'publish',
-                        'posts_per_page' => $posts_per_page,
-                        'paged' => $paged
-            //        'meta_query' => array(
-            //            array(
-            //                'key' => 'company_id',
-            //                'value' => $company_id,
-            //                'compare' => '='
-            //            )
-            //
-            //        ),
-                    );
+                    $argc = $classQueryPostJob->queryFavoriteJob();
                     $loopJobs = new WP_Query($argc);
                     if ($loopJobs->have_posts()):
                         ?>
@@ -171,22 +130,7 @@ if (is_user_logged_in()) {
                         <hr/>
 
                     <?php endif; ?>
-                    <?php
-                    if ($loopJobs->max_num_pages > 1) {
-                        ?>
-                        <p class="navrechts">
-                            <?php
-                            for ($i = 1; $i <= $loopJobs->max_num_pages; $i++) {
-                                ?>
-                                <a href="<?php echo '?paged=' . $i; ?>" <?php echo ($paged == $i) ? 'class="selected"' : ''; ?>><?php echo $i; ?></a>
-                            <?php
-                            }
-                            if ($paged != $loopJobs->max_num_pages) {
-                                ?>
-                                <a href="<?php echo '?paged=' . $i; //next link ?>">></a>
-                            <?php } ?>
-                        </p>
-                    <?php } ?>
+                    <?php echo $classQueryPostJob->buildPagingPostJob($loopJobs); ?>
                 </div>
 
                 <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"

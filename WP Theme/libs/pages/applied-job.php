@@ -11,6 +11,7 @@ if (is_user_logged_in()) {
 
         $classCandidate = new Candidate($wpdb);
         $classEmployer = new Employer($wpdb);
+        $classQueryPostJob = new QueryPostJob($wpdb);
     }
 } else {
     $isLogin = false;
@@ -50,46 +51,12 @@ if (is_user_logged_in()) {
 
                     <div class="col-md-12 border-bottom-1-ddd no-padding"
                          style="padding-bottom: 10px !important;">
-                        <form>
-                            <div class="col-md-3 no-padding">
-                                <span class="pull-left">Positions</span>
-                                <select id="searchList" class="pull-left form-control">
-                                    <option>10</option>
-                                    <option>50</option>
-                                    <option>100</option>
-                                    <option>All</option>
-                                </select>
-                            </div>
-                            <div class="col-md-push-6 col-md-3 no-padding">
-                                <span class="pull-right">Sort by</span><br/>
-                                <select id="searchSort" class="pull-right form-control col-md-3">
-                                    <option>Last Update</option>
-                                    <option>Company Name</option>
-                                    <option>Less to more competitive jobs</option>
-                                    <option>More to less competitive jobs</option>
-                                </select>
-                            </div>
-                        </form>
+                        <?php
+                        echo $classQueryPostJob->buildFormQueryJob();
+                        ?>
                     </div>
                     <?php
-                    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-                    $argc = array(
-                        'post_type' => 'job',
-//                                        'category_name' => 'highlight-jobs',
-                        //'orderby' => 'date', //name of category by slug
-                        //'order' => 'ASC',
-                        'post_status' => 'publish',
-                        'posts_per_page' => 1,
-                        'paged' => $paged
-//        'meta_query' => array(
-//            array(
-//                'key' => 'company_id',
-//                'value' => $company_id,
-//                'compare' => '='
-//            )
-//
-//        ),
-                    );
+                    $argc = $classQueryPostJob->queryFavoriteJob();
                     $loopJobs = new WP_Query($argc);
                     if ($loopJobs->have_posts()):
                         ?>
@@ -137,21 +104,8 @@ if (is_user_logged_in()) {
 
                     <?php endif; ?>
                     <?php
-                    if ($loopJobs->max_num_pages > 1) {
-                        ?>
-                        <p class="navrechts">
-                            <?php
-                            for ($i = 1; $i <= $loopJobs->max_num_pages; $i++) {
-                                ?>
-                                <a href="<?php echo '?paged=' . $i; ?>" <?php echo ($paged == $i) ? 'class="selected"' : ''; ?>><?php echo $i; ?></a>
-                            <?php
-                            }
-                            if ($paged != $loopJobs->max_num_pages) {
-                                ?>
-                                <a href="<?php echo '?paged=' . $i; //next link ?>">></a>
-                            <?php } ?>
-                        </p>
-                    <?php } ?>
+                    echo $classQueryPostJob->buildPagingPostJob($loopJobs);
+                    ?>
                 </div>
 
                 <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"

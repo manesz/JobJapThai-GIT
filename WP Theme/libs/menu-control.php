@@ -7,6 +7,7 @@ require_once("class/ClassCandidate.php");
 require_once("class/ClassPackage.php");
 require_once("class/ClassFavorite.php");
 require_once("class/ClassApply.php");
+require_once("class/ClassQueryPostJob.php");
 require_once("class/simple-php-captcha-master/contact-us-captcha.php");
 
 //admin menu
