@@ -109,8 +109,8 @@ function custom_post_job()
                     <select id="company_id" name="company_id" class="select-width">
                         <option value="">--Select--</option>
                         <?php if ($objCompany):foreach ($objCompany as $value): ?>
-                            <option value="<?php echo $value->employer_id ?>"
-                                <?php echo $company_id == $value->employer_id ? "selected" : ""; ?>
+                            <option value="<?php echo $value->id ?>"
+                                <?php echo $company_id == $value->id ? "selected" : ""; ?>
                                 ><?php echo $value->company_name; ?></option>
                         <?php endforeach; ?>
                         <?php endif; ?>

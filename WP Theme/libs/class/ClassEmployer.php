@@ -67,7 +67,7 @@ class Employer
         dbDelta($sql);
     }
 
-    public function getList($id = 0)
+    public function getList($id = 0, $order_by = "")
     {
         $strAnd = $id ? " AND a.ID=$id" : "";
         $sql = "
@@ -85,6 +85,7 @@ class Employer
             ON (a.ID = c.employer_id)
             WHERE 1
             $strAnd
+            $order_by
         ";
         $result = $this->wpdb->get_results($sql);
         return $result;
@@ -96,9 +97,16 @@ class Employer
         print_r($all_meta_for_user);
     }
 
-    public function getCompanyInfo($employer_id = 0)
+    public function getCompanyInfo($id = 0, $employer_id = 0, $order = "")
     {
         $strAnd = $employer_id ? " AND employer_id=$employer_id" : "";
+        if ($id) {
+            if (is_array($employer_id)) {
+                $strAnd .= " AND id IN (". implode(', ', $employer_id) . ")";
+            } else {
+                $strAnd .= " AND id=$id";
+            }
+        }
         $sql = "
             SELECT
               *
@@ -107,6 +115,7 @@ class Employer
             WHERE 1
             AND publish = 1
             $strAnd
+            $order
         ";
         $result = $this->wpdb->get_results($sql);
         return $result;

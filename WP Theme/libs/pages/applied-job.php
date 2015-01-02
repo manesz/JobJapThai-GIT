@@ -56,7 +56,7 @@ if (is_user_logged_in()) {
                         ?>
                     </div>
                     <?php
-                    $argc = $classQueryPostJob->queryFavoriteJob();
+                    $argc = $classQueryPostJob->queryApplyJob($userID);
                     $loopJobs = new WP_Query($argc);
                     if ($loopJobs->have_posts()):
                         ?>

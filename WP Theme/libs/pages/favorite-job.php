@@ -83,7 +83,7 @@ if (is_user_logged_in()) {
                         ?>
                     </div>
                     <?php
-                    $argc = $classQueryPostJob->queryFavoriteJob();
+                    $argc = $classQueryPostJob->queryFavoriteJob($userID);
                     $loopJobs = new WP_Query($argc);
                     if ($loopJobs->have_posts()):
                         ?>
@@ -129,8 +129,8 @@ if (is_user_logged_in()) {
                         </ul>
                         <hr/>
 
+                        <?php echo $classQueryPostJob->buildPagingPostJob($loopJobs); ?>
                     <?php endif; ?>
-                    <?php echo $classQueryPostJob->buildPagingPostJob($loopJobs); ?>
                 </div>
 
                 <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"

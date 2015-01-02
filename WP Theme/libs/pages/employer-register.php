@@ -10,7 +10,7 @@ if (is_user_logged_in()) {
         if ($userType == 'employer') {
             $classEmployer = new Employer($wpdb);
             $metaUser = get_user_meta($userID);
-            $arrayCompanyInfo = $classEmployer->getCompanyInfo($userID);
+            $arrayCompanyInfo = $classEmployer->getCompanyInfo(0, $userID);
             if ($arrayCompanyInfo) {
                 extract((array)$arrayCompanyInfo[0]);
             }

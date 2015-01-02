@@ -11,25 +11,30 @@ class QueryPostJob
     private $wpdb;
     public $tableFavoriteJob = "ics_favorite_job";
     public $tableFavoriteCompany = "ics_favorite_company";
+    private $ClassFavorite = null;
+    private $ClassApply = null;
+    private $ClassEmployer = null;
 
     public function __construct($wpdb)
     {
         $this->wpdb = $wpdb;
+        $this->ClassFavorite = new Favorite($wpdb);
+        $this->ClassApply = new Apply($wpdb);
+        $this->ClassEmployer = new Employer($wpdb);
     }
 
-    public function queryFavoriteJob()
+    public function queryFavoriteJob($user_id)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
-        $orderby = empty($_GET['orderby']) ? 10 : $_GET['orderby'];
+        $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
+
+        $getListFavJob = $this->ClassFavorite->listFavJob(0, 0, $user_id);
         $argc = array(
             'post_type' => 'job',
-//                                        'category_name' => 'highlight-jobs',
-            //'orderby' => 'date', //name of category by slug
-            //'order' => 'DESC',
             'post_status' => 'publish',
             'posts_per_page' => $posts_per_page,
-            'paged' => $paged
+            'paged' => $paged,
             //        'meta_query' => array(
             //            array(
             //                'key' => 'company_id',
@@ -39,6 +44,84 @@ class QueryPostJob
             //
             //        ),
         );
+
+        switch($orderby) {
+            case 1://last update
+                $arrayListJobID = array();
+                foreach($getListFavJob as $value){
+                    $arrayListJobID[] = $value->job_id;
+                }
+                if (!$arrayListJobID)
+                    return null;
+                $argc['orderby'] = 'modified';
+                $argc['order'] = 'DESC';
+                $argc['post__in'] = $arrayListJobID;
+                break;
+            case 2://company name
+                $arrayCompanyID = array();
+                foreach($getListFavJob as $value){
+                    $arrayCompanyID[] = $value->company_id;
+                }
+                $objListCompany = $this->ClassEmployer->getCompanyInfo($arrayCompanyID, 0, " ORDER BY company_name");
+
+                $arrayListJobID = array();
+                foreach($objListCompany as $value1) {
+                   foreach($getListFavJob as $value2) {
+                     if ($value1->id == $value2->company_id) {
+                         $arrayListJobID[] = $value2->job_id;
+                     }  
+                   } 
+                }var_dump($arrayCompanyID);
+                if (!$arrayListJobID)
+                    return null;
+                $argc['post__in'] = $arrayListJobID;
+                break;
+        }
+        return $argc;
+    }
+
+    public function queryApplyJob($user_id)
+    {
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
+        $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
+
+        $getListApplyJob = $this->ClassApply->listApplyJob(0, 0, $user_id);
+        $argc = array(
+            'post_type' => 'job',
+            'post_status' => 'publish',
+            'posts_per_page' => $posts_per_page,
+            'paged' => $paged
+        );
+
+        switch($orderby) {
+            case 1://last update
+                $arrayListJobID = array();
+                foreach($getListApplyJob as $value){
+                    $arrayListJobID[] = $value->job_id;
+                }
+                $argc['orderby'] = 'modified';
+                $argc['order'] = 'DESC';
+                $argc['post__in'] = $arrayListJobID;
+                break;
+            case 2://company name
+                $arrayCompanyID = array();
+                foreach($getListApplyJob as $value){
+                    $arrayCompanyID[] = $value->company_id;
+                }
+                $objListCompany = $this->ClassEmployer->getCompanyInfo($arrayCompanyID, 0, " ORDER BY company_name");
+
+                $arrayListJobID = array();
+                foreach($objListCompany as $value1) {
+                    foreach($getListApplyJob as $value2) {
+                        if ($value1->employer_id == $value2->company_id) {
+                            $arrayListJobID[] = $value2->job_id;
+                        }
+                    }
+                }
+                $argc['post__in'] = $arrayListJobID;
+                break;
+        }
         return $argc;
     }
 
@@ -68,12 +151,12 @@ class QueryPostJob
                 <select name="orderby"
                         onchange="$('#frm_query').submit();"
                         class="pull-right form-control col-md-3">
-                    <option value="modified" <?php echo $orderby == 'modified' ? 'selected' : ''; ?>>Last Update
+                    <option value="1" <?php echo $orderby == '1' ? 'selected' : ''; ?>>Last Update
                     </option>
-                    <option value="company" <?php echo $orderby == 'company' ? 'selected' : ''; ?>>Company Name</option>
-                    <option value="" <?php echo $orderby == '' ? 'selected' : ''; ?>>Less to more competitive jobs
+                    <option value="2" <?php echo $orderby == '2' ? 'selected' : ''; ?>>Company Name</option>
+                    <option value="3" <?php echo $orderby == '3' ? 'selected' : ''; ?>>Less to more competitive jobs
                     </option>
-                    <option value="" <?php echo $orderby == '' ? 'selected' : ''; ?>>More to less competitive jobs
+                    <option value="4" <?php echo $orderby == '4' ? 'selected' : ''; ?>>More to less competitive jobs
                     </option>
                 </select>
             </div>
