@@ -119,7 +119,7 @@ if ($_REQUEST) {
         $classFavorite = new Favorite($wpdb);
         if ($_REQUEST['favorite_type'] == 'job') {
             if ($_REQUEST['is_favorite'] == 'true') {
-                $result = $classFavorite->addFavJob($_REQUEST['user_id'], $_REQUEST['id']);
+                $result = $classFavorite->addFavJob($_REQUEST['user_id'], $_REQUEST['id'], $_REQUEST['company_id']);
                 echo $result;
             } else {
                 $result = $classFavorite->setPublishJob($_REQUEST['fav_id']);
@@ -144,7 +144,7 @@ if ($_REQUEST) {
         $classApply = new Apply($wpdb);
         if ($_REQUEST['apply_type'] == 'job') {
             if ($_REQUEST['is_apply'] == 'true') {
-                $result = $classApply->addApplyJob($_REQUEST['user_id'], $_REQUEST['id']);
+                $result = $classApply->addApplyJob($_REQUEST['user_id'], $_REQUEST['id'], $_REQUEST['company_id']);
                 echo $result;
             } else {
                 $result = $classApply->setPublishJob($_REQUEST['apply_id']);

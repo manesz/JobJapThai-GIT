@@ -221,6 +221,7 @@ $isAdmin = current_user_can('manage_options');
                             favorite: 'true',
                             favorite_type: 'job',
                             user_id: <?php echo $userID; ?>,
+                            company_id: <?php echo $company_id; ?>,
                             id: <?php echo $postID; ?>,
                             is_favorite: 'true'
                         },
@@ -257,6 +258,7 @@ $isAdmin = current_user_can('manage_options');
                             apply_type: 'job',
                             user_id: <?php echo $userID; ?>,
                             id: <?php echo $postID; ?>,
+                            company_id: <?php echo $company_id; ?>,
                             is_apply: 'true'
                         },
                         success: function (result) {

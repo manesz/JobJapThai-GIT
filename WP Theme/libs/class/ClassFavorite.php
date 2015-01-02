@@ -53,20 +53,22 @@ class Favorite
         return $result;
     }
 
-    public function addFavJob($user_id, $job_id) {
-        if (!$user_id || !$job_id)
+    public function addFavJob($user_id, $job_id, $company_id) {
+        if (!$user_id || !$job_id|| !$company_id)
             return $this->returnMessage('Fail No id.', true);
         $sql = "
             INSERT INTO `$this->tableFavoriteJob`
             (
              `user_id`,
              `job_id`,
+             `company_id`,
              `create_datetime`,
              `update_datetime`,
              `publish`)
             VALUES (
             '{$user_id}',
             '{$job_id}',
+            '{$company_id}',
             NOW(),
             NOW(),
             1
