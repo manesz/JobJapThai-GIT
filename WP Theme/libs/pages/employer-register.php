@@ -35,6 +35,7 @@ if (is_user_logged_in()) {
 <section class="container-fluid" style="margin-top: 10px;">
 <script>
     var site_url = '<?php echo get_site_url(); ?>/';
+    var is_login = <?php echo $isLogin? "true": "false"; ?>;
 </script>
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/employer-register.js"></script>
 
@@ -133,32 +134,32 @@ if (is_user_logged_in()) {
     <h5 class="bg-ddd padding-10 clearfix">Package</h5>
     <div id="list_package">
 
-<!--        <div class="form-group col-md-12">-->
-<!--            <div class="col-md-2 text-right clearfix"><label for="employerSelectPackage">Select-->
-<!--                    Package<span class="font-color-red">*</span></label></div>-->
-<!--            <div class="col-md-10">-->
-<!--                <select id="employerSelectPackage" name="employerSelectPackage" class="form-control">-->
-<!--                    <option>---------------- Please select package ----------------</option>-->
-<!--                </select>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="form-group col-md-12">-->
-<!--            <div class="col-md-2 text-right clearfix"><label for="employerSelectPeriod">Select-->
-<!--                    Period<span class="font-color-red">*</span></label></div>-->
-<!--            <div class="col-md-10">-->
-<!--                <select id="employerSelectPeriod" name="employerSelectPeriod" class="form-control">-->
-<!--                    <option>---------------- Please select period ----------------</option>-->
-<!--                </select>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--        <div class="form-group col-md-12">-->
+        <!--            <div class="col-md-2 text-right clearfix"><label for="employerSelectPackage">Select-->
+        <!--                    Package<span class="font-color-red">*</span></label></div>-->
+        <!--            <div class="col-md-10">-->
+        <!--                <select id="employerSelectPackage" name="employerSelectPackage" class="form-control">-->
+        <!--                    <option>---------------- Please select package ----------------</option>-->
+        <!--                </select>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        <div class="form-group col-md-12">-->
+        <!--            <div class="col-md-2 text-right clearfix"><label for="employerSelectPeriod">Select-->
+        <!--                    Period<span class="font-color-red">*</span></label></div>-->
+        <!--            <div class="col-md-10">-->
+        <!--                <select id="employerSelectPeriod" name="employerSelectPeriod" class="form-control">-->
+        <!--                    <option>---------------- Please select period ----------------</option>-->
+        <!--                </select>-->
+        <!--            </div>-->
+        <!--        </div>-->
     </div>
-        <div class="form-group col-md-12">
-            <div class="col-md-12">
-                <input type="button" class="btn btn-primary col-md-12"
-                       value="New Package" data-toggle="modal" id="new_package"
-                       data-target="#modal_package"/>
-            </div>
+    <div class="form-group col-md-12">
+        <div class="col-md-12">
+            <input type="button" class="btn btn-primary col-md-12"
+                   value="New Package" data-toggle="modal" id="new_package"
+                   data-target="#modal_package"/>
         </div>
+    </div>
     <div class="clearfix"></div>
 <?php endif; ?>
 
@@ -310,7 +311,7 @@ if (is_user_logged_in()) {
 </div>
 <div class="form-group col-md-12">
     <div class="col-md-2 text-right clearfix"><label
-            for="employerContactPostcode">Postcode</label></div>
+            for="employerContactPostcode">Postcode<span class="font-color-red">*</span></label></div>
     <div class="col-md-10">
         <input type="text" id="employerContactPostcode" name="employerContactPostcode"
                class="form-control" required
@@ -518,7 +519,7 @@ if (is_user_logged_in()) {
             });
         }
     };
-    $(document).ready(function(){
+    $(document).ready(function () {
         proselect.init();
         <?php if ($isLogin): ?>
         showListPackage();

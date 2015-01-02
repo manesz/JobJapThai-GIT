@@ -77,10 +77,12 @@ $(document).ready(function () {
                 url: $form.attr('action'),
                 data: data,
                 success: function (result) {
-                    if (result != 'success') {
-                        $("#show_message").html(result);
-                    } else {
+                    if (!is_login) {
+                        showModalMessage(result, "Message Add Candidate");
                         window.location.href = site_url + "edit-resume";
+                    }
+                    else {
+                        showModalMessage(result, "Message Edit Candidate");
                     }
                     hideImgLoading();
                 },

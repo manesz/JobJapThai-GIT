@@ -67,14 +67,14 @@ function registerEmp()
             echo '<div class="font-color-BF2026"><p>Error edit company information for contact.</p></div>';
             exit;
         }
-        echo 'success';
+        echo '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
         exit;
     }
 
 //On success
     if (!is_wp_error($user_id)) {
         setUserLogin($user_id);
-        echo 'success';
+        echo '<div class="font-color-4BB748"><p>Add Success.</p></div>';
 //        header('Location: ' . get_site_url() . '/edit-resume/');
     } else {
         $error_string = $user_id->get_error_message();
