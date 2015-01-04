@@ -178,6 +178,7 @@ class QueryPostJob
 
         $argc = array(
             'post_type' => $this->postType,
+            'category_name' => 'highlight-jobs',
             'post_status' => 'publish',
             'posts_per_page' => $posts_per_page,
             'paged' => $paged
