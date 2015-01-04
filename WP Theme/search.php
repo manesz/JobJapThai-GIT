@@ -23,28 +23,10 @@ $classQueryPostJob = new QueryPostJob($wpdb);
                         </div>
                         <div class="clearfix" style="margin-top: 20px;"></div>
 
-                        <ul class="job-list no-padding">
-                            <?php for($i=0;$i<=6;$i++):?>
-                                <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
-                                    <div class="col-md-12">
-                                        <div class="col-md-2" style="padding: 0px">
-                                            <a href="job-desc.php" target="_blank"><img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-logo.png" style="width: 100%;"/></a>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <h5 class="font-color-BF2026">
-                                                <a href="job-desc.php" target="_blank">Japanese Interpreter (JLPT Level 2 or 1)</a>
-                                            </h5>
-                                            YMC Translation Center Co.,Ltd.<br/>
-                                            Permanent<br/>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <br/>Aug 14, 2014<br/>
-                                            Bangkok<br/>
-                                        </div>
-                                    </div>
-                                </li>
-                            <?php endfor; ?>
-                        </ul>
+                        <?php
+                        $argc = $classQueryPostJob->querySearchJob();
+                        echo $classQueryPostJob->buildListJob($argc);
+                        ?>
 
                     </div>
 

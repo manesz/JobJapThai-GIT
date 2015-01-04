@@ -166,10 +166,11 @@ if ($_REQUEST) {
 
     if ($_REQUEST['query_list_job_post'] == 'true') {
         $classQueryPostJob = new QueryPostJob($wpdb);
-        if ($_REQUEST['type'] == "favorite") {
-            $argc = $classQueryPostJob->queryFavoriteJob($_REQUEST['user_id']);
-        } else if ($_REQUEST['type'] == "apply") {
-            $argc = $classQueryPostJob->queryApplyJob($_REQUEST['user_id']);
+        $getType = $_REQUEST['type'];
+        switch($getType){
+            case "favorite": $argc = $classQueryPostJob->queryFavoriteJob($_REQUEST['user_id']);break;
+            case "apply": $argc = $classQueryPostJob->queryApplyJob($_REQUEST['user_id']);break;
+            case "search":$argc = $classQueryPostJob->querySearchJob(); break;
         }
         echo $classQueryPostJob->buildListJob($argc);
         exit;
