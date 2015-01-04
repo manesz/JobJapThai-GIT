@@ -130,6 +130,86 @@ class QueryPostJob
         return $argc;
     }
 
+    public function queryJobUpdate()
+    {
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
+        $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
+
+        $argc = array(
+            'post_type' => $this->postType,
+            'post_status' => 'publish',
+            'posts_per_page' => $posts_per_page,
+            'paged' => $paged
+        );
+
+        switch ($orderby) {
+            case 1: //last update
+                $argc['orderby'] = 'modified';
+                $argc['order'] = 'DESC';
+                break;
+            case 2: //company name
+                $arrayCompanyID = array();
+//                foreach ($getListApplyJob as $value) {
+//                    $arrayCompanyID[] = $value->company_id;
+//                }
+//                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
+//                $arrayMetaQuery = array();
+//                foreach ($objListCompany as $value) {
+//                    $arrayMetaQuery[] = array(
+//                        'key' => 'company_id',
+//                        'value' => $value->id,
+//                        'compare' => '='
+//                    );
+//                }
+//                $argc['meta_query'] = array($arrayMetaQuery);
+//                if (!$arrayMetaQuery)
+                    return null;
+                break;
+        }
+        return $argc;
+    }
+
+    public function queryHighlightJobs()
+    {
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
+        $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
+
+        $argc = array(
+            'post_type' => $this->postType,
+            'post_status' => 'publish',
+            'posts_per_page' => $posts_per_page,
+            'paged' => $paged
+        );
+
+        switch ($orderby) {
+            case 1: //last update
+                $argc['orderby'] = 'modified';
+                $argc['order'] = 'DESC';
+                break;
+            case 2: //company name
+                $arrayCompanyID = array();
+//                foreach ($getListApplyJob as $value) {
+//                    $arrayCompanyID[] = $value->company_id;
+//                }
+//                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
+//                $arrayMetaQuery = array();
+//                foreach ($objListCompany as $value) {
+//                    $arrayMetaQuery[] = array(
+//                        'key' => 'company_id',
+//                        'value' => $value->id,
+//                        'compare' => '='
+//                    );
+//                }
+//                $argc['meta_query'] = array($arrayMetaQuery);
+//                if (!$arrayMetaQuery)
+                    return null;
+                break;
+        }
+        return $argc;
+    }
+
     public function querySearchJob()
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;

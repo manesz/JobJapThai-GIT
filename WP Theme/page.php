@@ -41,6 +41,8 @@ if (have_posts()) :
             get_template_part('libs/pages/favorite-job');
         } else if (is_page("applied-job")) {
             get_template_part('libs/pages/applied-job');
+        } else if (is_page("highlight-jobs")) {
+            get_template_part('libs/pages/highlight-jobs');
         }
 
     endwhile;

@@ -44,6 +44,13 @@ $init_page = array(
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
+	array(
+		  'post_title' => 'Highlight jobs',
+		  'post_content'  => '',
+		  'post_status'=> 'publish',
+		  'post_type'=>'page',
+		  'post_author'=> 1
+	),
 	/* Employer page */
 	array(
 		  'post_title' => 'Employer',

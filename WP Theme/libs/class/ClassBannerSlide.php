@@ -20,6 +20,7 @@ class BannerSlide
     public function createDB()
     {
         $sql = "
+            DROP TABLE IF EXISTS $this->tableBannerSlide;
             CREATE TABLE `$this->tableBannerSlide` (
               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
               `link` text,
@@ -54,7 +55,7 @@ class BannerSlide
 
     public function getList($plimit = 0, $pbegin = 0)
     {
-        $this->createDB();
+//        $this->createDB();
         if ($plimit != 0 && $pbegin != 0) {
             $strLimit = " LIMIT $pbegin, $plimit ";
         } else if ($plimit != 0) {

@@ -5,7 +5,8 @@ if (!session_id())
 global $wpdb;
 if ($_REQUEST) {
     $sendTo = 'ruxchuk@gmail.com'; //email info
-    if ($_REQUEST['send_email_contact_us'] == 'true') {
+    $sendEmailContactUs = empty($_REQUEST['send_email_contact_us']) ? false : $_REQUEST['send_email_contact_us'];
+    if ($sendEmailContactUs == 'true') {
         extract($_REQUEST);
         if ($_SESSION['captcha_contact_us']['code'] != @$security_code) {
             echo 'error_captcha';
@@ -30,13 +31,18 @@ if ($_REQUEST) {
     }
 
 //    if (is_user_logged_in()) {
-    if ($_REQUEST['new_package'] == 'true') {
+    $newPackage = empty($_REQUEST['new_package']) ? false : $_REQUEST['new_package'];
+    $listPackage = empty($_REQUEST['list_package']) ? false : $_REQUEST['list_package'];
+    $postPackage = empty($_REQUEST['post_package']) ? false : $_REQUEST['post_package'];
+    if ($newPackage == 'true') {
         require_once("pages/package-new.php");
         exit;
-    } else if ($_REQUEST['list_package'] == 'true') {
+    }
+    if ($listPackage == 'true') {
         require_once("pages/package-list.php");
         exit;
-    } else if ($_REQUEST['post_package'] == 'true') {
+    }
+    if ($postPackage == 'true') {
         $classPackage = new Package($wpdb);
         $postType = $_REQUEST['type_post'];
         if ($postType == 'add') {
@@ -53,7 +59,8 @@ if ($_REQUEST) {
         exit;
     }
 
-    if ($_REQUEST['candidate_post'] == 'true') {
+    $candidatePost = empty($_REQUEST['candidate_post']) ? false : $_REQUEST['candidate_post'];
+    if ($candidatePost == 'true') {
         $classCandidate = new Candidate($wpdb);
         $postType = $_REQUEST['post_type'];
         switch ($postType) {
@@ -115,7 +122,8 @@ if ($_REQUEST) {
     }
 
     //Favorite
-    if ($_REQUEST['favorite'] == 'true') {
+    $favorite = empty($_REQUEST['favorite']) ? false : $_REQUEST['favorite'];
+    if ($favorite == 'true') {
         $classFavorite = new Favorite($wpdb);
         if ($_REQUEST['favorite_type'] == 'job') {
             if ($_REQUEST['is_favorite'] == 'true') {
@@ -140,7 +148,8 @@ if ($_REQUEST) {
 
 
     //Apply
-    if ($_REQUEST['apply_post'] == 'true') {
+    $applyPost = empty($_REQUEST['apply_post']) ? false : $_REQUEST['apply_post'];
+    if ($applyPost == 'true') {
         $classApply = new Apply($wpdb);
         if ($_REQUEST['apply_type'] == 'job') {
             if ($_REQUEST['is_apply'] == 'true') {
@@ -164,13 +173,20 @@ if ($_REQUEST) {
     //End Apply
 
 
-    if ($_REQUEST['query_list_job_post'] == 'true') {
+    $query_list_job_post = empty($_REQUEST['query_list_job_post']) ? false : $_REQUEST['query_list_job_post'];
+    if ($query_list_job_post == 'true') {
         $classQueryPostJob = new QueryPostJob($wpdb);
         $getType = $_REQUEST['type'];
-        switch($getType){
-            case "favorite": $argc = $classQueryPostJob->queryFavoriteJob($_REQUEST['user_id']);break;
-            case "apply": $argc = $classQueryPostJob->queryApplyJob($_REQUEST['user_id']);break;
-            case "search":$argc = $classQueryPostJob->querySearchJob(); break;
+        switch ($getType) {
+            case "favorite":
+                $argc = $classQueryPostJob->queryFavoriteJob($_REQUEST['user_id']);
+                break;
+            case "apply":
+                $argc = $classQueryPostJob->queryApplyJob($_REQUEST['user_id']);
+                break;
+            case "search":
+                $argc = $classQueryPostJob->querySearchJob();
+                break;
         }
         echo $classQueryPostJob->buildListJob($argc);
         exit;
