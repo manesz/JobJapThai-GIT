@@ -1,43 +1,43 @@
-<?php get_header(); ?>
+<?php
+get_template_part("header");
+get_template_part("libs/nav");
+?>
 
-			<div id="content">
+<section class="container-fluid" style="margin-top: 10px;">
 
-				<div id="inner-content" class="wrap cf">
+    <div class="container wrapper">
+        <div class="row">
 
-					<div id="main" class="m-all t-2of3 d-5of7 cf" role="main">
+            <div class="col-md-8">
 
-						<article id="post-not-found" class="hentry cf">
+                <article id="post-not-found" class="hentry cf">
 
-							<header class="article-header">
+                    <header class="article-header">
 
-								<h1><?php _e( 'Epic 404 - Article Not Found', 'bonestheme' ); ?></h1>
+                        <h1><?php _e('Epic 404 - Article Not Found', 'bonestheme'); ?></h1>
 
-							</header>
+                    </header>
 
-							<section class="entry-content">
+                    <section class="entry-content">
 
-								<p><?php _e( 'The article you were looking for was not found, but maybe try looking again!', 'bonestheme' ); ?></p>
+                        <p><?php _e('The article you were looking for was not found, but maybe try looking again!', 'bonestheme'); ?></p>
 
-							</section>
+                    </section>
 
-							<section class="search">
+                    <section class="search">
 
-									<p><?php get_search_form(); ?></p>
+                        <p><?php get_search_form(); ?></p>
 
-							</section>
+                    </section>
 
-							<footer class="article-footer">
+                </article>
 
-									<p><?php _e( 'This is the 404.php template.', 'bonestheme' ); ?></p>
-
-							</footer>
-
-						</article>
-
-					</div>
-
-				</div>
-
-			</div>
-
-<?php get_footer(); ?>
+            </div>
+            <?php
+            get_template_part("libs/pages/sidebar");
+            ?>
+        </div>
+    </div>
+</section>
+<?php
+get_template_part("footer"); ?>
