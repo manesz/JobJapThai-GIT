@@ -67,11 +67,11 @@
             <?php
             $argc = array(
                 'post_type' => 'job',
-//                                        'category_name' => 'highlight-jobs',
-                //'orderby' => 'date', //name of category by slug
-                //'order' => 'ASC',
+                'category_name' => 'highlight-jobs',
+                'orderby' => 'date', //name of category by slug
+                'order' => 'DESC',
                 'post_status' => 'publish',
-                'posts_per_page' => 10
+                'posts_per_page' => 5
             );
             $loopHighlightJobs = new WP_Query($argc);
             $i = 0;

@@ -21,7 +21,8 @@ $classEmployer = new Employer($wpdb);
                 <span style="font-size: 16px !important; color: #BF2026; ">Highlight jobs</span>
             </h4>
 
-            <div class="pull-right" style="font-size: 12px; margin-top: 15px;"><a>一覧を見る ></a></div>
+            <div class="pull-right" style="font-size: 12px; margin-top: 15px;">
+                <a href="<?php echo get_site_url(); ?>/highlight-jobs" target="_blank">一覧を見る ></a></div>
             <div class="clearfix"></div>
 
             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
