@@ -192,5 +192,22 @@ if ($_REQUEST) {
         exit;
     }
 
+
+    //Forget pass
+    if (isset($_REQUEST['reset_pass'])) {
+
+        $classAuthentication = new Authentication($wpdb);
+        echo $classAuthentication->forgetPassWord($_REQUEST);
+        exit;
+    }
+    //End Forget pass
+
 //    }
+
+    $signInPost = isset($_POST['sign_in_post']) ? $_POST['sign_in_post'] : false;
+    if ($signInPost == "true") {
+        $classAuthentication = new Authentication($wpdb);
+        echo $classAuthentication->signin($_POST);
+        exit;
+    }
 }

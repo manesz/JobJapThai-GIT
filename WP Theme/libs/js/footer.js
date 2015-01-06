@@ -28,12 +28,15 @@ function scrollToTop(fade_in) {
 }
 
 function showModalMessage(msg, title) {
-    title = title || "Success";
+    title = title || "Message";
     $("#modal_show_message .modal-body").html(msg);
     $("#modal_show_message #myModalMassage").html(title);
     $('#modal_show_message').modal('show');
 }
 
+function closeModalMessage() {
+    $('#modal_show_message').modal('hide');
+}
 var wppage = {
     init: function () {
         wppage.addEvent();
@@ -46,7 +49,7 @@ var wppage = {
             interval: 5000
         });
         $('#myTab a').on('click', function (e) {
-            e.preventDefault()
+            e.preventDefault();
             $(this).tab('show', 'fast');
         });
     },
@@ -56,3 +59,37 @@ var wppage = {
     }
 };
 $(document).ready(wppage.onready);
+
+var post_lost_pass = false;
+$(document).ready(function(){
+//    $("#lost_password").load(url_lost_password);
+    $("#lostpasswordform").submit(function(){
+        if (!post_lost_pass) {
+            showImgLoading();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                cache: false,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.error) {
+                        $("#message_lost_password").html(result.msg);
+                    }else {
+                        $('#user_login').val('');
+                        $("#message_lost_password").html(result.msg);
+                    }
+                    hideImgLoading();
+                    post_lost_pass = false;
+                },
+                error: function (result) {
+                    showModalMessage(result.responseText, 'Error');
+                    hideImgLoading();
+                    post_lost_pass = false;
+                }
+            });
+        }
+        post_lost_pass = true;
+        return false;
+    });
+});

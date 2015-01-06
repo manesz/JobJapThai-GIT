@@ -41,13 +41,6 @@ $(document).ready(function () {
                     }
                 }
             },
-            expect_month_salary: {
-                validators: {
-                    integer: {
-                        message: 'The value is not an number'
-                    }
-                }
-            },
             month_salary: {
                 validators: {
                     integer: {

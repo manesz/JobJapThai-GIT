@@ -129,7 +129,7 @@ if ($arrayContact) {
         background-color: #FFF;
         width: 0px;
         height: 0px;
-        z-index: 10;
+        z-index: 9998;
     }
     .img_loading {
         position: fixed; top: 40%; left: 50%;

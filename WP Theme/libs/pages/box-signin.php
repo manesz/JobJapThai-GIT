@@ -22,24 +22,27 @@ if (is_user_logged_in()) {
     </div>
     <?php if (!$isLogin): ?>
     <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post"
-        id="frm_sigin">
+        id="frm_sigin" class="form-horizontal">
         <input type="hidden" name="sign_in_post" value="true">
 
         <div class="form-group clearfix" style="margin-bottom: 10px;">
             <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Email/Username
                 :</label>
 
-            <div class="col-md-8"><input id="username" name="username" class="form-control"></div>
+            <div class="col-md-8"><input id="username" name="username" required=""
+                                         class="form-control"></div>
         </div>
         <div class="form-group clearfix" style="margin-bottom: 10px;">
             <label for="password" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Password :</label>
 
-            <div class="col-md-8"><input id="password" name="password" type="password" class="form-control"></div>
+            <div class="col-md-8"><input id="password" name="password" required=""
+                                         type="password" class="form-control"></div>
         </div>
 
         <div class="form-group clearfix" style="margin-bottom: 10px;">
             <button type="submit" class="btn btn-success pull-right" style="margin-right: 15px;">Signin</button>
-            <button type="button" class="btn btn-default pull-right" style="margin-right: 15px; border: none;">reset
+            <button type="button" class="btn btn-default pull-right" onclick="resetFormSigin();"
+                    style="margin-right: 15px; border: none;">reset
             </button>
         </div>
 
@@ -67,10 +70,72 @@ if (is_user_logged_in()) {
     <?php endif;?>
 </div>
 <script>
+    function resetFormSigin() {
+        $("#frm_sigin #username").val('');
+        $("#frm_sigin #password").val('');
+        $("#frm_sigin #username").focus();
+        var $frm = $('#frm_sigin');
+        $($frm).bootstrapValidator('revalidateField', 'username');
+        $($frm).bootstrapValidator('revalidateField', 'password');
+    }
+    var check_sigin = false;
     $(document).ready(function(){
-        $("#frm_sigin").submit(function(){
-            alert(44)
-            return false;
-        });
+//        $("#frm_sigin").submit(function(){
+//
+////            return false;
+//        });
+        $('#frm_sigin').bootstrapValidator({
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            }
+        }).on('success.form.bv', function (e) {
+            if (!check_sigin) {
+                // Prevent form submission
+                e.preventDefault();
+
+                // Get the form instance
+                var $form = $(e.target);
+
+                // Get the BootstrapValidator instance
+                var bv = $form.data('bootstrapValidator');
+                var data = $form.serialize();
+                // Use Ajax to submit form data
+                showImgLoading();
+                $.ajax({
+                    type: "POST",
+                    url: '',
+                    cache: false,
+                    dataType: 'json',
+                    data: data,
+                    success: function (result) {
+                        if (!result.error) {
+                            window.location.href = result.msg;
+                            return true;
+                        }
+                        showModalMessage(result.msg, 'Login Fail');
+                        check_sigin = false;
+                        hideImgLoading();
+                    },
+                    error: function (result) {
+                        showModalMessage("Error:\n" + result.responseText);
+                        hideImgLoading();
+                        check_sigin = false;
+                    }
+                });
+            }
+            check_sigin = true;
+        })
+            .on('error.field.bv', function (e, data) {
+                if (data.bv.getSubmitButton()) {
+                    data.bv.disableSubmitButtons(false);
+                }
+            })
+            .on('success.field.bv',function (e, data) {
+                if (data.bv.getSubmitButton()) {
+                    data.bv.disableSubmitButtons(false);
+                }
+            });
     });
 </script>
