@@ -86,5 +86,5 @@ function setUserLogin($user_id)
     $auth_secure_cookie = $secure_cookie;
     wp_set_current_user($user_id);
     wp_set_auth_cookie($user_id, true, $secure_cookie);
-    update_usermeta($user_id, 'last_login', current_time('mysql'));
+    update_user_meta($user_id, 'last_login', current_time('mysql'));
 }
