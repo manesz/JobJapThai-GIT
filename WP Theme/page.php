@@ -13,9 +13,7 @@ if (have_posts()) :
         if (is_page("about-us")) {
             get_template_part('libs/pages/about-us'); //change to call full page UI
             //get_template_part('post-formats/format');
-        } else if (is_page("news")) {
-            get_template_part('libs/pages/news');
-        } else if (is_page("employer-register")) {
+        }else if (is_page("employer-register")) {
             get_template_part('libs/pages/employer-register');
         } else if (is_page("Edit Resume")) {
             get_template_part('libs/pages/employer-register');

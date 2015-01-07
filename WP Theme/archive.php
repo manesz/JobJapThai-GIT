@@ -2,112 +2,63 @@
 
 get_template_part("header");
 get_template_part("libs/nav");
-$postType = get_post_type(get_the_ID());
-if ($postType == 'job') {
-    get_template_part('libs/pages/category');
-} else {
+global $wpdb;
+$classQueryPostJob = new QueryPostJob($wpdb);
 
-    ?>
+$titlePage = "News jobs update";
 
-    <div id="content">
+$cat = empty($_GET['cat']) ? false : $_GET['cat'];
+$current_cat_id = get_query_var('cat');
+if ($cat) {
+    $getTerm = get_term_by('slug', $cat, 'custom_job_cat');
+    $titlePage = $getTerm->name;
+} else if ($current_cat_id) {
+    $titlePage = get_cat_name($current_cat_id);
+}
 
-        <div id="inner-content" class="wrap cf">
+?>
+    <section class="container-fluid" style="margin-top: 10px;">
 
-            <div id="main" class="m-all t-2of3 d-5of7 cf" role="main">
+        <div class="container wrapper">
+            <div class="row">
 
-                <?php if (is_category()) { ?>
-                    <h1 class="archive-title h2">
-                        <span><?php _e('Posts Categorized:', 'bonestheme'); ?></span> <?php single_cat_title(); ?>
-                    </h1>
+                <div class="col-md-8">
+                    <div class="clearfix"
+                         style="border: 1px #ddd solid; border-radius: 5px; background: #fff; padding: 10px; margin-bottom: 10px;">
+                        <h5 class="pull-left" style="">
+                            <img src="<?php echo get_template_directory_uri(); ?>/libs/img/icon-title.png"
+                                 style="height: 25px;"/>
+                            お知らせ
+                            <span class="font-color-BF2026" style=""><?php echo $titlePage; ?></span>
+                        </h5>
 
-                <?php } elseif (is_tag()) { ?>
-                    <h1 class="archive-title h2">
-                        <span><?php _e('Posts Tagged:', 'bonestheme'); ?></span> <?php single_tag_title(); ?>
-                    </h1>
+                        <div class="clearfix" style="margin-top: 20px;"></div>
+                        <div id="show_message" class="col-md-12">
+                        </div>
+                        <hr/>
+                        <div class="col-md-12 border-bottom-1-ddd no-padding"
+                             style="padding-bottom: 10px !important;">
+                            <input type="hidden" id="type_query" value="favorite">
+                            <?php
+                            echo $classQueryPostJob->buildFormQueryJob(0);
+                            ?>
+                        </div>
+                        <?php
+                        $argc = $classQueryPostJob->queryJobUpdate($cat, $current_cat_id);
+                        echo $classQueryPostJob->buildListJob($argc);
+                        ?>
+                    </div>
 
-                <?php
-                } elseif (is_author()) {
-                    global $post;
-                    $author_id = $post->post_author;
-                    ?>
-                    <h1 class="archive-title h2">
+                    <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"
+                         style="width: 100%; height: auto;"/>
 
-                        <span><?php _e('Posts By:', 'bonestheme'); ?></span> <?php the_author_meta('display_name', $author_id); ?>
+                </div>
 
-                    </h1>
-                <?php } elseif (is_day()) { ?>
-                    <h1 class="archive-title h2">
-                        <span><?php _e('Daily Archives:', 'bonestheme'); ?></span> <?php the_time('l, F j, Y'); ?>
-                    </h1>
-
-                <?php } elseif (is_month()) { ?>
-                    <h1 class="archive-title h2">
-                        <span><?php _e('Monthly Archives:', 'bonestheme'); ?></span> <?php the_time('F Y'); ?>
-                    </h1>
-
-                <?php } elseif (is_year()) { ?>
-                    <h1 class="archive-title h2">
-                        <span><?php _e('Yearly Archives:', 'bonestheme'); ?></span> <?php the_time('Y'); ?>
-                    </h1>
-                <?php } ?>
-
-                <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-
-                    <article id="post-<?php the_ID(); ?>" <?php post_class('cf'); ?> role="article">
-
-                        <header class="article-header">
-
-                            <h3 class="h2 entry-title"><a href="<?php the_permalink() ?>" rel="bookmark"
-                                                          title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <p class="byline vcard"><?php
-                                printf(__('Posted', 'bonestheme') . ' <time class="updated" datetime="%1$s" pubdate>%2$s</time> ' . __('by', 'bonestheme') . ' <span class="author">%3$s</span> <span class="amp">&</span> ' . __('filed under', 'bonestheme') . ' %4$s.', get_the_time('Y-m-j'), get_the_time(__('F jS, Y', 'bonestheme')), get_the_author_link(get_the_author_meta('ID')), get_the_category_list(', '));
-                                ?></p>
-
-                        </header>
-
-                        <section class="entry-content cf">
-
-                            <?php the_post_thumbnail('bones-thumb-300'); ?>
-
-                            <?php the_excerpt(); ?>
-
-                        </section>
-
-                        <footer class="article-footer">
-
-                        </footer>
-
-                    </article>
-
-                <?php endwhile; ?>
-
-                    <?php bones_page_navi(); ?>
-
-                <?php else : ?>
-
-                    <article id="post-not-found" class="hentry cf">
-                        <header class="article-header">
-                            <h1><?php _e('Oops, Post Not Found!', 'bonestheme'); ?></h1>
-                        </header>
-                        <section class="entry-content">
-                            <p><?php _e('Uh Oh. Something is missing. Try double checking things.', 'bonestheme'); ?></p>
-                        </section>
-                        <footer class="article-footer">
-                            <p><?php _e('This is the error message in the archive.php template.', 'bonestheme'); ?></p>
-                        </footer>
-                    </article>
-
-                <?php endif; ?>
-
+                <?php get_template_part('libs/pages/sidebar'); ?>
             </div>
-
-            <?php get_sidebar(); ?>
-
         </div>
 
-    </div>
+    </section>
 <?php
-}
+
 get_template_part("footer");
