@@ -1,10 +1,11 @@
 <?php
-include_once('header.php');
-include_once('libs/nav.php');
-include_once('libs/front-banner.php');
+get_template_part("header");
+get_template_part("libs/nav");
+get_template_part("libs/front-banner");
 
-
+global $wpdb;
 $classEmployer = new Employer($wpdb);
+$classQueryPostJob = new QueryPostJob($wpdb);
 ?>
     <section class="container-fluid" style="margin-top: 10px;">
 
@@ -38,70 +39,9 @@ $classEmployer = new Employer($wpdb);
                     <div class="item active">
 
                         <?php
-                        $argc = array(
-                            'post_type' => 'job',
-//                                        'category_name' => 'highlight-jobs',
-                            //'orderby' => 'date', //name of category by slug
-                            //'order' => 'ASC',
-                            'post_status' => 'publish',
-                            'posts_per_page' => 10
-                        );
-                        $loopHighlightJobs = new WP_Query($argc);
-                        $i = 0;
-                        if ($loopHighlightJobs->have_posts()):
+                        echo $classQueryPostJob->buildHighlightJobs();
                         ?>
-
-                        <ul class="job-list" style="padding: 0px;">
-                            <?php while ($loopHighlightJobs->have_posts()) :
-                                $loopHighlightJobs->the_post();
-                                $postID = get_the_id();
-                                $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
-                                if (empty($url)) {
-                                    $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
-                                } else {
-                                    $thumbnail = $url;
-                                }
-                                $customField = get_post_custom($postID);
-                                $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
-                                $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
-                                ?>
-                                <?php if ($i % 4 == 0 && $i > 0): ?>
-                                <div class="item">
-                                <ul class="job-list" style="padding: 0px;">
-                            <?php else: ?>
-                                <li class="col-md-6 clearfix">
-                                    <div class="col-md-4" style="padding: 0px;">
-                                        <a href="<?php the_permalink(); ?>" target="_blank"><img
-                                                src="<?php echo $thumbnail; ?>"
-                                                style="width: 100%"/></a>
-                                    </div>
-                                    <div class="col-md-8" style="padding: 0 0 0 10px;">
-                                        <h4 style="font-size: 14px !important; color: #BF2026"><a
-                                                href="<?php the_permalink(); ?>"
-                                                target="_blank"><?php the_title(); ?></a></h4>
-
-                                        <p class="font-size-12">
-                                            <span class="font-color-4D94CC"><?php echo $job_location; ?></span><br/>
-                                            <?php echo $job_type; ?><br/>
-                                            <?php the_date('d F, Y'); ?>
-                                        </p>
-                                    </div>
-                                </li>
-                            <?php endif; ?>
-
-                                <?php if ($i % 4 == 0 && $i > 0): ?>
-                                </ul>
-                                </div>
-                            <?php endif; ?>
-
-                                <?php $i++;
-                            endwhile;?>
-
-                        </ul>
                     </div>
-                    <?php
-                    endif;
-                    ?>
                 </div>
 
                 <!-- Controls -->
@@ -128,57 +68,10 @@ $classEmployer = new Employer($wpdb);
                 <a href="<?php echo get_site_url(); ?>/job" target="_blank">一覧を見る ></a></div>
             <div class="clearfix"></div>
 
-            <ul class="job-list no-padding">
-                <?php
-                $argc = array(
-                    'post_type' => 'job',
-//                                'category_name' => 'highlight-jobs',
-                    'orderby' => 'date', //name of category by slug
-                    'order' => 'DESC',
-                    'post_status' => 'publish',
-                    'posts_per_page' => 10
-                );
-                $loopJobsUpdate = new WP_Query($argc);
-                $i = 0;
-                if ($loopJobsUpdate->have_posts()):
-                    while ($loopJobsUpdate->have_posts()) :
-                        $loopJobsUpdate->the_post();
-                        $postID = get_the_id();
-                        $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
-                        if (empty($url)) {
-                            $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
-                        } else {
-                            $thumbnail = $url;
-                        }
-                        $customField = get_post_custom($postID);
-                        $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
-                        $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
-                        $company_id = empty($customField["company_id"][0]) ? '' : $customField["company_id"][0];
-                        $getDataCompany = $company_id ? $classEmployer->getCompanyInfo($company_id) : false;
-                        $company_name = $getDataCompany ? $getDataCompany[0]->company_name : "";
-                        ?>
-                        <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
-                            <div class="col-md-12">
-                                <div class="col-md-2" style="padding: 0px">
-                                    <a href="<?php the_permalink(); ?>" target="_blank"><img
-                                            src="<?php echo $thumbnail; ?>"
-                                            style="width: 100%;"/></a>
-                                </div>
-                                <div class="col-md-8">
-                                    <h5 class="font-color-BF2026">
-                                        <a href="<?php the_permalink(); ?>" target="_blank"><?php the_title(); ?></a>
-                                    </h5>
-                                    <?php echo $company_name; ?><br/>
-                                    <?php echo $job_type; ?><br/>
-                                </div>
-                                <div class="col-md-2">
-                                    <br/><?php the_date('M d, Y'); ?><br/>
-                                    <?php echo $job_location; ?><br/>
-                                </div>
-                            </div>
-                        </li>
-                    <?php endwhile; endif; ?>
-            </ul>
+            <?php
+            $argc = $classQueryPostJob->queryJobUpdate(false, false, 10);
+            echo $classQueryPostJob->buildListJob($argc, false);
+            ?>
 
         </div>
 

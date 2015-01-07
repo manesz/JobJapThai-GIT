@@ -16,6 +16,7 @@ class QueryPostJob
     private $ClassFavorite = null;
     private $ClassApply = null;
     private $ClassEmployer = null;
+    public $categoryLocationID = 19;
 
     public function __construct($wpdb)
     {
@@ -130,18 +131,27 @@ class QueryPostJob
         return $argc;
     }
 
-    public function queryJobUpdate()
+    public function queryJobUpdate($cat = false, $location = false, $limit = -1)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
         $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
 
+        if ($limit > -1) {
+            $posts_per_page = $limit;
+        }
         $argc = array(
             'post_type' => $this->postType,
             'post_status' => 'publish',
             'posts_per_page' => $posts_per_page,
             'paged' => $paged
         );
+        if ($cat) {
+            $argc['custom_job_cat'] = $cat;
+        }
+        if ($location) {
+            $argc['category__in'] = array($location);
+        }
 
         switch ($orderby) {
             case 1: //last update
@@ -164,18 +174,20 @@ class QueryPostJob
 //                }
 //                $argc['meta_query'] = array($arrayMetaQuery);
 //                if (!$arrayMetaQuery)
-                    return null;
+                return null;
                 break;
         }
         return $argc;
     }
 
-    public function queryHighlightJobs()
+    public function queryHighlightJobs($limit = -1)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
         $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
 
+        if ($limit > -1)
+            $posts_per_page = $limit;
         $argc = array(
             'post_type' => $this->postType,
             'category_name' => 'highlight-jobs',
@@ -205,7 +217,7 @@ class QueryPostJob
 //                }
 //                $argc['meta_query'] = array($arrayMetaQuery);
 //                if (!$arrayMetaQuery)
-                    return null;
+                return null;
                 break;
         }
         return $argc;
@@ -261,6 +273,19 @@ class QueryPostJob
         }
 
         return $argc;
+    }
+
+    function getSubCatLocation($post_id)
+    {
+        $post_categories = wp_get_post_categories($post_id);
+        foreach ($post_categories as $c) {
+            $cat = get_category($c);
+            if ($cat->category_parent == $this->categoryLocationID) {
+                $job_location['name'] = $cat->name;
+                $job_location['link'] = get_category_link($cat->term_id);
+            }
+        }
+        return empty($job_location) ? false : "<a href='$job_location[link]'>$job_location[name]</a>";
     }
 
     public function buildFormQueryJob($user_id, $search = false)
@@ -361,7 +386,7 @@ class QueryPostJob
         return $strPaging;
     }
 
-    function buildListJob($argc)
+    function buildListJob($argc, $paging = true)
     {
         if (is_array($argc))
             $loopJobs = new WP_Query($argc);
@@ -386,10 +411,11 @@ class QueryPostJob
                         }
                         $customField = get_post_custom($postID);
                         $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
-                        $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
+//                        $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
                         $company_id = empty($customField["company_id"][0]) ? '' : $customField["company_id"][0];
                         $getDataCompany = $company_id ? $this->ClassEmployer->getCompanyInfo($company_id) : false;
                         $company_name = $getDataCompany ? $getDataCompany[0]->company_name : "";
+                        $job_location = $this->getSubCatLocation($postID);
                         ?>
                         <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
                             <div class="col-md-12">
@@ -407,7 +433,7 @@ class QueryPostJob
                                     <?php echo empty($job_type) ? "" : $job_type; ?><br/>
                                 </div>
                                 <div class="col-md-2">
-                                    <br/><?php the_date('M d, Y'); ?><br/>
+                                    <?php the_date('M d, Y'); ?><br/>
                                     <?php echo empty($job_location) ? "" : $job_location; ?><br/>
                                 </div>
                             </div>
@@ -415,7 +441,8 @@ class QueryPostJob
                     <?php endwhile; ?>
                 </ul>
                 <?php
-                echo $this->buildPagingPostJob($loopJobs); ?>
+                if ($paging)
+                    echo $this->buildPagingPostJob($loopJobs); ?>
             <?php else: ?>
                 <div class="no-padding">Not result</div>
             <?php endif; ?>
@@ -426,4 +453,68 @@ class QueryPostJob
         ob_end_clean();
         return $strContent;
     }
+
+    function buildHighlightJobs()
+    {
+        $argc = $this->queryHighlightJobs(-1);
+        $loopHighlightJobs = new WP_Query($argc);
+        $i = 0;
+        ob_start();
+        if ($loopHighlightJobs->have_posts()):
+            ?>
+
+            <ul class="job-list" style="padding: 0px;">
+                <?php while ($loopHighlightJobs->have_posts()) :
+                    $loopHighlightJobs->the_post();
+                    $postID = get_the_id();
+                    $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
+                    if (empty($url)) {
+                        $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
+                    } else {
+                        $thumbnail = $url;
+                    }
+                    $customField = get_post_custom($postID);
+                    $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
+                    $job_location = $this->getSubCatLocation($postID);
+                    ?>
+                    <?php if ($i % 4 == 0 && $i > 0): ?>
+                    <div class="item">
+                    <ul class="job-list" style="padding: 0px;">
+                <?php else: ?>
+                    <li class="col-md-6 clearfix">
+                        <div class="col-md-4" style="padding: 0px;">
+                            <a href="<?php the_permalink(); ?>" target="_blank"><img
+                                    src="<?php echo $thumbnail; ?>"
+                                    style="width: 100%"/></a>
+                        </div>
+                        <div class="col-md-8" style="padding: 0 0 0 10px;">
+                            <h4 style="font-size: 14px !important; color: #BF2026"><a
+                                    href="<?php the_permalink(); ?>"
+                                    target="_blank"><?php the_title(); ?></a></h4>
+
+                            <p class="font-size-12">
+                                <span class="font-color-4D94CC"><?php echo $job_location; ?></span><br/>
+                                <?php echo $job_type; ?><br/>
+                                <?php the_date('d F, Y'); ?>
+                            </p>
+                        </div>
+                    </li>
+                <?php endif; ?>
+
+                    <?php if ($i % 4 == 0 && $i > 0): ?>
+                    </ul>
+                    </div>
+                <?php endif; ?>
+
+                    <?php $i++;
+                endwhile;?>
+
+            </ul> <?php
+        endif;
+        $strContent = ob_get_contents();
+        ob_end_clean();
+        return $strContent;
+
+    }
+
 }

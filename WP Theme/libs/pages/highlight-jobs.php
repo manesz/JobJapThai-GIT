@@ -31,7 +31,7 @@ $classQueryPostJob = new QueryPostJob($wpdb);
                     <hr/>
                     <div class="col-md-12 border-bottom-1-ddd no-padding"
                          style="padding-bottom: 10px !important;">
-                        <input type="hidden" id="type_query" value="favorite">
+                        <input type="hidden" id="type_query" value="highlight_jobs" >
                         <?php
                         echo $classQueryPostJob->buildFormQueryJob(0);
                         ?>
