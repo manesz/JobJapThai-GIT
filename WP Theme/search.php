@@ -33,7 +33,7 @@ $classQueryPostJob = new QueryPostJob($wpdb);
                     <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png" style="width: 100%; height: auto;"/>
 
                 </div>
-                <?php include_once('libs/sidebar.php'); ?>
+                <?php include_once('libs/pages/sidebar.php'); ?>
             </div>
         </div>
 

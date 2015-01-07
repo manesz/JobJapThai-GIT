@@ -79,7 +79,7 @@ $classQueryPostJob = new QueryPostJob($wpdb);
              style="width: 100%; height: auto; margin-top: 10px;"/>
     </div>
 
-    <?php include_once('libs/sidebar.php'); ?>
+    <?php include_once('libs/pages/sidebar.php'); ?>
 
     </div>
     </div>

@@ -44,7 +44,7 @@ include_once("libs/nav.php");
 
                 </div>
 
-                <?php include_once('libs/sidebar.php'); ?>
+                <?php include_once('libs/pages/sidebar.php'); ?>
             </div>
         </div>
 
