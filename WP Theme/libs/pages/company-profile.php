@@ -298,4 +298,3 @@ if ($company_id):
         </script>
     <?php endif; ?>
 <?php endif; ?>
-<?php get_template_part("footer"); ?>
