@@ -1,16 +1,15 @@
-
 function showImgLoading() {
     hideImgLoading();
     $("body").append(str_loading);
     $('<div id="screenBlock"></div>').appendTo('body');
-    $('#screenBlock').css( { opacity: 0, width: $(document).width(), height: $(document).height() } );
+    $('#screenBlock').css({ opacity: 0, width: $(document).width(), height: $(document).height() });
     $('#screenBlock').addClass('blockDiv');
     $('#screenBlock').animate({opacity: 0.7}, 200);
 }
 
 function hideImgLoading() {
     $(".img_loading").remove();
-    $('#screenBlock').animate({opacity: 0}, 200, function() {
+    $('#screenBlock').animate({opacity: 0}, 200, function () {
         $('#screenBlock').remove();
     });
 }
@@ -27,13 +26,13 @@ function scrollToTop(fade_in) {
         });
 }
 
-function showModalMessage(msg, title) {
+function showModalMessage(msg, title, event) {
     title = title || "Message";
+    event = event || false;
     $("#modal_show_message .modal-body").html(msg);
     $("#modal_show_message #myModalMassage").html(title);
     $('#modal_show_message').modal('show');
 }
-
 function closeModalMessage() {
     $('#modal_show_message').modal('hide');
 }
@@ -61,9 +60,9 @@ var wppage = {
 $(document).ready(wppage.onready);
 
 var post_lost_pass = false;
-$(document).ready(function(){
+$(document).ready(function () {
 //    $("#lost_password").load(url_lost_password);
-    $("#lostpasswordform").submit(function(){
+    $("#lostpasswordform").submit(function () {
         if (!post_lost_pass) {
             showImgLoading();
             $.ajax({
@@ -75,7 +74,7 @@ $(document).ready(function(){
                 success: function (result) {
                     if (result.error) {
                         $("#message_lost_password").html(result.msg);
-                    }else {
+                    } else {
                         $('#user_login').val('');
                         $("#message_lost_password").html(result.msg);
                     }
@@ -92,4 +91,9 @@ $(document).ready(function(){
         post_lost_pass = true;
         return false;
     });
+
+
+    $('#modal_show_message').on('hidden.bs.modal', function () {
+        // do something…
+    })
 });

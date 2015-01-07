@@ -111,6 +111,8 @@ if (is_user_logged_in()) {
                     data: data,
                     success: function (result) {
                         if (!result.error) {
+                            closeModalMessage();
+                            alert('Login Success');
                             window.location.href = result.msg;
                             return true;
                         }

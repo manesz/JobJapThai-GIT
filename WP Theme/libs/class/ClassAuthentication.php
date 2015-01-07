@@ -29,21 +29,21 @@ class Authentication
         $dateSignOn['user_password'] = $pass;
         $dateSignOn['remember'] = false;
         $user = wp_signon($dateSignOn, false);
-        if (is_wp_error($user))//$user->get_error_message()
+        if (is_wp_error($user)) //$user->get_error_message()
             return $this->returnMessage(
                 '<p><strong>ERROR</strong>: The password you entered for the username <strong>' .
-                $userName .'</strong> is incorrect.
+                $userName . '</strong> is incorrect.
                 <a href="#" data-toggle="modal" data-target="#modalForget"
                 onclick="closeModalMessage();">Lost your password</a>?</p>', true);
         else {
-            update_usermeta($user->ID, 'last_login', current_time('mysql'));
+            update_user_meta($user->ID, 'last_login', current_time('mysql'));
             $userType = get_user_meta($user->ID, 'user_type', true);
             if ($userType == "employer")
-                return $this->returnMessage(get_site_url() . '/edit-resume/', false);
+                return $this->returnMessage(get_site_url() . '/edit-resume/', false, false);
             else if ($userType == 'candidate') {
-                return $this->returnMessage(get_site_url() . '/candidate/', false);
+                return $this->returnMessage(get_site_url() . '/candidate/', false, false);
             } else {
-                return $this->returnMessage(get_site_url() . '/', false);
+                return $this->returnMessage(get_site_url() . '/', false, false);
             }
         }
     }
@@ -103,11 +103,14 @@ class Authentication
 
     }
 
-    private function returnMessage($msg, $error) {
+    private function returnMessage($msg, $error, $show_div = true)
+    {
         if ($error) {
-            return json_encode(array('msg' => '<div class="font-color-BF2026"><p>'.$msg.'</p></div>', 'error' => $error));
+            return json_encode(array('msg' => $show_div ? '<div class="font-color-BF2026"><p>' . $msg . '</p></div>' : $msg,
+                'error' => $error));
         } else {
-            return json_encode(array('msg' => '<div class="font-color-4BB748"><p>' .$msg. '</p></div>', 'error' => $error));
+            return json_encode(array('msg' => $show_div ? '<div class="font-color-4BB748"><p>' . $msg . '</p></div>' : $msg,
+                'error' => $error));
         }
     }
 }
