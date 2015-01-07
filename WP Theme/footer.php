@@ -1,6 +1,8 @@
 <?php
 
+global $wpdb;
 $objClassContact = new Contact($wpdb);
+$classQueryPostJob = new QueryPostJob($wpdb);
 $arrayContact = $objClassContact->getContact(1);
 if ($arrayContact) {
     extract((array)$arrayContact[0]);
@@ -53,7 +55,9 @@ if ($arrayContact) {
                 <?php
                 foreach ($termsJobCat as $term):
                     ?>
-                    <li><a href="job?cat=<?php echo $term->slug?>"><?php echo $term->name; ?></a></li>
+                    <li>
+                        <a href="<?php echo home_url(); ?>/job?cat=<?php echo $term->slug ?>"><?php echo $term->name; ?></a>
+                    </li>
                 <?php endforeach; ?>
                 </ul><?php
             endif;
@@ -63,14 +67,26 @@ if ($arrayContact) {
         <div class="col-md-3">
             <ul class="clearfix" style="list-style: none; border: none;">
                 <li><span style="color: #BF2026">Location</span></li>
-                <li>Jobs in Bangkok</li>
-                <li>Jobs in Chachoengsao</li>
-                <li>Jobs in Chonburi</li>
-                <li>Jobs in Nonthaburi</li>
-                <li>Jobs in Pathum Thani</li>
-                <li>Jobs in Ratonh</li>
-                <li>Jobs in Samut Prakan</li>
-                <li>Jobs in Samut Sakhon</li>
+                <!--                <li>Jobs in Bangkok</li>-->
+                <!--                <li>Jobs in Chachoengsao</li>-->
+                <!--                <li>Jobs in Chonburi</li>-->
+                <!--                <li>Jobs in Nonthaburi</li>-->
+                <!--                <li>Jobs in Pathum Thani</li>-->
+                <!--                <li>Jobs in Ratonh</li>-->
+                <!--                <li>Jobs in Samut Prakan</li>-->
+                <!--                <li>Jobs in Samut Sakhon</li>-->
+                <?php
+                $all_cats = get_categories('child_of=' . $classQueryPostJob->categoryLocationID . '&hide_empty=0');
+                $arrayLocation = array();
+                foreach ($all_cats as $value) {
+                    if ($value->parent) {
+                        $arrayLocation[] = $value;
+                    }
+                }
+                foreach ($arrayLocation as $value) : ?>
+                    <li><a href="<?php echo get_category_link($value->term_taxonomy_id); ?>">Jobs
+                            in <?php echo $value->name; ?></a></li>
+                <?php endforeach; ?>
             </ul>
         </div>
         <div class="col-md-3">
@@ -105,11 +121,16 @@ if ($arrayContact) {
         </div>
         <div class="col-md-6">
             <ul class="sitemaps pull-right no-margin">
-                <li class="no-margin" style="float: left; width: auto;">Home</li>
-                <li class="no-margin" style="float: left; width: auto;">About Us</li>
-                <li class="no-margin" style="float: left; width: auto;">Contact Us</li>
-                <li class="no-margin" style="float: left; width: auto;">JobJapThai News</li>
-                <li class="no-margin" style="float: left; width: auto;">Sitemaps</li>
+                <li class="no-margin" style="float: left; width: auto;"><a href="<?php echo home_url(); ?>">Home</a>
+                </li>
+                <li class="no-margin" style="float: left; width: auto;"><a href="<?php echo home_url(); ?>/about-us">About
+                        Us</a></li>
+                <li class="no-margin" style="float: left; width: auto;"><a href="<?php echo home_url(); ?>/contact">Contact
+                        Us</a></li>
+                <li class="no-margin" style="float: left; width: auto;"><a href="<?php echo home_url(); ?>/news">JobJapThai
+                        News</a></li>
+                <li class="no-margin" style="float: left; width: auto;"><a
+                        href="<?php echo home_url(); ?>/">Sitemaps</a></li>
             </ul>
         </div>
     </div>
@@ -117,7 +138,7 @@ if ($arrayContact) {
 </footer><!-- END : footers.container-fluid -->
 
 <?php
-    include_once('libs/pages/modal.php');
+include_once('libs/pages/modal.php');
 ?>
 
 <!-- Modal -->
@@ -131,8 +152,11 @@ if ($arrayContact) {
         height: 0px;
         z-index: 9998;
     }
+
     .img_loading {
-        position: fixed; top: 40%; left: 50%;
+        position: fixed;
+        top: 40%;
+        left: 50%;
         z-index: 9999;
     }
 </style>

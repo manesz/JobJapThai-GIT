@@ -187,6 +187,9 @@ if ($_REQUEST) {
             case "search":
                 $argc = $classQueryPostJob->querySearchJob();
                 break;
+            case "highlight_jobs":
+                $argc = $classQueryPostJob->queryHighlightJobs();
+                break;
         }
         echo $classQueryPostJob->buildListJob($argc);
         exit;
