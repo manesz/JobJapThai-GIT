@@ -24,7 +24,7 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
 
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li class="col-md-6 text-center <?php echo $s != 'advance' ? 'active' : ''; ?>"
+            <li class="col-md-6 text-center <?php echo $s == 'advance' ? '' : 'active'; ?>"
                 style="list-style: none; border: none;">
                 <a href="#search" role="tab"
                    data-toggle="tab">Search</a>
@@ -38,7 +38,7 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
 
         <!-- Tab panes -->
         <div class="tab-content">
-            <div class="tab-pane" id="search" style="padding-top: 20px;">
+            <div class="tab-pane <?php echo $s == 'advance' ? '' : 'active'; ?>" id="search" style="padding-top: 20px;">
                 <form role="search" action="<?php echo esc_url(home_url('/')); ?>" method="get">
                     <div class="form-group clearfix" style="margin-bottom: 10px;">
                         <label for="textSearch1" class="" style="font-size: 12px; padding-right: 0px;">Search:</label>
