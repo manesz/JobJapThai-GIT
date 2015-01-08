@@ -295,6 +295,7 @@ if (is_user_logged_in()) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" id="first_name" name="first_name" class="form-control"
+                                   maxlength="50"
                                    required="" value="<?php echo empty($first_name) ? "" : $first_name; ?>"
                                 />
                         </div>
@@ -303,7 +304,8 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="last_name">Surname / Last Name<span
                                     class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <input type="text" id="last_name" name="last_name" class="form-control"
+                            <input type="text" maxlength="50"
+                                   id="last_name" name="last_name" class="form-control"
                                    value="<?php echo empty($last_name) ? "" : $last_name; ?>"
                                    required/>
                         </div>
@@ -322,7 +324,8 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="date_of_birth">Date of birth<span
                                     class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <input type="text" id="date_of_birth" name="date_of_birth" class="form-control datepicker"
+                            <input type="text" maxlength="20"
+                                   id="date_of_birth" name="date_of_birth" class="form-control datepicker"
                                    required placeholder="dd/mm/yyyy"
                                    value="<?php echo empty($date_of_birth) ? '' : $date_of_birth; ?>"/>
                         </div>
@@ -331,7 +334,8 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="phone">Phone / Mobile<span
                                     class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <input type="text" id="phone" name="phone" class="form-control" required
+                            <input type="text" maxlength="50"
+                                   id="phone" name="phone" class="form-control" required
                                    value="<?php echo empty($phone) ? '' : $phone; ?>"/>
                         </div>
                     </div>
@@ -405,7 +409,7 @@ if (is_user_logged_in()) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" id="year_of_work_exp" name="year_of_work_exp" class="form-control"
-                                   placeholder="Year(s)"
+                                   placeholder="Year(s)" maxlength="50"
                                    value="<?php echo empty($year_of_work_exp) ? "" : $year_of_work_exp; ?>"/>
                             <span class="font-color-red">please enter only number No.(-) or (.) and space.</span>
                         </div>
@@ -414,7 +418,8 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="last_position">Lasted Position</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" id="last_position" name="last_position" class="form-control"
+                            <input type="text" maxlength="50"
+                                   id="last_position" name="last_position" class="form-control"
                                    value="<?php echo empty($last_position) ? "" : $last_position; ?>"/>
                         </div>
                     </div>
@@ -443,7 +448,7 @@ if (is_user_logged_in()) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" id="last_month_salary" name="last_month_salary" class="form-control"
-                                   placeholder="THB"
+                                   placeholder="THB" maxlength="50"
                                    value="<?php echo empty($last_month_salary) ? "" : $last_month_salary; ?>"/>
                             <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
                         </div>
@@ -502,7 +507,7 @@ if (is_user_logged_in()) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" id="expect_month_salary" name="expect_month_salary" class="form-control"
-                                   placeholder="THB"
+                                   placeholder="THB" maxlength="50"
                                    value="<?php echo empty($expect_month_salary) ? "" : $expect_month_salary; ?>"/>
                             <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
                         </div>
@@ -520,7 +525,7 @@ if (is_user_logged_in()) {
                     <div class="form-group col-md-12">
                         <div class="col-md-4 text-right clearfix"><label for="start_date">Start Date</label></div>
                         <div class="col-md-8">
-                            <input type="text" id="start_date" name="start_date"
+                            <input type="text" id="start_date" name="start_date" maxlength="20"
                                    class="form-control datepicker" placeholder="dd/mm/yyyy"
                                    value="<?php echo empty($start_date) ? "" : date("d/m/Y", strtotime($start_date)); ?>"/>
                         </div>
@@ -567,7 +572,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="university">University /
                                 Institute</label></div>
                         <div class="col-md-8">
-                            <input type="text" id="university" name="university"
+                            <input type="text" id="university" name="university" maxlength="80"
                                    class="form-control" placeholder="" required/>
                         </div>
                     </div>
@@ -576,7 +581,7 @@ if (is_user_logged_in()) {
                                 Period</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" id="education_period_from" name="education_period_from"
+                            <input type="text" id="education_period_from" name="education_period_from" maxlength="50"
                                    class="form-control datepicker" placeholder="From: dd/mm/yyyy" required=""/>
                         </div>
                     </div>
@@ -584,7 +589,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix">
                         </div>
                         <div class="col-md-8">
-                            <input type="text" id="education_period_to" name="education_period_to"
+                            <input type="text" id="education_period_to" name="education_period_to" maxlength="20"
                                    class="form-control datepicker" placeholder="To: dd/mm/yyyy" required=""/>
                         </div>
                     </div>
@@ -592,7 +597,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="grade_gpa">Grade / GPA</label></div>
                         <div class="col-md-8">
                             <input type="text" id="grade_gpa" name="grade_gpa" class="form-control"
-                                   placeholder="" required=""/>
+                                   placeholder="" required="" maxlength="20"/>
                         </div>
                     </div>
                     <div class="form-group col-md-12 text-right">
@@ -633,7 +638,7 @@ if (is_user_logged_in()) {
                         </div>
                         <div class="col-md-8">
                             <input type="text" id="employment_period_from" name="employment_period_from"
-                                   class="form-control"
+                                   class="form-control" maxlength="20"
                                    placeholder="From: mm/yyyy" required=""/>
                         </div>
                     </div>
@@ -641,7 +646,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"></div>
                         <div class="col-md-8">
                             <input type="text" id="employment_period_to" name="employment_period_to"
-                                   class="form-control"
+                                   class="form-control" maxlength="20"
                                    placeholder="To: mm/yyyy" required=""/>
                         </div>
                     </div>
@@ -649,21 +654,21 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"><label for="company_name">Company Name</label></div>
                         <div class="col-md-8">
                             <input type="text" id="company_name" name="company_name" class="form-control"
-                                   placeholder="" required=""/>
+                                   placeholder="" required="" maxlength="80"/>
                         </div>
                     </div>
                     <div class="form-group col-md-12">
                         <div class="col-md-4 text-right clearfix"><label for="position">Position</label></div>
                         <div class="col-md-8">
                             <input type="text" id="position" name="position" class="form-control"
-                                   placeholder="" required=""/>
+                                   placeholder="" required="" maxlength="50"/>
                         </div>
                     </div>
                     <div class="form-group col-md-12">
                         <div class="col-md-4 text-right clearfix"><label for="month_salary">Monthly Salary</label></div>
                         <div class="col-md-8">
                             <input type="text" id="month_salary" name="month_salary" class="form-control"
-                                   placeholder="" required=""/>
+                                   placeholder="" required="" maxlength="50"/>
                             <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
                         </div>
                     </div>
@@ -751,7 +756,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-4 text-right clearfix"></div>
                         <div class="col-md-8">
                             <input type="text" id="toeic_toefl_ielts_score" name="toeic_toefl_ielts_score"
-                                   class="form-control" placeholder="Your Score: 999" required=""
+                                   class="form-control" placeholder="Your Score: 999" required="" maxlength="50"
                                    value="<?php echo empty($toeic_toefl_ielts_score) ? "" : $toeic_toefl_ielts_score; ?>"/>
                         </div>
                     </div>
