@@ -19,7 +19,11 @@ if (is_user_logged_in()) {
 //        $the_last_login = mysql2date($date_format, $lastLogin, false);
 //        echo $the_last_login;
 
+
         $classCandidate = new Candidate($wpdb);
+        $get_image_avatar = $classCandidate->getAvatarPath($userID);
+        $str_image_avatar = "<img src='$get_image_avatar' />";
+
         $objInformation = $classCandidate->getInformation($userID);
         if ($objInformation)
             extract((array)$objInformation[0]);
@@ -42,6 +46,10 @@ if (is_user_logged_in()) {
 }
 
 ?>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/libs/css/jasny-bootstrap.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="<?php echo get_template_directory_uri(); ?>/libs/js/jasny-bootstrap.min.js"></script>
 <script>
     var site_url = '<?php echo get_site_url(); ?>/';
     var is_login = <?php echo $isLogin ? 'true': 'false'; ?>;
@@ -52,13 +60,47 @@ if (is_user_logged_in()) {
     var career_profile_id = <?php echo empty($objCareerProfile)?0:$objCareerProfile[0]->id;?>;
     var desired_job_id = <?php echo empty($objDesiredJob)?0:$objDesiredJob[0]->id;?>;
     var skill_languages_id = <?php echo empty($objSkillLanguage)?0:$objSkillLanguage[0]->id;?>;
+
+    $(document).ready(function () {
+        <?php if ($isLogin): ?>
+        $('#image_avatar').change(function () {
+            if ($(this).val() != '') {
+                var formData = new FormData();
+                formData.append('image_avatar', $(this)[0].files[0]);
+                formData.append('candidate_post', 'true');
+                formData.append('post_type', 'image_avatar');
+                formData.append('candidate_id', <?php echo $userID; ?>);
+                showImgLoading();
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function (result) {
+                        showModalMessage(result.msg, 'Message Candidate');
+                        path_avatar = result.path;
+                        hideImgLoading();
+                    },
+                    error: function (result) {
+                        showModalMessage(result.responseText, 'Message Candidate');
+                        hideImgLoading();
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+
+            }
+        });
+        <?php endif; ?>
+    });
 </script>
+
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/candidate.js"></script>
 <section class="container-fluid" style="margin-top: 10px;">
 
 <div class="container wrapper">
 <div class="row">
-
 <div class="col-md-8">
 <?php if ($isLogin) { ?>
     <div id="sectProfile" class="col-md-12">
@@ -74,10 +116,24 @@ if (is_user_logged_in()) {
 
         </div>
         <div class="col-md-4" style="padding-top: 10px;">
-            <?php echo get_avatar($userID, 100);
+            <?php //echo get_avatar($userID, 100);
             //echo do_shortcode( '[avatar_upload]');
             ?>
-            <input type="button" class="btn" value="Edit">
+            <!--            <input type="button" class="btn" value="Edit">-->
+            <form>
+                <div></div>
+                <div class="fileinput fileinput-new" data-provides="fileinput">
+                    <div id="preview" class="fileinput-preview thumbnail" data-trigger="fileinput"
+                         style="width: 150px;height: 150px;"><?php echo $str_image_avatar; ?></div>
+                    <div>
+                        <span class="btn btn-default btn-file">
+                            <span class="fileinput-new">Select image</span>
+                            <span class="fileinput-exists">Change</span>
+                            <input type="file" name="file" id="image_avatar" class="ephoto-upload" accept="image/jpeg"></span>
+                        <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                    </div>
+                </div>
+            </form>
         </div>
 
     </div>
@@ -323,7 +379,9 @@ if (is_user_logged_in()) {
 
                     <div class="form-group col-md-12" style="">
                         <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
-                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
+                            reset
+                        </button>
                     </div>
                 </div>
             </form>
@@ -393,7 +451,9 @@ if (is_user_logged_in()) {
 
                     <div class="form-group col-md-12" style="">
                         <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
-                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
+                            reset
+                        </button>
                     </div>
                 </div>
             </form>
@@ -468,7 +528,9 @@ if (is_user_logged_in()) {
 
                     <div class="form-group col-md-12" style="">
                         <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
-                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
+                            reset
+                        </button>
                     </div>
                 </div>
             </form>
@@ -486,8 +548,9 @@ if (is_user_logged_in()) {
         </div>
         <div id="candEDUCATION" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <form method="post" id="form_candidate4" class="form-horizontal form_candidate">
-                <input type="hidden" id="post_type" name="post_type" value="add_education" />
-                <input type="hidden" id="education_id" name="education_id" value="0" />
+                <input type="hidden" id="post_type" name="post_type" value="add_education"/>
+                <input type="hidden" id="education_id" name="education_id" value="0"/>
+
                 <div class="panel-body">
                     <div id="education_list"></div>
                     <span>Please provide details of education institutions, dates attended and qualification attained.</span>
@@ -559,8 +622,9 @@ if (is_user_logged_in()) {
         </div>
         <div id="candWorkExperience" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <form method="post" id="form_candidate5" class="form-horizontal form_candidate">
-                <input type="hidden" id="post_type" name="post_type" value="add_work_experience" />
-                <input type="hidden" id="work_experience_id" name="work_experience_id" value="0" />
+                <input type="hidden" id="post_type" name="post_type" value="add_work_experience"/>
+                <input type="hidden" id="work_experience_id" name="work_experience_id" value="0"/>
+
                 <div class="panel-body">
                     <div id="work_experience_list"></div>
                     <div class="form-group col-md-12">
@@ -722,7 +786,9 @@ if (is_user_logged_in()) {
 
                     <div class="form-group col-md-12" style="">
                         <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save</button>
-                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">reset</button>
+                        <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
+                            reset
+                        </button>
                     </div>
                 </div>
             </form>

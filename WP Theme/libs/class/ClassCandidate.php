@@ -1,5 +1,7 @@
 <?php
 
+include('class.upload.php');
+
 class Candidate
 {
     private $wpdb;
@@ -718,17 +720,18 @@ class Candidate
         $job_type = empty($job_type) ? false : $job_type;
         $expect_month_salary = empty($expect_month_salary) ? false : $expect_month_salary;
         $available_to_work = empty($available_to_work) ? false : $available_to_work;
-        if (!empty($start_date)) {
-            list($dd, $mm, $yyyy) = explode('/', $start_date);
-            if (checkdate($mm, $dd, $yyyy)) {
-                $start_date = explode('/', $start_date); //DateTime::createFromFormat('d/m/Y', $check_in);
-                $start_date = $start_date[2] . "-" . $start_date[1] . "-" . $start_date[0];
-            } else {
-                $start_date = "0000-00-00";
-            }
-        } else {
-            $start_date = "0000-00-00";
-        }
+        $start_date = empty($start_date) ? false : $start_date;
+//        if (!empty($start_date)) {
+//            list($dd, $mm, $yyyy) = explode('/', $start_date);
+//            if (checkdate($mm, $dd, $yyyy)) {
+//                $start_date = explode('/', $start_date); //DateTime::createFromFormat('d/m/Y', $check_in);
+//                $start_date = $start_date[2] . "-" . $start_date[1] . "-" . $start_date[0];
+//            } else {
+//                $start_date = "0000-00-00";
+//            }
+//        } else {
+//            $start_date = "0000-00-00";
+//        }
         if (!$desired_job_id) {
             $desired_job_id = $this->addCareerProfile($post);
             if (!$desired_job_id)
@@ -851,20 +854,109 @@ class Candidate
         return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
     }
 
+    function uploadAvatarImage($file)
+    {
+        $handle = new Upload($file);
+        $upload_dir = wp_upload_dir();
+//        echo get_template_directory() . '/library/res/save_data.txt';
+        $dir_dest = $upload_dir['basedir'] . '/avatar' . $upload_dir['subdir'];
 
-//    public function delete($id)
-//    {
-//        $sql = "
-//            UPDATE $this->tableBannerSlide
-//            SET publish = 0
-//            WHERE 1
-//            AND id = {$id};
-//        ";
-//        if ($id) {
-//            $result = $this->wpdb->query($sql);
-//            return $result;
-//        } else {
-//            return FALSE;
-//        }
-//    }
+        $dir_pics = get_site_url() . "/"  . 'wp-content/uploads/avatar' . $upload_dir['subdir'];
+        $arrayReturn = array();
+        $filePath = 'wp-content/uploads/avatar' . $upload_dir['subdir'];;
+        if ($handle->uploaded) {
+            $handle->image_resize = true;
+            $handle->image_ratio_y = true;
+            $handle->image_x = 150;
+
+            // yes, the file is on the server
+            // now, we start the upload 'process'. That is, to copy the uploaded file
+            // from its temporary location to the wanted location
+            // It could be something like $handle->Process('/home/www/my_uploads/');
+            $handle->Process($dir_dest);
+
+            // we check if everything went OK
+            if ($handle->processed) {
+                $dir_pics .= '/' . $handle->file_dst_name;
+                $filePath .= '/' . $handle->file_dst_name;
+                $arrayReturn['error'] = false;
+                // everything was fine !
+                $msgReturn = '<p class="result">';
+                $msgReturn .= '  <b>File uploaded with success</b><br />';
+                $msgReturn .= '  File: <a target="_blank" href="' . $dir_pics . '">' .
+                    $handle->file_dst_name . '</a>';
+                $msgReturn .= '   (' . round(filesize($handle->file_dst_pathname) / 256) / 4 . 'KB)';
+                $msgReturn .= '</p>';
+            } else {
+                $arrayReturn['error'] = true;
+                // one error occured
+                $msgReturn = '<p class="result">';
+                $msgReturn .= '  <b>File not uploaded to the wanted location</b><br />';
+                $msgReturn .= '  Error: ' . $handle->error . '';
+                $msgReturn .= '</p>';
+            }
+
+            // we delete the temporary files
+            $handle->Clean();
+
+        } else {
+            $arrayReturn['error'] = true;
+            // if we're here, the upload file failed for some reasons
+            // i.e. the server didn't receive the file
+            $msgReturn = '<p class="result">';
+            $msgReturn .= '  <b>File not uploaded on the server</b><br />';
+            $msgReturn .= '  Error: ' . $handle->error . '';
+            $msgReturn .= '</p>';
+        }
+        $arrayReturn['msg'] = $msgReturn;
+        $arrayReturn['path'] = $filePath;
+        return $arrayReturn;
+    }
+
+    function addAvatarPath($user_id, $path)
+    {
+        return update_user_meta($user_id, 'avatar_path', $path);
+    }
+
+    function getAvatarPath($user_id)
+    {
+        $path = get_user_meta($user_id, 'avatar_path', true);
+        $pathNonAvatar = get_template_directory_uri() . "/libs/images/non-avatar.jpg";
+        if (empty($path)) {
+            return $pathNonAvatar;
+        }
+        $file_headers = @get_headers(get_site_url() . "/"  . $path);
+        if($file_headers[0] == 'HTTP/1.1 404 Not Found') {
+            return $pathNonAvatar;
+        }
+        return get_site_url() . "/"  . $path;
+    }
+
+    function deleteOldAvatar($user_id)
+    {
+        $path = get_user_meta($user_id, 'avatar_path', true);
+        if (empty($path))
+            return true;
+        $file_headers = @get_headers(get_site_url() . "/"  . $path);
+        if($file_headers[0] != 'HTTP/1.1 404 Not Found') {
+            return unlink($path);
+        }
+        return true;
+    }
+
+    function returnMessage($msg, $error)
+    {
+        if ($error) {
+            $arrayReturn = (array('msg' => '<div class="font-color-BF2026"><p>' . $msg . '</p></div>', 'error' => $error));
+        } else {
+            if (is_array($msg)) {
+                $arrayReturn = $msg;
+                $msg = $msg['msg'];
+            }
+            $arrayReturn['msg'] = '<div class="font-color-4BB748"><p>' . $msg . '</p></div>';
+            $arrayReturn['error'] = $error;
+        }
+        return json_encode($arrayReturn);
+    }
+
 }

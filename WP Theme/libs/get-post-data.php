@@ -116,6 +116,17 @@ if ($_REQUEST) {
                 $result = $classCandidate->editSkillLanguages($_REQUEST);
                 echo $result;
                 break;
+            case "image_avatar":
+                $result = $classCandidate->uploadAvatarImage($_FILES['image_avatar']);
+                if (!$result['error']) {
+                    if (!$classCandidate->deleteOldAvatar($_REQUEST['candidate_id'])) {
+                        echo $classCandidate->returnMessage("Error delete old image.", true);
+                        exit;
+                    }
+                    $classCandidate->addAvatarPath($_REQUEST['candidate_id'], $result['path']);
+                }
+                echo $classCandidate->returnMessage($result, $result['error']);
+                break;
             //End edit
         }
         exit;

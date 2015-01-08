@@ -388,7 +388,7 @@ class QueryPostJob
 
     function buildListJob($argc, $paging = true)
     {
-        if (is_array($argc))
+        if (is_array($argc) || !$argc)
             $loopJobs = new WP_Query($argc);
         else
             $loopJobs = $this->wpdb->get_results($argc);
