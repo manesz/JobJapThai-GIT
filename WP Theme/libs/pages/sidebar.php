@@ -24,11 +24,13 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
 
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active col-md-6 text-center" style="list-style: none; border: none;">
+            <li class="col-md-6 text-center <?php echo $s != 'advance' ? 'active' : ''; ?>"
+                style="list-style: none; border: none;">
                 <a href="#search" role="tab"
                    data-toggle="tab">Search</a>
             </li>
-            <li class="col-md-6 text-center" style="list-style: none; border: none;">
+            <li class="col-md-6 text-center <?php echo $s == 'advance' ? 'active' : ''; ?>"
+                style="list-style: none; border: none;">
                 <a href="#advanceSearch" role="tab"
                    data-toggle="tab">Advance
                     Search</a></li>
@@ -36,12 +38,13 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
 
         <!-- Tab panes -->
         <div class="tab-content">
-            <div class="tab-pane <?php echo $s != 'advance' ? 'active' : ''; ?>" id="search" style="padding-top: 20px;">
+            <div class="tab-pane" id="search" style="padding-top: 20px;">
                 <form role="search" action="<?php echo esc_url(home_url('/')); ?>" method="get">
                     <div class="form-group clearfix" style="margin-bottom: 10px;">
                         <label for="textSearch1" class="" style="font-size: 12px; padding-right: 0px;">Search:</label>
                         <input type="text" id="textSearch1" name="s" class="form-control"
-                               placeholder="enter text search" value="<?php echo get_search_query(); ?>"/>
+                               placeholder="enter text search"
+                               value="<?php echo get_search_query() != 'advance' ? get_search_query() : ''; ?>"/>
                     </div>
                     <div class="form-group clearfix text-center" style="margin: 10px 0 10px 0;">
                         <button type="submit" class="btn btn-default col-md-12"
@@ -79,7 +82,8 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
                         </select>
                     </div>
                     <div class="form-group clearfix" style="margin-bottom: 10px;">
-                        <label for="emp_type" class="" style="font-size: 12px; padding-right: 0px;">Employer Type</label>
+                        <label for="emp_type" class="" style="font-size: 12px; padding-right: 0px;">Employer
+                            Type</label>
                         <select name="emp_type" class="col-md-12 form-control">
                             <option>All Type</option>
                         </select>
@@ -87,7 +91,20 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
                     <div class="form-group clearfix" style="margin-bottom: 10px;">
                         <label for="category" class="" style="font-size: 12px; padding-right: 0px;">Category</label>
                         <select id="category" name="job_cat" class="col-md-12 form-control">
-                            <option>All Categories</option>
+                            <option value="">All Categories</option>
+
+                            <?php $termsJobCat = get_terms('custom_job_cat');
+                            if (!empty($termsJobCat) && !is_wp_error($termsJobCat)) :
+                                ?>
+                                <?php
+                                foreach ($termsJobCat as $term):
+                                    ?>
+                                    <option <?php echo $term->slug == $job_cat ? "selected" : ""; ?>
+                                        value="<?php echo $term->slug ?>"><?php echo $term->name ?></option>
+                                <?php endforeach; ?>
+                            <?php
+                            endif;
+                            ?>
                         </select>
                     </div>
                     <div class="form-group clearfix" style="margin-bottom: 10px;">
@@ -108,8 +125,8 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
     </div>
 
 
-
-    <div class="clearfix" style="<?php if(isset($page) && $page == "news"): echo "display: block; "; else: echo "display: none;"; endif;?>border: 1px #ddd solid; border-radius: 5px; background: #fff; padding: 10px; margin-bottom: 10px;">
+    <div class="clearfix" style="<?php if (isset($page) && $page == "news"): echo "display: block; ";
+    else: echo "display: none;"; endif; ?>border: 1px #ddd solid; border-radius: 5px; background: #fff; padding: 10px; margin-bottom: 10px;">
         <h4 class="font-color-BF2026">
             <img src="<?php echo get_template_directory_uri(); ?>/libs/img/icon-title.png" style="height: 25px;"/>
             Top 5 Hilight Job
@@ -142,9 +159,13 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
                     <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
                         <div class="col-md-12">
                             <div class="col-md-4" style="padding: 0px">
-                                <a href="<?php the_permalink(); ?>"><img src="<?php echo $thumbnail; ?>" style="width: 100%;"/> </div></a>
+                                <a href="<?php the_permalink(); ?>"><img src="<?php echo $thumbnail; ?>"
+                                                                         style="width: 100%;"/></div>
+                            </a>
                             <div class="col-md-8">
-                                <a href="<?php the_permalink(); ?>"><h5 class="font-color-BF2026 no-margin"><?php the_title(); ?></h5></a>
+                                <a href="<?php the_permalink(); ?>"><h5
+                                        class="font-color-BF2026 no-margin"><?php the_title(); ?></h5></a>
+
                                 <p class="font-size-12">
                                     <span class="font-color-4D94CC">Bangkok</span><br/>
                                     Permanent<br/>
@@ -153,7 +174,7 @@ $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
                             </div>
                         </div>
                     </li>
-                <?php endwhile;?>
+                <?php endwhile; ?>
             </ul>
         <?php endif; ?>
     </div>
