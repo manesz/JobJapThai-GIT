@@ -628,6 +628,9 @@ class Candidate
     {
         extract($post);
         $information_id = empty($information_id) ? false : $information_id;
+        $new_password = empty($new_password) ? false : $new_password;
+        $old_password = empty($old_password) ? false : $old_password;
+        $information_id = empty($information_id) ? false : $information_id;
         $title = empty($title) ? false : $title;
         $first_name = empty($first_name) ? false : $first_name;
         $last_name = empty($last_name) ? false : $last_name;
@@ -650,6 +653,18 @@ class Candidate
         $province = empty($province) ? false : $province;
         $district = empty($district) ? false : $district;
         $city = empty($city) ? false : $city;
+
+        if ($new_password && $old_password) {//echo $new_password;echo $old_password;
+            $current_user = wp_get_current_user();
+            $user = get_user_by('login', $current_user->user_login);
+            if ($user && wp_check_password($old_password, $user->data->user_pass, $user->ID)) {
+                wp_set_password($new_password, $user->ID);
+                return '<script>window.location.reload();</script><div class="font-color-4BB748"><p>Edit Success.</p></div>';
+            } else {
+                return '<div class="font-color-BF2026"><p>Error check old password.</p></div>';
+            }
+        }
+
         if (!$information_id) {
             $information_id = $this->addInformation($post);
             if (!$information_id)
@@ -861,7 +876,7 @@ class Candidate
 //        echo get_template_directory() . '/library/res/save_data.txt';
         $dir_dest = $upload_dir['basedir'] . '/avatar' . $upload_dir['subdir'];
 
-        $dir_pics = get_site_url() . "/"  . 'wp-content/uploads/avatar' . $upload_dir['subdir'];
+        $dir_pics = get_site_url() . "/" . 'wp-content/uploads/avatar' . $upload_dir['subdir'];
         $arrayReturn = array();
         $filePath = 'wp-content/uploads/avatar' . $upload_dir['subdir'];;
         if ($handle->uploaded) {
@@ -925,11 +940,11 @@ class Candidate
         if (empty($path)) {
             return $pathNonAvatar;
         }
-        $file_headers = @get_headers(get_site_url() . "/"  . $path);
-        if($file_headers[0] == 'HTTP/1.1 404 Not Found') {
+        $file_headers = @get_headers(get_site_url() . "/" . $path);
+        if ($file_headers[0] == 'HTTP/1.1 404 Not Found') {
             return $pathNonAvatar;
         }
-        return get_site_url() . "/"  . $path;
+        return get_site_url() . "/" . $path;
     }
 
     function deleteOldAvatar($user_id)
@@ -937,8 +952,8 @@ class Candidate
         $path = get_user_meta($user_id, 'avatar_path', true);
         if (empty($path))
             return true;
-        $file_headers = @get_headers(get_site_url() . "/"  . $path);
-        if($file_headers[0] != 'HTTP/1.1 404 Not Found') {
+        $file_headers = @get_headers(get_site_url() . "/" . $path);
+        if ($file_headers[0] != 'HTTP/1.1 404 Not Found') {
             return unlink($path);
         }
         return true;

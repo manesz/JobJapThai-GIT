@@ -253,11 +253,10 @@ if (is_user_logged_in()) {
                         </div>
                     </div>
                     <div class="form-group col-md-12">
-                        <div class="col-md-4 text-right clearfix"><label for="candPassword">Password<span
+                        <div class="col-md-4 text-right clearfix"><label for="old_password">Old Password<span
                                     class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <input type="password" id="candPassword" name="pass" class="form-control"
-                                <?php echo $isLogin ? '' : 'required'; ?>
+                            <input type="password" id="old_password" name="old_password" class="form-control"
                                    data-bv-stringlength="true"
                                    data-bv-stringlength-min="8"
                                    maxlength="50"
@@ -265,18 +264,14 @@ if (is_user_logged_in()) {
                         </div>
                     </div>
                     <div class="form-group col-md-12">
-                        <div class="col-md-4 text-right clearfix"><label for="candConfirmPassword">Confirm Password<span
+                        <div class="col-md-4 text-right clearfix"><label for="new_password">New Password<span
                                     class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <input type="password" id="candConfirmPassword" name="rePass"
+                            <input type="password" id="new_password" name="new_password"
                                    class="form-control"
                                    maxlength="50"
-                                <?php echo $isLogin ? '' : 'required'; ?>
                                    data-bv-stringlength="true"
-                                   data-bv-stringlength-min="8"
-                                   data-bv-identical="true"
-                                   data-bv-identical-field="pass"
-                                   data-bv-identical-message="The password and its confirm are not the same"/>
+                                   data-bv-stringlength-min="8"/>
                         </div>
                     </div>
                     <div class="form-group col-md-12">
@@ -326,7 +321,7 @@ if (is_user_logged_in()) {
                         <div class="col-md-8">
                             <input type="text" maxlength="20"
                                    id="date_of_birth" name="date_of_birth" class="form-control datepicker"
-                                   required placeholder="dd/mm/yyyy"
+                                   required placeholder="dd/mm/yyyy | Ex. 23/02/1980"
                                    value="<?php echo empty($date_of_birth) ? '' : $date_of_birth; ?>"/>
                         </div>
                     </div>
