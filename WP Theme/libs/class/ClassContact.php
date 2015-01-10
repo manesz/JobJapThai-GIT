@@ -40,8 +40,8 @@ class Contact
 
     public function getContact($id = 0)
     {
-        if (!$id)
-            $this->createDB();
+//        if (!$id)
+//            $this->createDB();
         $strAnd = $id ? " AND id=$id" : "";
         $sql = "
             SELECT

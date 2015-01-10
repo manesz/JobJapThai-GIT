@@ -1,3 +1,9 @@
+<?php
+global $wpdb;
+$classCandidate = new Candidate($wpdb);
+
+
+?>
 <section class="container-fluid" style="margin-top: 10px;">
 
     <div class="container wrapper">
@@ -23,17 +29,7 @@
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="preferredPosition">
                             <h5 class="font-color-BF2026" style="">Preferred Positions List</h5>
-                            <ul class="clearfix no-padding">
-                                <?php for($i=0;$i<=30;$i++):?>
-                                <li>
-                                    <div class="col-md-12 no-padding">
-                                        <span class="pull-left">Agriculture / Livestock / Fishery / Mining</span>
-                                        <span class="pull-right font-color-BF2026">13,970</span>
-                                    </div>
-                                </li>
-                                <?php endfor;?>
-                            </ul>
-
+                            <?php echo $classCandidate->buildPreferredPositionsList(); ?>
                         </div>
                         <div class="tab-pane fade" id="fileEducation">...</div>
                         <div class="tab-pane fade" id="levelEducation">...</div>

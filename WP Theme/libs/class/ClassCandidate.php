@@ -19,6 +19,28 @@ class Candidate
         $this->tableUser = $this->wpdb->users;
     }
 
+    function buildPreferredPositionsList()
+    {
+        $getDesiredJob = $this->getDesiredJob(0, 0, " AND expect_month_salary !='' ORDER BY id DESC");
+        ob_start();
+        ?>
+        <ul class="clearfix no-padding">
+            <?php foreach($getDesiredJob as $value): ?>
+            <li>
+                <div class="col-md-12 no-padding">
+                    <span class="pull-left"><?php echo $value->job_type; ?></span>
+                    <span class="pull-right font-color-BF2026"><?php echo number_format($value->expect_month_salary); ?></span>
+                </div>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+        <?php
+
+        $strBuild = ob_get_contents();
+        ob_end_clean();
+        return $strBuild;
+    }
+
     public function getInformation($candidate_id = 0, $id = 0)
     {
         $strAnd = $candidate_id ? " AND candidate_id=$candidate_id" : "";
@@ -53,10 +75,11 @@ class Candidate
         return $result;
     }
 
-    public function getDesiredJob($candidate_id = 0, $id = 0)
+    public function getDesiredJob($candidate_id = 0, $id = 0, $str_and = "")
     {
         $strAnd = $candidate_id ? " AND candidate_id=$candidate_id" : "";
         $strAnd .= $id ? " AND id=$id" : "";
+        $strAnd .= $str_and ? " $str_and" : "";
         $sql = "
             SELECT
               *
