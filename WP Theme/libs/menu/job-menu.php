@@ -87,6 +87,7 @@ function custom_post_job()
         $salary = $custom["salary"][0];
         $working_day = $custom["working_day"][0];
         $company_id = $custom["company_id"][0];
+        $highlight_jobs = $custom["highlight_jobs"][0];
 
         $objCompany = $classEmployer->getCompanyInfo();
         ?>
@@ -98,8 +99,9 @@ function custom_post_job()
         <link href="<?php echo get_template_directory_uri(); ?>/libs/js/libs/select2/select2.css" rel="stylesheet"/>
         <script src="<?php echo get_template_directory_uri(); ?>/libs/js/libs/select2/select2.js"></script>
         <script>
-            jQuery(document).ready(function () {
-                jQuery("#company_id").select2();
+            var $ = jQuery;
+            $(document).ready(function () {
+                $("#company_id").select2();
             });
         </script>
         <table>
@@ -115,6 +117,15 @@ function custom_post_job()
                         <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="highlight_jobs">Highlight jobs:</label></td>
+                <td>
+                    <input type="checkbox" value="<?php echo empty($highlight_jobs)? 0 : $highlight_jobs;?>"
+                           <?php echo $highlight_jobs ? 'checked' : ''; ?>
+                           name="highlight_jobs"
+                           onclick="this.value=$(this).prop('checked')?1:0;">
                 </td>
             </tr>
             <tr>
@@ -201,6 +212,7 @@ function custom_post_job()
         update_post_meta($post->ID, "salary", $_POST["salary"]);
         update_post_meta($post->ID, "working_day", $_POST["working_day"]);
         update_post_meta($post->ID, "company_id", $_POST["company_id"]);
+        update_post_meta($post->ID, "highlight_jobs", $_POST["highlight_jobs"]);
         return true;
     }
 

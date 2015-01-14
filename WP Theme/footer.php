@@ -142,28 +142,6 @@ include_once('libs/pages/modal.php');
 ?>
 
 <!-- Modal -->
-<style type="text/css">
-    .blockDiv {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        background-color: #FFF;
-        width: 0px;
-        height: 0px;
-        z-index: 9998;
-    }
-
-    .img_loading {
-        position: fixed;
-        top: 40%;
-        left: 50%;
-        z-index: 9999;
-    }
-</style>
-<script>
-    var str_loading = '<div class="img_loading"><img src="<?php
-    bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
-</script>
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/footer.js"></script>
 
 </body>
