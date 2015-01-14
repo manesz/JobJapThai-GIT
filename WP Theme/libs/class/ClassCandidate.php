@@ -137,7 +137,8 @@ class Candidate
                         To: <?php echo $value->education_period_to; ?></td>
                     <td><?php echo $value->grade_gpa; ?></td>
                     <td>
-                        <a href="javascript:educationSetValue(<?php echo $strSetValueForEdit; ?>);">Edit</a>|<a>Delete</a>
+                        <a href="javascript:educationSetValue(<?php echo $strSetValueForEdit; ?>);">Edit</a>|
+                        <a href="javascript:deleteEducation(<?php echo $value->id; ?>);">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -196,7 +197,7 @@ class Candidate
                     <td><?php echo $value->job_duties; ?></td>
                     <td>
                         <a href="javascript:workExperienceSetValue(<?php echo $strSetValueForEdit; ?>);">Edit</a>|
-                        <a>Delete</a>
+                        <a href="javascript:deleteWorkExperience(<?php echo $value->id; ?>);">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -512,10 +513,10 @@ class Candidate
         $pass = empty($pass) ? false : $pass;
         $rePass = empty($rePass) ? false : $rePass;
         if ($pass != $rePass && $pass && $rePass) {
-            return '<div class="font-color-BF2026"><p>Error! Check your password and confirm password.</p></div>';
+            return $this->returnMessage('Error! Check your password and confirm password.', true);
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return '<div class="font-color-BF2026"><p>Invalid email format.</p></div>';
+            return 'Invalid email format.';
         }
         list($username) = explode('@', $email);
         $userData = array(
@@ -535,32 +536,32 @@ class Candidate
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return '<div class="font-color-BF2026"><p>Error add information for contact.</p></div>';
+                return 'Error add information for contact.';
             }
             $result = $this->addCareerProfile($postData);
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return '<div class="font-color-BF2026"><p>Error add Career Profile for contact.</p></div>';
+                return 'Error add Career Profile for contact.';
             }
             $result = $this->addDesiredJob($postData);
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return '<div class="font-color-BF2026"><p>Error add Desired Job for contact.</p></div>';
+                return 'Error add Desired Job for contact.';
             }
             $result = $this->addSkillLanguages($postData);
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return '<div class="font-color-BF2026"><p>Error add Skill Languages for contact.</p></div>';
+                return 'Error add Skill Languages for contact.';
             }
         } else {
             $error_string = $user_id->get_error_message();
-            return '<div class="font-color-BF2026"><p>' . $error_string . '</p></div>';
+            return '' . $error_string . '';
         }
         $this->setUserLogin($user_id);
-        return '<div class="font-color-4BB748"><p>Add Success.</p></div>';
+        return $this->returnMessage('Add Success.', false);
     }
 
     public function addCompanyInfo($post)
@@ -682,16 +683,16 @@ class Candidate
             $user = get_user_by('login', $current_user->user_login);
             if ($user && wp_check_password($old_password, $user->data->user_pass, $user->ID)) {
                 wp_set_password($new_password, $user->ID);
-                return '<script>window.location.reload();</script><div class="font-color-4BB748"><p>Edit Success.</p></div>';
+                return $this->returnMessage('<script>window.location.reload();</script>Edit Success.', false);
             } else {
-                return '<div class="font-color-BF2026"><p>Error check old password.</p></div>';
+                return $this->returnMessage('Error check old password.', true);
             }
         }
 
         if (!$information_id) {
             $information_id = $this->addInformation($post);
             if (!$information_id)
-                return '<div class="font-color-BF2026"><p>Error add Information.</p></div>';
+                return $this->returnMessage('Error add Information.', true);
         } else {
             $sql = "
             UPDATE `$this->tableInformation`
@@ -712,9 +713,9 @@ class Candidate
         ";
             $result = $this->wpdb->query($sql);
             if (!$result)
-                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+                return $this->returnMessage('Sorry Edit Error.', true);
         }
-        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+        return $this->returnMessage('Edit Success.', false);
     }
 
     public function editCareerProfile($post)
@@ -729,7 +730,7 @@ class Candidate
         if (!$career_profile_id) {
             $career_profile_id = $this->addCareerProfile($post);
             if (!$career_profile_id)
-                return '<div class="font-color-BF2026"><p>Error add Career Profile.</p></div>';
+                return $this->returnMessage('Error add Career Profile.', true);
         } else {
             $sql = "
             UPDATE `$this->tableCareerProfile`
@@ -744,9 +745,9 @@ class Candidate
         ";
             $result = $this->wpdb->query($sql);
             if (!$result)
-                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+                return $this->returnMessage('Sorry Edit Error.', true);
         }
-        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+        return $this->returnMessage('Edit Success.', false);
     }
 
     public function editDesiredJob($post)
@@ -773,7 +774,7 @@ class Candidate
         if (!$desired_job_id) {
             $desired_job_id = $this->addCareerProfile($post);
             if (!$desired_job_id)
-                return '<div class="font-color-BF2026"><p>Error add Desired Job.</p></div>';
+                return $this->returnMessage('Error add Desired Job.', true);
         } else {
             $sql = "
             UPDATE `$this->tableDesiredJob`
@@ -789,9 +790,9 @@ class Candidate
         ";
             $result = $this->wpdb->query($sql);
             if (!$result)
-                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+                return $this->returnMessage('Sorry Edit Error.', true);
         }
-        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+        return $this->returnMessage('Edit Success.', false);
     }
 
     public function editEducation($post)
@@ -804,7 +805,7 @@ class Candidate
         $education_period_to = empty($education_period_to) ? false : $education_period_to;
         $grade_gpa = empty($grade_gpa) ? false : $grade_gpa;
         if (!$education_id)
-            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+            return $this->returnMessage('Error no id.', true);
         $sql = "
             UPDATE `$this->tableEducation`
             SET
@@ -818,8 +819,27 @@ class Candidate
         ";
         $result = $this->wpdb->query($sql);
         if (!$result)
-            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
-        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+            return $this->returnMessage('Sorry Edit Error.', true);
+        return $this->returnMessage('Edit Success.', false);
+    }
+
+    function deleteEducation($post)
+    {
+        extract($post);
+        $education_id = empty($education_id) ? false : $education_id;
+        if (!$education_id)
+            return $this->returnMessage('Error no id.', true);
+        $sql = "
+            UPDATE `$this->tableEducation`
+            SET
+              `update_datetime` = NOW(),
+              `publish` = 0
+            WHERE `id` = '$education_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return $this->returnMessage('Sorry Edit Error.', true);
+        return $this->returnMessage('Delete Success.', false);
     }
 
     public function editWorkExperience($post)
@@ -833,7 +853,7 @@ class Candidate
         $month_salary = empty($month_salary) ? false : $month_salary;
         $job_duties = empty($job_duties) ? false : $job_duties;
         if (!$work_experience_id)
-            return '<div class="font-color-BF2026"><p>Error no id.</p></div>';
+            return 'Error no id.';
         $sql = "
             UPDATE `$this->tableWorkExperience`
             SET
@@ -848,8 +868,27 @@ class Candidate
         ";
         $result = $this->wpdb->query($sql);
         if (!$result)
-            return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
-        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+            return $this->returnMessage('Sorry Edit Error.', true);
+        return $this->returnMessage('Edit Success.', false);
+    }
+
+    function deleteWorkExperience($post)
+    {
+        extract($post);
+        $work_experience_id = empty($work_experience_id) ? false : $work_experience_id;
+        if (!$work_experience_id)
+            return $this->returnMessage('Error no id.', true);
+        $sql = "
+            UPDATE `$this->tableWorkExperience`
+            SET
+              `update_datetime` = NOW(),
+              `publish` = 0
+            WHERE `id` = '$work_experience_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return $this->returnMessage('Sorry Edit Error.', true);
+        return $this->returnMessage('Delete Success.', false);
     }
 
     public function editSkillLanguages($post)
@@ -868,7 +907,7 @@ class Candidate
         if (!$skill_languages_id) {
             $skill_languages_id = $this->addSkillLanguages($post);
             if (!$skill_languages_id)
-                return '<div class="font-color-BF2026"><p>Error add Skill Languages.</p></div>';
+                return $this->returnMessage('Error add Skill Languages.', true);
         } else {
             $sql = "
             UPDATE `$this->tableSkillLanguages`
@@ -887,9 +926,9 @@ class Candidate
         ";
             $result = $this->wpdb->query($sql);
             if (!$result)
-                return '<div class="font-color-BF2026"><p>Sorry Edit Error.</p></div>';
+                return $this->returnMessage('Sorry Edit Error.', true);
         }
-        return '<div class="font-color-4BB748"><p>Edit Success.</p></div>';
+        return $this->returnMessage('Edit Success.', false);
     }
 
     function uploadAvatarImage($file)
@@ -982,7 +1021,7 @@ class Candidate
         return true;
     }
 
-    function returnMessage($msg, $error)
+    function returnMessage($msg, $error, $json = true)
     {
         if ($error) {
             $arrayReturn = (array('msg' => '<div class="font-color-BF2026"><p>' . $msg . '</p></div>', 'error' => $error));
@@ -994,7 +1033,7 @@ class Candidate
             $arrayReturn['msg'] = '<div class="font-color-4BB748"><p>' . $msg . '</p></div>';
             $arrayReturn['error'] = $error;
         }
-        return json_encode($arrayReturn);
+        return $json ? json_encode($arrayReturn) : $arrayReturn;
     }
 
 }

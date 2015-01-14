@@ -550,6 +550,7 @@ if (is_user_logged_in()) {
             <form method="post" id="form_candidate4" class="form-horizontal form_candidate">
                 <input type="hidden" id="post_type" name="post_type" value="add_education"/>
                 <input type="hidden" id="education_id" name="education_id" value="0"/>
+                <input type="hidden" name="candidate_id" value="<?php echo $userID; ?>"/>
 
                 <div class="panel-body">
                     <div id="education_list"></div>
@@ -624,6 +625,7 @@ if (is_user_logged_in()) {
             <form method="post" id="form_candidate5" class="form-horizontal form_candidate">
                 <input type="hidden" id="post_type" name="post_type" value="add_work_experience"/>
                 <input type="hidden" id="work_experience_id" name="work_experience_id" value="0"/>
+                <input type="hidden" name="candidate_id" value="<?php echo $userID; ?>"/>
 
                 <div class="panel-body">
                     <div id="work_experience_list"></div>

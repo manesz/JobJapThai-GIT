@@ -66,6 +66,7 @@ if ($_REQUEST) {
         switch ($postType) {
             case "add":
                 $result = $classCandidate->addCandidate($_REQUEST);
+//                $generatedKey = sha1(mt_rand(10000,99999).time().$email);;
                 echo $result;
                 break;
             case "edit":
@@ -81,14 +82,14 @@ if ($_REQUEST) {
             case "add_education":
                 $result = $classCandidate->addEducation($_REQUEST);
                 if ($result)
-                    echo 'success';
-                else echo 'fail';
+                    echo $classCandidate->returnMessage("Add education success.", false);
+                else echo $classCandidate->returnMessage("Add education fail.", true);
                 break;
             case "add_work_experience":
                 $result = $classCandidate->addWorkExperience($_REQUEST);
                 if ($result)
-                    echo 'success';
-                else echo 'fail';
+                    echo $classCandidate->returnMessage("Add work experience success.", false);
+                else echo $classCandidate->returnMessage("Add work experience fail.", true);
                 break;
 
             //Edit
@@ -128,6 +129,17 @@ if ($_REQUEST) {
                 echo $classCandidate->returnMessage($result, $result['error']);
                 break;
             //End edit
+
+            //Delete
+            case "delete_education":
+                $result = $classCandidate->deleteEducation($_REQUEST);
+                echo $result;
+                break;
+            case "delete_work_experience":
+                $result = $classCandidate->deleteWorkExperience($_REQUEST);
+                echo $result;
+                break;
+            //End Delete
         }
         exit;
     }
@@ -218,10 +230,10 @@ if ($_REQUEST) {
 
 //    }
 
-    $signInPost = isset($_POST['sign_in_post']) ? $_POST['sign_in_post'] : false;
+    $signInPost = isset($_REQUEST['sign_in_post']) ? $_REQUEST['sign_in_post'] : false;
     if ($signInPost == "true") {
         $classAuthentication = new Authentication($wpdb);
-        echo $classAuthentication->signin($_POST);
+        echo $classAuthentication->signin($_REQUEST);
         exit;
     }
 }

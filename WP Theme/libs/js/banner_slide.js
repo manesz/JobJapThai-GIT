@@ -95,7 +95,7 @@ function getGalleryList(url) {
      }
      });*/
     $.ajax({
-        type: "POST",
+        type: "GET",
         cache: false,
 //        contentType: "application/json",
         dataType: 'json',
@@ -125,7 +125,7 @@ function getGalleryList(url) {
                             arrayOrderID.push($(this).attr("data"));
                         });
                         $.ajax({
-                            type: "POST",
+                            type: "GET",
                             url: '',
                             data: {
                                 post_page: 'banner_slide',
@@ -179,7 +179,7 @@ function getJsonAdd() {
 
     var myurl = $('input#siteurl').val();
     $.ajax({
-        type: "POST",
+        type: "GET",
         cache: false,
 //        contentType: "application/json",
         dataType: 'json',

@@ -119,16 +119,22 @@ $(document).ready(function () {
 //                alert(data);return;
                 showImgLoading();
                 $.ajax({
-                    type: "POST",
-                    url: '',
+                    type: "GET",
+                    dataType: 'json',
+                    cache: false,
+                    url: url_post,
                     data: data,
                     success: function (result) {
-                        if (!is_login) {
-                            showModalMessage(result, "Message Add Candidate");
-                            window.location.reload();
-                        }
-                        else {
-                            showModalMessage(result, "Message Edit Candidate");
+                        if (!result.error) {
+                            if (!is_login) {
+                                showModalMessage(result.msg, "Message Add Candidate");
+                                window.location.reload();
+                            }
+                            else {
+                                showModalMessage(result.msg, "Message Edit Candidate");
+                            }
+                        } else {
+                            showModalMessage(result.msg);
                         }
 
                         if (check_education_post) {
@@ -200,7 +206,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     career_profile_id: career_profile_id
                 });
-                 break;
+                break;
             case 3:
                 data_for_post = $.param({
                     candidate_post: 'true',
@@ -208,7 +214,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     desired_job_id: desired_job_id
                 });
-                 break;
+                break;
             case 6:
                 data_for_post = $.param({
                     candidate_post: 'true',
@@ -216,7 +222,7 @@ $(document).ready(function () {
                     candidate_id: candidate_id,
                     skill_languages_id: skill_languages_id
                 });
-                 break;
+                break;
         }
     });
     $("#btn_add_education").click(function () {
@@ -251,8 +257,10 @@ $(document).ready(function () {
 function getEducation() {
     showImgLoading();
     $.ajax({
-        type: "POST",
-        url: '',
+        type: "GET",
+//        dataType: 'json',
+//        cache: false,
+        url: url_post,
         data: {
             candidate_post: 'true',
             post_type: 'get_education',
@@ -272,8 +280,10 @@ function getEducation() {
 function getWorkExperience() {
     showImgLoading();
     $.ajax({
-        type: "POST",
-        url: '',
+        type: "GET",
+//        dataType: 'json',
+//        cache: false,
+        url: url_post,
         data: {
             candidate_post: 'true',
             post_type: 'get_work_experience',
@@ -352,5 +362,57 @@ function resetPanelWorkExperienceValue(type) {
     $("input[type=text], select, textarea", $frm).each(function () {
         if ($(this).attr("required"))
             $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
+
+function deleteEducation(id) {
+    if (!confirm("คุณต้องการลบข้อมูล ใช่หรือไม่"))
+        return;
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        cache: false,
+        url: url_post,
+        data: {
+            candidate_post: 'true',
+            post_type: 'delete_education',
+            education_id: id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, result.error ? "Fail" : "Success");
+            if (!result.error)
+                getEducation();
+        },
+        error: function (result) {
+            alert("Error:\n" + result.responseText);
+            hideImgLoading();
+        }
+    });
+}
+
+function deleteWorkExperience(id) {
+    if (!confirm("คุณต้องการลบข้อมูล ใช่หรือไม่"))
+        return;
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        cache: false,
+        url: url_post,
+        data: {
+            candidate_post: 'true',
+            post_type: 'delete_work_experience',
+            work_experience_id: id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, result.error ? "Fail" : "Success");
+            if (!result.error)
+                getWorkExperience();
+        },
+        error: function (result) {
+            alert("Error:\n" + result.responseText);
+            hideImgLoading();
+        }
     });
 }
