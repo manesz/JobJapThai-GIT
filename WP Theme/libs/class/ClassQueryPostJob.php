@@ -190,7 +190,9 @@ class QueryPostJob
             $posts_per_page = $limit;
         $argc = array(
             'post_type' => $this->postType,
-            'category_name' => 'highlight-jobs',
+//            'category_name' => 'highlight-jobs',
+            'meta_key' => 'highlight_jobs',
+            'meta_value' => '1',
             'post_status' => 'publish',
             'posts_per_page' => $posts_per_page,
             'paged' => $paged
