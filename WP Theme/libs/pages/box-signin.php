@@ -21,40 +21,40 @@ if (is_user_logged_in()) {
     <div style="background: #BF2026; margin: 20px 0 10px 0; padding : 5px; color: #fff;">における求職者ログイン Job Seeker Log in
     </div>
     <?php if (!$isLogin): ?>
-    <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post"
-        id="frm_sigin" class="form-horizontal">
-        <input type="hidden" name="sign_in_post" value="true">
+        <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post"
+              id="frm_sigin" class="form-horizontal">
+            <input type="hidden" name="sign_in_post" value="true">
 
-        <div class="form-group clearfix" style="margin-bottom: 10px;">
-            <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Email/Username
-                :</label>
+            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Email/Username
+                    :</label>
 
-            <div class="col-md-8"><input id="username" name="username" required=""
-                                         class="form-control"></div>
-        </div>
-        <div class="form-group clearfix" style="margin-bottom: 10px;">
-            <label for="password" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Password :</label>
+                <div class="col-md-8"><input id="username" name="username" required=""
+                                             class="form-control"></div>
+            </div>
+            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                <label for="password" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Password :</label>
 
-            <div class="col-md-8"><input id="password" name="password" required=""
-                                         type="password" class="form-control"></div>
-        </div>
+                <div class="col-md-8"><input id="password" name="password" required=""
+                                             type="password" class="form-control"></div>
+            </div>
 
-        <div class="form-group clearfix" style="margin-bottom: 10px;">
-            <button type="submit" class="btn btn-success pull-right" style="margin-right: 15px;">Signin</button>
-            <button type="button" class="btn btn-default pull-right" onclick="resetFormSigin();"
-                    style="margin-right: 15px; border: none;">reset
-            </button>
-        </div>
+            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                <button type="submit" class="btn btn-success pull-right" style="margin-right: 15px;">Signin</button>
+                <button type="button" class="btn btn-default pull-right" onclick="resetFormSigin();"
+                        style="margin-right: 15px; border: none;">reset
+                </button>
+            </div>
 
-        <hr/>
+            <hr/>
 
-        <div class="form-group clearfix text-right" style="margin-bottom: 10px; padding-right: 15px;">
-            <a href="#" data-toggle="modal" data-target="#modalRegister">register</a> /
-            <a href="#" data-toggle="modal" data-target="#modalForget">forget username or password</a>
-        </div>
+            <div class="form-group clearfix text-right" style="margin-bottom: 10px; padding-right: 15px;">
+                <a href="#" data-toggle="modal" data-target="#modalRegister">register</a> /
+                <a href="#" data-toggle="modal" data-target="#modalForget">forget username or password</a>
+            </div>
 
-    </form>
-    <?php else:?>
+        </form>
+    <?php else: ?>
         <div class="form-group clearfix" style="margin-bottom: 10px;">
             <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Hello! :</label>
 
@@ -67,7 +67,7 @@ if (is_user_logged_in()) {
         <div class="form-group clearfix text-right" style="margin-bottom: 10px; padding-right: 15px;">
             <a class="btn btn-info" href="<?php echo wp_logout_url(home_url()); ?>" role="button">Logout</a>
         </div>
-    <?php endif;?>
+    <?php endif; ?>
 </div>
 <script>
     function resetFormSigin() {
@@ -79,7 +79,7 @@ if (is_user_logged_in()) {
         $($frm).bootstrapValidator('revalidateField', 'password');
     }
     var check_sigin = false;
-    $(document).ready(function(){
+    $(document).ready(function () {
 //        $("#frm_sigin").submit(function(){
 //
 ////            return false;
@@ -104,21 +104,24 @@ if (is_user_logged_in()) {
                 // Use Ajax to submit form data
                 showImgLoading();
                 $.ajax({
-                    type: "POST",
+                    type: "GET",
                     url: '',
                     cache: false,
                     dataType: 'json',
                     data: data,
                     success: function (result) {
+                        hideImgLoading();
                         if (!result.error) {
-                            closeModalMessage();
-                            alert('Login Success');
-                            window.location.href = result.msg;
+//                            closeModalMessage();
+                            showModalMessage('<div class="font-color-4BB748"><p>Log in success</p></div>', 'Log in');
+//                            window.location.href = result.msg;
+                            setTimeout(function () {
+                                window.location.href = result.msg;
+                            }, 2000);
                             return true;
                         }
                         showModalMessage(result.msg, 'Login Fail');
                         check_sigin = false;
-                        hideImgLoading();
                     },
                     error: function (result) {
                         showModalMessage("Error:\n" + result.responseText);
@@ -134,7 +137,7 @@ if (is_user_logged_in()) {
                     data.bv.disableSubmitButtons(false);
                 }
             })
-            .on('success.field.bv',function (e, data) {
+            .on('success.field.bv', function (e, data) {
                 if (data.bv.getSubmitButton()) {
                     data.bv.disableSubmitButtons(false);
                 }

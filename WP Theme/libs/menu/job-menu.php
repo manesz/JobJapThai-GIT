@@ -122,8 +122,8 @@ function custom_post_job()
             <tr>
                 <td><label for="highlight_jobs">Highlight jobs:</label></td>
                 <td>
-                    <input type="checkbox" value="<?php echo empty($highlight_jobs)? 0 : $highlight_jobs;?>"
-                           <?php echo $highlight_jobs ? 'checked' : ''; ?>
+                    <input type="checkbox" value="<?php echo empty($highlight_jobs) ? 0 : $highlight_jobs; ?>"
+                        <?php echo $highlight_jobs ? 'checked' : ''; ?>
                            name="highlight_jobs"
                            onclick="this.value=$(this).prop('checked')?1:0;">
                 </td>
@@ -204,15 +204,17 @@ function custom_post_job()
     function save_details_job()
     {
         global $post;
-        update_post_meta($post->ID, "qualification", $_POST["qualification"]);
-        update_post_meta($post->ID, "job_type", $_POST["job_type"]);
-        update_post_meta($post->ID, "jlpt_level", $_POST["jlpt_level"]);
-        update_post_meta($post->ID, "job_location", $_POST["job_location"]);
-        update_post_meta($post->ID, "japanese_skill", $_POST["japanese_skill"]);
-        update_post_meta($post->ID, "salary", $_POST["salary"]);
-        update_post_meta($post->ID, "working_day", $_POST["working_day"]);
-        update_post_meta($post->ID, "company_id", $_POST["company_id"]);
-        update_post_meta($post->ID, "highlight_jobs", $_POST["highlight_jobs"]);
+        if ($_POST) {
+            update_post_meta($post->ID, "qualification", $_POST["qualification"]);
+            update_post_meta($post->ID, "job_type", $_POST["job_type"]);
+            update_post_meta($post->ID, "jlpt_level", $_POST["jlpt_level"]);
+            update_post_meta($post->ID, "job_location", $_POST["job_location"]);
+            update_post_meta($post->ID, "japanese_skill", $_POST["japanese_skill"]);
+            update_post_meta($post->ID, "salary", $_POST["salary"]);
+            update_post_meta($post->ID, "working_day", $_POST["working_day"]);
+            update_post_meta($post->ID, "company_id", $_POST["company_id"]);
+            update_post_meta($post->ID, "highlight_jobs", $_POST["highlight_jobs"]);
+        }
         return true;
     }
 

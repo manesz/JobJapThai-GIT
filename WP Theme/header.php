@@ -53,7 +53,7 @@
         $(document).ready(function () {
             $(".datepicker").datepicker();
         });
-        var url_post = "<?php echo home_url(); ?>";
+        var url_post = "<?php echo home_url(); ?>/";
         var str_loading = '<div class="img_loading"><img src="<?php
     bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
     </script>
@@ -79,4 +79,4 @@
         }
     </style>
 </head>
-<body <?php body_class(); ?>>
+<body <?php body_class(); ?> style="border-top: #ed1c24 5px solid;">

@@ -167,4 +167,28 @@ $init_page = array(
         'post_author'=> 1
     ),
     /* End Candidate Page*/
+
+    //Register
+    array(
+        'post_title' => 'Register Success',
+        'post_content'  => '',
+        'post_status'=> 'publish',
+        'post_type'=>'page',
+        'post_author'=> 1
+    ),
+    array(
+        'post_title' => 'Confirm Register',
+        'post_content'  => '',
+        'post_status'=> 'publish',
+        'post_type'=>'page',
+        'post_author'=> 1
+    ),
+    array(
+        'post_title' => 'Confirm Success',
+        'post_content'  => '',
+        'post_status'=> 'publish',
+        'post_type'=>'page',
+        'post_author'=> 1
+    ),
+    //End Register
 );

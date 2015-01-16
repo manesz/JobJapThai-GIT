@@ -41,6 +41,12 @@ if (have_posts()) :
             get_template_part('libs/pages/applied-job');
         } else if (is_page("highlight-jobs")) {
             get_template_part('libs/pages/highlight-jobs');
+        } else if (is_page("register-success")) {
+            get_template_part('libs/pages/register-success');
+        } else if (is_page("confirm-register")) {
+            get_template_part('libs/pages/confirm-register');
+        } else if (is_page("confirm-success")) {
+            get_template_part('libs/pages/register-success');
         }
 
     endwhile;

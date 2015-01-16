@@ -36,6 +36,10 @@ class Authentication
                 <a href="#" data-toggle="modal" data-target="#modalForget"
                 onclick="closeModalMessage();">Lost your password</a>?</p>', true);
         else {
+            if (!$this->checkIsConfirm($user->ID)) {
+                return $this->returnMessage(
+                    '<p>Sorry, your Email has not been confirmed.<br/>Please check your email inbox.', true);
+            }
             update_user_meta($user->ID, 'last_login', current_time('mysql'));
             $userType = get_user_meta($user->ID, 'user_type', true);
             if ($userType == "employer")
@@ -47,6 +51,63 @@ class Authentication
             }
         }
     }
+
+//    Confirm register
+
+    function getUserByKey($key)
+    {
+        $args = array(
+            'meta_key' => 'activation_key',
+            'meta_value' => $key,
+        );
+        $user = get_users($args);
+        return $user[0];
+    }
+
+    function checkUserByKey($key)
+    {
+        $args = array(
+//            'blog_id'      => $GLOBALS['blog_id'],
+//            'role'         => '',
+            'meta_key' => 'activation_key',
+            'meta_value' => $key,
+//            'meta_compare' => '',
+//            'meta_query'   => array(),
+//            'include'      => array(),
+//            'exclude'      => array(),
+//            'orderby'      => 'login',
+//            'order'        => 'ASC',
+//            'offset'       => '',
+//            'search'       => '',
+//            'number'       => '',
+//            'count_total'  => false,
+//            'fields'       => 'all',
+//            'who'          => ''
+        );
+        $user = get_users($args);
+        if (empty($user)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function checkIsConfirm($user_id)
+    {
+        $result = get_user_meta($user_id, 'activation_confirm', true);
+        if (empty($result)) {
+            update_user_meta($user_id, 'activation_confirm', 'false');
+            return false;
+        }
+        return empty($result) || $result == 'true' ? true : false;
+    }
+
+    function updateActivationConfirm($user_id)
+    {
+        update_user_meta($user_id, 'activation_confirm', 'true');
+    }
+
+//    End Confirm Register
 
     public function forgetPassWord($post)
     {
@@ -103,14 +164,22 @@ class Authentication
 
     }
 
-    private function returnMessage($msg, $error, $show_div = true)
+    private function returnMessage($msg, $error, $show_div = true, $json = true)
     {
         if ($error) {
-            return json_encode(array('msg' => $show_div ? '<div class="font-color-BF2026"><p>' . $msg . '</p></div>' : $msg,
-                'error' => $error));
+            $message = array('msg' => $show_div ? '<div class="font-color-BF2026"><p>' . $msg . '</p></div>' : $msg,
+                'error' => $error);
         } else {
-            return json_encode(array('msg' => $show_div ? '<div class="font-color-4BB748"><p>' . $msg . '</p></div>' : $msg,
-                'error' => $error));
+            if (is_array($msg)) {
+                $arrayReturn = $msg;
+                $arrayReturn['msg'] = $show_div ? '<div class="font-color-4BB748"><p>' . @$msg['msg'] . '</p></div>' : $msg['msg'];
+                $arrayReturn['error'] = false;
+                $message = $arrayReturn;
+            } else {
+                $message = array('msg' => $show_div ? '<div class="font-color-4BB748"><p>' . $msg . '</p></div>' : $msg,
+                    'error' => $error);
+            }
         }
+        return $json ? json_encode($message) : $message;
     }
 }

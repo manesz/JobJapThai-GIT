@@ -3,7 +3,7 @@
  */
 var data_for_post = $.param({
     candidate_post: 'true',
-    post_type: 'add'
+    post_type: 'register'
 });
 var check_from_post = false;
 var check_education_post = false;
@@ -127,14 +127,17 @@ $(document).ready(function () {
                     success: function (result) {
                         if (!result.error) {
                             if (!is_login) {
-                                showModalMessage(result.msg, "Message Add Candidate");
-                                window.location.reload();
+                                showModalMessage(result.msg, "Message register Candidate");
+                                setTimeout(function(){
+                                    window.location.href = url_post +"register-success/?mail_confirm=" +
+                                        $("#email").val()
+                                }, 3000);
                             }
                             else {
                                 showModalMessage(result.msg, "Message Edit Candidate");
                             }
                         } else {
-                            showModalMessage(result.msg);
+                            showModalMessage(result.msg, 'Error');
                         }
 
                         if (check_education_post) {

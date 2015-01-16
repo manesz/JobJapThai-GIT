@@ -6,6 +6,13 @@
  * Time: 13:10 น.
  */
 
+$getKey = $_REQUEST['key'];
+$urlConfirm = home_url() . "/confirm-register?key=$getKey";
+$objClassContact = new Contact($wpdb);
+$getContact = $objClassContact->getContact(1);
+if ($getContact) {
+    $getContact = $getContact[0];
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -242,7 +249,8 @@
                                                             <br>
 
                                                             <p>ขอบคุณสำหรับการสมัครสมาชิก www.jobjapthai.com กรุณายืนยันการสมัครด้วยการคลิก link ด้านล่างนี้</p><br/><br/>
-                                                            <p><a href="#" target="_blank">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a> </p>
+                                                            <p><a href="<?php echo $urlConfirm; ?>"
+                                                                  target="_blank"><?php echo $urlConfirm; ?></a> </p>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -286,13 +294,15 @@
                                                         <div class='contentEditable'
                                                              style='text-align: center;color:#AAAAAA;'>
                                                             <p>
-                                                                Sent by [SENDER_NAME] <br/>
-                                                                [CLIENTS.ADDRESS] <br/>
-                                                                [CLIENTS.PHONE] <br/>
-                                                                <a href="[FORWARD]" style='color:#AAAAAA;'>Forward
-                                                                    to a friend</a> <br/>
-                                                                <a href="[UNSUBSCRIBE]"
-                                                                   style='color:#AAAAAA;'>Unsubscribe</a>
+                                                                Sent by info@jobjapthai.com <br/>
+                                                                JobJapThai Co., Ltd.<br/>
+                                                                1 Infinite Loop Cupertino, CA 95014<br/>
+                                                                Tel. +6686 627 0681<br/>
+                                                                <a href="mailto:contact@jobjapthai.com">contact@jobjapthai.com</a>
+<!--                                                                <a href="[FORWARD]" style='color:#AAAAAA;'>Forward-->
+<!--                                                                    to a friend</a> <br/>-->
+<!--                                                                <a href="[UNSUBSCRIBE]"-->
+<!--                                                                   style='color:#AAAAAA;'>Unsubscribe</a>-->
                                                             </p>
                                                         </div>
                                                     </div>
@@ -316,37 +326,51 @@
                                         <table width='190' cellpadding="0" cellspacing="0" align="center">
                                             <tr>
                                                 <td width='20'></td>
+                                                <?php if (!empty($getContact->link_facebook)): ?>
                                                 <td width='40'>
                                                     <div class='contentEditableContainer contentFacebookEditable'>
                                                         <div class='contentEditable'
                                                              style='text-align: center;color:#AAAAAA;'>
+                                                            <a href="<?php echo $getContact->link_facebook; ?>" target="_blank">
                                                             <img src="http://ideacorners.com/files/cust-logo/jobjapthai-social-fb.png" alt="facebook"
                                                                  width='40' height='40' data-max-width="40"
-                                                                 data-customIcon="true">
+                                                                 data-customIcon="true"></a>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td width='10'></td>
+                                                <?php endif;
+                                                if (!empty($getContact->link_twitter)):
+                                                ?>
                                                 <td width='40'>
                                                     <div class='contentEditableContainer contentTwitterEditable'>
                                                         <div class='contentEditable'
                                                              style='text-align: center;color:#AAAAAA;'>
+                                                            <a href="<?php echo $getContact->link_twitter; ?>" target="_blank">
                                                             <img src="http://ideacorners.com/files/cust-logo/jobjapthai-social-ggp.png" alt="twitter"
                                                                  width='40' height='40' data-max-width="40"
                                                                  data-customIcon="true">
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td width='10'></td>
+
+                                                <?php endif;
+                                                if (!empty($getContact->link_ggp)):
+                                                ?>
                                                 <td width='40'>
                                                     <div class='contentEditableContainer contentImageEditable'>
                                                         <div class='contentEditable'
                                                              style='text-align: center;color:#AAAAAA;'>
+                                                            <a href="<?php echo $getContact->link_ggp; ?>" target="_blank">
                                                             <img src="http://ideacorners.com/files/cust-logo/jobjapthai-social-tw.png" alt="Pinterest"
                                                                  width='40' height='40' data-max-width="40">
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </td>
+                                                <?php endif; ?>
                                             </tr>
                                         </table>
                                     </td>
@@ -367,7 +391,7 @@
 </td>
 </tr>
 </table>
-
+<?php /*
 <!--Default Zone
 
       <div class="customZone" data-type="image">
@@ -807,6 +831,7 @@
 
     -->
 <!--Default Zone End-->
+ */ ?>
 
 </body>
 </html>

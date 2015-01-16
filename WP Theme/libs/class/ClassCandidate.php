@@ -505,7 +505,7 @@ class Candidate
     {
         $fxrootpath = ABSPATH . 'wp-load.php';
         if (!file_exists($fxrootpath)) {
-            return 'Set value $fxrootpath in file : pages/apply-employer-register.php ';
+            return $this->returnMessage('Set value $fxrootpath in file : pages/apply-employer-register.php', true, false);
         }
         include_once($fxrootpath);
         extract($post);
@@ -513,16 +513,18 @@ class Candidate
         $pass = empty($pass) ? false : $pass;
         $rePass = empty($rePass) ? false : $rePass;
         if ($pass != $rePass && $pass && $rePass) {
-            return $this->returnMessage('Error! Check your password and confirm password.', true);
+            return $this->returnMessage('Error! Check your password and confirm password.', true, false);
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return 'Invalid email format.';
+            return $this->returnMessage('Invalid email format.', true, false);
         }
         list($username) = explode('@', $email);
+        $generatedKey = sha1(mt_rand(10000, 99999).time().$email);
         $userData = array(
             'user_login' => $username,
             'user_pass' => $pass,
-            'user_email' => $email
+            'user_email' => $email,
+//            'user_activation_key' => $generatedKey
         );
         $user_id = wp_insert_user($userData);
 
@@ -536,32 +538,34 @@ class Candidate
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return 'Error add information for contact.';
+                return $this->returnMessage('Error add information for contact.', true, false);
             }
             $result = $this->addCareerProfile($postData);
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return 'Error add Career Profile for contact.';
+                return $this->returnMessage('Error add Career Profile for contact.', true, false);
             }
             $result = $this->addDesiredJob($postData);
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return 'Error add Desired Job for contact.';
+                return $this->returnMessage('Error add Desired Job for contact.', true, false);
             }
             $result = $this->addSkillLanguages($postData);
             if (!$result) {
                 wp_revoke_user($user_id);
                 wp_delete_user($user_id);
-                return 'Error add Skill Languages for contact.';
+                return $this->returnMessage('Error add Skill Languages for contact.', true, false);
             }
+            update_user_meta($user_id, "activation_key", $generatedKey);
+            update_user_meta($user_id, "activation_confirm", "false");
         } else {
             $error_string = $user_id->get_error_message();
-            return '' . $error_string . '';
+            return $this->returnMessage($error_string, true, false);
         }
-        $this->setUserLogin($user_id);
-        return $this->returnMessage('Add Success.', false);
+        $message = array("msg" => 'Register Success.', 'key'=> $generatedKey);
+        return $this->returnMessage($message, false, false);
     }
 
     public function addCompanyInfo($post)

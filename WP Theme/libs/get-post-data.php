@@ -15,7 +15,6 @@ if ($_REQUEST) {
             {
                 return "text/html";
             }
-
             add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
             $subject = "Email Contact Us from $send_name";
             ob_start();
@@ -64,10 +63,27 @@ if ($_REQUEST) {
         $classCandidate = new Candidate($wpdb);
         $postType = $_REQUEST['post_type'];
         switch ($postType) {
-            case "add":
+            case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
 //                $generatedKey = sha1(mt_rand(10000,99999).time().$email);;
-                echo $result;
+                if (!$result['error']) {
+                    //$this->setUserLogin($user_id);
+                    $_REQUEST['key'] = $result['key'];
+                    function wp_mail_set_content_type()
+                    {
+                        return "text/html";
+                    }
+                    add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
+                    ob_start();
+                    require_once("content-email/register_confirmation.php");
+                    $message = ob_get_contents();
+                    ob_end_clean();
+
+                    if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
+                        echo $classCandidate->returnMessage("Sorry error send email.", true);
+                    }
+                }
+                echo $classCandidate->returnMessage($result, $result['error'], true);
                 break;
             case "edit":
                 break;

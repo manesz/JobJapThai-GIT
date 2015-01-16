@@ -1,6 +1,7 @@
-<?php include_once('header.php');?>
-<?php include_once("libs/nav.php"); ?>
-<?php include_once("libs/front-banner.php");
+<?php
+get_template_part('header');
+get_template_part("libs/nav");
+get_template_part("libs/front-banner");
 
 
 $classQueryPostJob = new QueryPostJob($wpdb);
@@ -30,12 +31,12 @@ $classQueryPostJob = new QueryPostJob($wpdb);
 
                     </div>
 
-                    <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png" style="width: 100%; height: auto;"/>
+                    <?php get_template_part("libs/pages/banner2"); ?>
 
                 </div>
-                <?php include_once('libs/pages/sidebar.php'); ?>
+                <?php get_template_part('libs/pages/sidebar'); ?>
             </div>
         </div>
 
     </section>
-<?php include_once('footer.php');?>
+<?php get_template_part('footer');?>
