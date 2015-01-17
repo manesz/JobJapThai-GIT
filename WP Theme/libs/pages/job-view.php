@@ -29,7 +29,7 @@ $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_
 $japanese_skill = empty($customField["japanese_skill"][0]) ? '' : $customField["japanese_skill"][0];
 $salary = empty($customField["salary"][0]) ? '' : $customField["salary"][0];
 $working_day = empty($customField["working_day"][0]) ? '' : $customField["working_day"][0];
-$company_id = empty($customField["company_id"][0]) ? '' : $customField["company_id"][0];
+$company_id = empty($customField["company_id"][0]) ? 0 : $customField["company_id"][0];
 $getDataCompany = $company_id ? $classEmployer->getCompanyInfo($company_id) : false;
 if ($getDataCompany) {
     extract((array)$getDataCompany[0]);
@@ -69,10 +69,12 @@ $isAdmin = current_user_can('manage_options');
                                     <i class="glyphicon glyphicon-star font-color-BF2026"></i>
                                 </span>
                         </h4>
+                        <?php if ($company_id): ?>
                         <h5 class="font-color-BF2026 clearfix"
                             style=""><?php echo empty($company_name) ? "" : $company_name; ?>
                             <a href="<?php echo get_site_url(); ?>/company-profile?id=<?php echo $company_id; ?>"
                                target="_blank">(View company profile)</a></h5>
+                        <?php endif; ?>
                         <hr/>
                         <?php if (!empty($company_profile_and_business_operation)): ?>
                             <h5><strong>Company Profile</strong></h5>
@@ -214,7 +216,7 @@ $isAdmin = current_user_can('manage_options');
                 } else {
                     showImgLoading();
                     $.ajax({
-                        type: "POST",
+                        type: "GET",
                         dataType: 'json',
                         url: '',
                         data: {
@@ -250,7 +252,7 @@ $isAdmin = current_user_can('manage_options');
                 } else {
                     showImgLoading();
                     $.ajax({
-                        type: "POST",
+                        type: "GET",
                         dataType: 'json',
                         url: '',
                         data: {
