@@ -239,7 +239,41 @@ if ($_REQUEST) {
     if (isset($_REQUEST['reset_pass'])) {
 
         $classAuthentication = new Authentication($wpdb);
-        echo $classAuthentication->forgetPassWord($_REQUEST);
+        $result = $classAuthentication->checkUserForForgetPassWord($_REQUEST['user_login']);
+        if ($result['error']) {
+            echo $classAuthentication->returnMessage($result, true);
+        } else {
+            $_REQUEST['user_data'] = $result['user_data'];
+            $user_data = $result['user_data'];
+            $email = $user_data->user_email;
+
+            $random_password = wp_generate_password(12, false);
+            $update_user = wp_update_user(array(
+                    'ID' => $user_data->ID,
+                    'user_pass' => $random_password
+                )
+            );
+            if (!$update_user) {
+                echo $this->returnMessage('Oops something went wrong updaing your account.', true);
+            } else {
+                $_REQUEST['user_login'] = $user_data->user_login;
+                $_REQUEST['new_pass'] = $random_password;
+                function wp_mail_set_content_type()
+                {
+                    return "text/html";
+                }
+                add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
+                ob_start();
+                require_once("content-email/forget_password.php");
+                $message = ob_get_contents();
+                ob_end_clean();
+                if (!wp_mail($email, "Forget password from Job Jap Thai", $message)) {
+                    echo $classAuthentication->returnMessage("Sorry error send email.", true);
+                } else {
+                    echo $classAuthentication->returnMessage("Check your email address for you new password.", false);
+                }
+            }
+        }
         exit;
     }
     //End Forget pass

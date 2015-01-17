@@ -5,21 +5,17 @@
  * Date: 14/1/2558
  * Time: 13:10 น.
  */
-
-$getKey = $_REQUEST['key'];
-$urlConfirm = home_url() . "/confirm-register?key=$getKey";
-$objClassContact = new Contact($wpdb);
-$getContact = $objClassContact->getContact(1);
-if ($getContact) {
-    $getContact = $getContact[0];
-}
+$user_data = $_REQUEST['user_data'];
+$email = $user_data->user_email;
+$userLogin = $_REQUEST['user_login'];
+$newPassword = $_REQUEST['new_pass'];
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Register Confirmation.</title>
+    <title>Forget Your Password.</title>
     <style type="text/css">
         body {
             padding-top: 0 !important;
@@ -201,13 +197,13 @@ if ($getContact) {
                                                 <td width='180'></td>
                                                 <td valign="middle" style='vertical-align: middle;'
                                                     width='150'>
-                                                    <div class='contentEditableContainer contentTextEditable'>
-                                                        <div class='contentEditable'
-                                                             style='text-align: right;'>
-                                                            <a href="[SHOWEMAIL]" class='link1'>Open in your
-                                                                browser</a>
-                                                        </div>
-                                                    </div>
+<!--                                                    <div class='contentEditableContainer contentTextEditable'>-->
+<!--                                                        <div class='contentEditable'-->
+<!--                                                             style='text-align: right;'>-->
+<!--                                                            <a href="[SHOWEMAIL]" class='link1'>Open in your-->
+<!--                                                                browser</a>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
                                                 </td>
                                             </tr>
                                         </table>
@@ -245,12 +241,11 @@ if ($getContact) {
                                                     <div class='contentEditableContainer contentTextEditable'>
                                                         <div class='contentEditable'
                                                              style='text-align: left;'>
-                                                            <h2 style="font-size: 20px;">Register Confirmation.</h2>
+                                                            <h2 style="font-size: 20px;">Forget Password.</h2>
                                                             <br>
 
-                                                            <p>ขอบคุณสำหรับการสมัครสมาชิก www.jobjapthai.com กรุณายืนยันการสมัครด้วยการคลิก link ด้านล่างนี้</p><br/><br/>
-                                                            <p><a href="<?php echo $urlConfirm; ?>"
-                                                                  target="_blank"><?php echo $urlConfirm; ?></a> </p>
+                                                            <p>User name: <?php echo $userLogin; ?></p><br/>
+                                                            <p>New password: <?php echo $newPassword; ?></p>
                                                         </div>
                                                     </div>
                                                 </td>

@@ -682,17 +682,6 @@ class Candidate
         $district = empty($district) ? false : $district;
         $city = empty($city) ? false : $city;
 
-        if ($new_password && $old_password) {//echo $new_password;echo $old_password;
-            $current_user = wp_get_current_user();
-            $user = get_user_by('login', $current_user->user_login);
-            if ($user && wp_check_password($old_password, $user->data->user_pass, $user->ID)) {
-                wp_set_password($new_password, $user->ID);
-                return $this->returnMessage('<script>window.location.reload();</script>Edit Success.', false);
-            } else {
-                return $this->returnMessage('Error check old password.', true);
-            }
-        }
-
         if (!$information_id) {
             $information_id = $this->addInformation($post);
             if (!$information_id)
@@ -718,6 +707,17 @@ class Candidate
             $result = $this->wpdb->query($sql);
             if (!$result)
                 return $this->returnMessage('Sorry Edit Error.', true);
+
+            if ($new_password && $old_password) {//echo $new_password;echo $old_password;
+                $current_user = wp_get_current_user();
+                $user = get_user_by('login', $current_user->user_login);
+                if ($user && wp_check_password($old_password, $user->data->user_pass, $user->ID)) {
+                    wp_set_password($new_password, $user->ID);
+                    return $this->returnMessage('<script>setTimeout(function(){window.location.reload()}, 3000);</script>Edit Success.', false);
+                } else {
+                    return $this->returnMessage('Error check old password.', true);
+                }
+            }
         }
         return $this->returnMessage('Edit Success.', false);
     }

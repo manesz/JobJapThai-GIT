@@ -37,6 +37,7 @@ class Authentication
                 onclick="closeModalMessage();">Lost your password</a>?</p>', true);
         else {
             if (!$this->checkIsConfirm($user->ID)) {
+                wp_logout();
                 return $this->returnMessage(
                     '<p>Sorry, your Email has not been confirmed.<br/>Please check your email inbox.', true);
             }
@@ -96,8 +97,8 @@ class Authentication
     {
         $result = get_user_meta($user_id, 'activation_confirm', true);
         if (empty($result)) {
-            update_user_meta($user_id, 'activation_confirm', 'false');
-            return false;
+            update_user_meta($user_id, 'activation_confirm', 'true');
+            return true;
         }
         return empty($result) || $result == 'true' ? true : false;
     }
@@ -127,10 +128,10 @@ class Authentication
         if ($user_exists) {
             $email = $user_data->user_email;
             $random_password = wp_generate_password(12, false);
-            $user = get_user_by('email', $email);
+            //$user = get_user_by('email', $email);
 
             $update_user = wp_update_user(array(
-                    'ID' => $user->ID,
+                    'ID' => $user_data->ID,
                     'user_pass' => $random_password
                 )
             );
@@ -164,7 +165,29 @@ class Authentication
 
     }
 
-    private function returnMessage($msg, $error, $show_div = true, $json = true)
+    function checkUserForForgetPassWord($user_login)
+    {
+
+        $username = trim($user_login);
+        $error = "";
+        if (username_exists($username)) {
+            $user_exists = true;
+            $user_data = get_user_by('login', $username);
+        } elseif (email_exists($username)) {
+            $user_exists = true;
+            $user_data = get_user_by('email', $username);
+        } else {
+            $user_exists = false;
+            $error = '<p>' . __('Username or Email was not found, try again!') . '</p>';
+        }
+        if ($user_exists) {
+            return $this->returnMessage(array('msg'=> '', 'user_data'=>$user_data), false, true, false);
+        }
+        return $this->returnMessage($error, true, true, false);
+
+    }
+
+    function returnMessage($msg, $error, $show_div = true, $json = true)
     {
         if ($error) {
             $message = array('msg' => $show_div ? '<div class="font-color-BF2026"><p>' . $msg . '</p></div>' : $msg,
