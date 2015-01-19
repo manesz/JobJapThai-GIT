@@ -15,6 +15,7 @@ if ($_REQUEST) {
             {
                 return "text/html";
             }
+
             add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
             $subject = "Email Contact Us from $send_name";
             ob_start();
@@ -28,6 +29,8 @@ if ($_REQUEST) {
         }
         exit;
     }
+
+    //Employer
 
 //    if (is_user_logged_in()) {
     $newPackage = empty($_REQUEST['new_package']) ? false : $_REQUEST['new_package'];
@@ -58,10 +61,38 @@ if ($_REQUEST) {
         exit;
     }
 
+    $employerPost = empty($_REQUEST['employer_post']) ? false : $_REQUEST['employer_post'];
+    if ($employerPost == 'true') {
+        $classEmployer = new Employer($wpdb);
+        $postType = empty($_REQUEST['post_type'])? false: $_REQUEST['post_type'];
+        $getPostBackend = empty($_REQUEST['post_backend'])? false: $_REQUEST['post_backend'];
+        if ($postType == 'add') {
+            $result = $classEmployer->employerRegister($_REQUEST);
+            if (!$result['error'] && !$getPostBackend) {
+                //$this->setUserLogin($user_id);
+                $_REQUEST['key'] = $result['key'];
+                ob_start();
+                require_once("content-email/register_confirmation.php");
+                $message = ob_get_contents();
+                ob_end_clean();
+
+                if (!wp_mail($_REQUEST['employerEmail'], "Register Confirmation from Job Jap Thai", $message)) {
+                    echo $classEmployer->returnMessage("Sorry error send email.", true);
+                }
+            }
+            echo $classEmployer->returnMessage($result, $result['error'], true);
+        } else if ($postType == 'edit') {
+            echo $classEmployer->editEmployer($_REQUEST);
+        }
+        exit;
+    }
+    //End Employer
+
+    //Candidate
     $candidatePost = empty($_REQUEST['candidate_post']) ? false : $_REQUEST['candidate_post'];
     if ($candidatePost == 'true') {
         $classCandidate = new Candidate($wpdb);
-        $postType = $_REQUEST['post_type'];
+        $postType = empty($_REQUEST['post_type'])? false: $_REQUEST['post_type'];
         switch ($postType) {
             case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
@@ -69,11 +100,6 @@ if ($_REQUEST) {
                 if (!$result['error']) {
                     //$this->setUserLogin($user_id);
                     $_REQUEST['key'] = $result['key'];
-                    function wp_mail_set_content_type()
-                    {
-                        return "text/html";
-                    }
-                    add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
                     ob_start();
                     require_once("content-email/register_confirmation.php");
                     $message = ob_get_contents();
@@ -159,6 +185,7 @@ if ($_REQUEST) {
         }
         exit;
     }
+    // END Candidate
 
     //Favorite
     $favorite = empty($_REQUEST['favorite']) ? false : $_REQUEST['favorite'];
@@ -262,6 +289,7 @@ if ($_REQUEST) {
                 {
                     return "text/html";
                 }
+
                 add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
                 ob_start();
                 require_once("content-email/forget_password.php");

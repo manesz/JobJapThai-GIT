@@ -78,16 +78,18 @@ function custom_post_job()
     function meta_job_option()
     {
         global $post, $classEmployer;
+        $getEmployerID = empty($_GET['employer_id'])? "": $_GET['employer_id'];
         $custom = get_post_custom($post->ID);
-        $qualification = $custom["qualification"][0];
-        $job_type = $custom["job_type"][0];
-        $jlpt_level = $custom["jlpt_level"][0];
-        $job_location = $custom["job_location"][0];
-        $japanese_skill = $custom["japanese_skill"][0];
-        $salary = $custom["salary"][0];
-        $working_day = $custom["working_day"][0];
-        $company_id = $custom["company_id"][0];
-        $highlight_jobs = $custom["highlight_jobs"][0];
+        $qualification = empty($custom["qualification"][0])? "" : $custom["qualification"][0] ;
+        $job_type = empty($custom["job_type"][0])? "" : $custom["job_type"][0] ;
+        $jlpt_level = empty($custom["jlpt_level"][0])? "" : $custom["jlpt_level"][0] ;
+        $job_location = empty($custom["job_location"][0])? "" : $custom["job_location"][0] ;
+        $japanese_skill = empty($custom["japanese_skill"][0])? "" : $custom["japanese_skill"][0] ;
+        $salary = empty($custom["salary"][0])? "" : $custom["salary"][0] ;
+        $working_day = empty($custom["working_day"][0])? "" : $custom["working_day"][0] ;
+        $company_id = empty($custom["company_id"][0])? $getEmployerID : $custom["company_id"][0] ;
+        $highlight_jobs = empty($custom["highlight_jobs"][0])? "" : $custom["highlight_jobs"][0] ;
+
 
         $objCompany = $classEmployer->getCompanyInfo();
         ?>
@@ -110,12 +112,11 @@ function custom_post_job()
                 <td>
                     <select id="company_id" name="company_id" class="select-width">
                         <option value="">--Select--</option>
-                        <?php if ($objCompany):foreach ($objCompany as $value): ?>
+                        <?php if ($objCompany)foreach ($objCompany as $value): ?>
                             <option value="<?php echo $value->id ?>"
                                 <?php echo $company_id == $value->id ? "selected" : ""; ?>
                                 ><?php echo $value->company_name; ?></option>
                         <?php endforeach; ?>
-                        <?php endif; ?>
                     </select>
                 </td>
             </tr>

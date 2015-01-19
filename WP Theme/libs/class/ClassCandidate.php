@@ -524,7 +524,6 @@ class Candidate
             'user_login' => $username,
             'user_pass' => $pass,
             'user_email' => $email,
-//            'user_activation_key' => $generatedKey
         );
         $user_id = wp_insert_user($userData);
 
@@ -532,6 +531,8 @@ class Candidate
             $user_type = 'candidate';
             add_user_meta($user_id, 'user_type', $user_type);
             add_user_meta($user_id, 'user_status', 'Under verification process');
+            add_user_meta($user_id, "activation_key", $generatedKey);
+            add_user_meta($user_id, "activation_confirm", "false");
             $postData = $_POST;
             $postData['candidate_id'] = $user_id;
             $result = $this->addInformation($postData);
@@ -558,14 +559,12 @@ class Candidate
                 wp_delete_user($user_id);
                 return $this->returnMessage('Error add Skill Languages for contact.', true, false);
             }
-            update_user_meta($user_id, "activation_key", $generatedKey);
-            update_user_meta($user_id, "activation_confirm", "false");
+            $message = array("msg" => 'Register Success.', 'key'=> $generatedKey);
+            return $this->returnMessage($message, false, false);
         } else {
             $error_string = $user_id->get_error_message();
             return $this->returnMessage($error_string, true, false);
         }
-        $message = array("msg" => 'Register Success.', 'key'=> $generatedKey);
-        return $this->returnMessage($message, false, false);
     }
 
     public function addCompanyInfo($post)

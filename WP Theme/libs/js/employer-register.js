@@ -12,7 +12,7 @@
  showImgLoading();
  //    alert(url);
  $.ajax({
- type: "POST",
+ type: "GET",
  url: url,
  data: data,
  success: function (result) {
@@ -42,7 +42,7 @@
 //    alert(data);
 //    return false;
 //});
-
+var is_page_backend = false;
 $(document).on("click", ".edit_package", function (e) {
     var packageID = $(this).attr('data');
     showAddPackage(packageID);
@@ -73,21 +73,25 @@ $(document).ready(function () {
             // Use Ajax to submit form data
             showImgLoading();
             $.ajax({
-                type: "POST",
+                dataType: 'json',
+                cache: false,
+                type: "GET",
                 url: $form.attr('action'),
                 data: data,
                 success: function (result) {
-                    if (!is_login) {
-                        showModalMessage(result, "Message Add Candidate");
-                        window.location.href = site_url + "edit-resume";
-                    }
-                    else {
-                        showModalMessage(result, "Message Edit Candidate");
-                    }
                     hideImgLoading();
+                    showModalMessage(result.msg, "Message Employer");
+                    if (!is_login && !result.error) {
+                        if (!is_page_backend)
+                            setTimeout(function () {
+                                window.location.href = url_post + "register-success/?mail_confirm=" +
+                                    $("#employerEmail").val()
+                            }, 3000);
+                        else $("#btn_success").show();
+                    }
                 },
                 error: function (result) {
-                    alert("Error:\n" + result.responseText);
+                    showModalMessage(result.responseText, "Error");
                     hideImgLoading();
                 }
             });

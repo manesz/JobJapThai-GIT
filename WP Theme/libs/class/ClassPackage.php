@@ -37,7 +37,7 @@ class Package
     public function getPackage($id = 0)
     {
 //        if (!$id)
-        $this->createDB();
+//        $this->createDB();
         $strAnd = $id ? " AND id=$id" : "";
         $sql = "
             SELECT
