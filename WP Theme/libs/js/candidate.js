@@ -125,6 +125,7 @@ $(document).ready(function () {
                     url: url_post,
                     data: data,
                     success: function (result) {
+                        hideImgLoading();
                         if (!result.error) {
                             if (!is_login) {
                                 showModalMessage(result.msg, "Message register Candidate");
@@ -154,7 +155,6 @@ $(document).ready(function () {
                         check_from_post = false;
                         check_education_post = false;
                         check_work_experience_post = false;
-                        hideImgLoading();
                     },
                     error: function (result) {
                         alert("Error:\n" + result.responseText);

@@ -5,6 +5,12 @@
  * Date: 14/1/2558
  * Time: 13:10 น.
  */
+global $wpdb;
+function wp_mail_set_content_type()
+{
+    return "text/html";
+}
+add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
 
 $getKey = $_REQUEST['key'];
 $urlConfirm = home_url() . "/confirm-register?key=$getKey";
