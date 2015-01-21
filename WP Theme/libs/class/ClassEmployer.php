@@ -220,7 +220,7 @@ class Employer
         $pass = isset($post['employerPassword']) ? $post['employerPassword'] : false;
         $rePass = isset($post['employerConfirmPassword']) ? $post['employerConfirmPassword'] : false;
         $email = isset($post['employerEmail']) ? $post['employerEmail'] : false;
-        $getPostBackend = empty($_REQUEST['post_backend'])? false: $_REQUEST['post_backend'];
+        $getPostBackend = empty($post['post_backend'])? false: $post['post_backend'];
         //$website = isset($post['employerContactWebsite']) ? $post['employerContactWebsite'] : '';
 
         $email = empty($email) ? false : $email;
@@ -283,12 +283,13 @@ class Employer
                 return $this->returnMessage('Error check old password.', true);
             }
         } elseif($getPostBackend && $pass) {
-            $user = get_user_by('ID', $employer_id);
-            if ($user && wp_check_password($rePass, $user->data->user_pass, $user->ID)) {
-                wp_set_password($pass, $user->ID);
-            } else {
-                return $this->returnMessage('Error check old password.', true);
-            }
+            $user = $this->getUser($employer_id);
+            wp_set_password($pass, $user->ID);
+//            if ($user && wp_check_password($rePass, $user->data->user_pass, $user->ID)) {
+//
+//            } else {
+//                return $this->returnMessage('Error check old password.', true);
+//            }
         }
         return $this->returnMessage('Edit Success.', false);
     }

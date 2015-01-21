@@ -6,6 +6,7 @@ class Candidate
 {
     private $wpdb;
     public $tableUser = "";
+    public $tableUserMeta = "";
     public $tableInformation = "ics_candidate_information";
     public $tableCareerProfile = "ics_candidate_career_profile";
     public $tableDesiredJob = "ics_candidate_desired_job";
@@ -17,6 +18,38 @@ class Candidate
     {
         $this->wpdb = $wpdb;
         $this->tableUser = $this->wpdb->users;
+        $this->tableUserMeta = $this->wpdb->usermeta;
+    }
+
+    function getListUser($candidate_id = 0, $order_by = "")
+    {
+        $strAnd = $candidate_id ? " AND a.ID=$candidate_id" : "";
+        $sql = "
+            SELECT
+              a.*,
+              b.*,
+              b.id as can_id
+            FROM
+              $this->tableUser a
+            INNER JOIN
+              $this->tableInformation b
+            ON (a.ID = b.candidate_id)
+            INNER JOIN
+              $this->tableUserMeta c
+            ON (c.user_id = a.ID AND c.meta_key = 'user_type'
+            AND c.meta_value='candidate')
+            WHERE 1
+            $strAnd
+            $order_by
+        ";
+        $result = $this->wpdb->get_results($sql);
+        return $result;
+    }
+
+    function getUser($candidate_id = 0)
+    {
+        $getUser = get_userdata($candidate_id);
+        return $getUser;
     }
 
     function buildPreferredPositionsList()
@@ -25,14 +58,15 @@ class Candidate
         ob_start();
         ?>
         <ul class="clearfix no-padding">
-            <?php foreach($getDesiredJob as $value): ?>
-            <li>
-                <div class="col-md-12 no-padding">
-                    <span class="pull-left"><?php echo $value->job_type; ?></span>
-                    <span class="pull-right font-color-BF2026"><?php echo number_format($value->expect_month_salary); ?></span>
-                </div>
-            </li>
-        <?php endforeach; ?>
+            <?php foreach ($getDesiredJob as $value): ?>
+                <li>
+                    <div class="col-md-12 no-padding">
+                        <span class="pull-left"><?php echo $value->job_type; ?></span>
+                        <span
+                            class="pull-right font-color-BF2026"><?php echo number_format($value->expect_month_salary); ?></span>
+                    </div>
+                </li>
+            <?php endforeach; ?>
         </ul>
         <?php
 
@@ -108,6 +142,807 @@ class Candidate
         ";
         $result = $this->wpdb->get_results($sql);
         return $result;
+    }
+
+
+    function buildHtmlFormRegister()
+    {
+        ob_start();
+       ?>
+        <form method="post" id="form_candidate_step1" class="form-horizontal"
+               data-bv-message="This value is not valid"
+               data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+               data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+               data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+
+        <div id="div_step1" class="col-md-12">
+            <div class="form-group col-md-12">
+                <div class="col-md-4 text-right clearfix"><label for="email">Email<span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-8">
+                    <input type="text" id="email" name="email" class="form-control"
+                           maxlength="50"
+                           data-bv-emailaddress="true"
+                           required data-bv-emailaddress-message="The input is not a valid email address"
+                        />
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-4 text-right clearfix"><label for="step1_pass">Password<span
+                            class="font-color-red">*</span></label>
+                </div>
+                <div class="col-md-8">
+                    <input type="password" id="pass" name="pass" class="form-control"
+                           maxlength="50"
+                           required
+                           data-bv-stringlength="true"
+                           data-bv-stringlength-min="8"
+                        />
+                </div>
+            </div>
+
+            <div class="form-group col-md-12" style="">
+                <button id="submitStep1" type="submit" class="btn btn-primary col-md-6 pull-right">Submit Form
+                </button>
+                <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
+                    Reset
+                </button>
+            </div>
+        </div>
+        <!-- END: step 1 -->
+    </form>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+
+    }
+    function buildHtmlEditProfile1($user_id, $is_backend = false)
+    {
+        $current_user = $this->getUser($user_id);
+        $isLogin = true;
+        $resumeCode = str_pad($user_id, 7, '0', STR_PAD_LEFT);
+        $lastLogin = get_user_meta($user_id, 'last_login', true);
+        $lastLogin = date_i18n('d M y', strtotime($lastLogin));
+        $lastUpdate = the_modified_author();
+        $lastUpdate = date_i18n('d M y', strtotime($lastUpdate));
+        $memberSince = $current_user->user_registered;
+        $memberSince = date_i18n('d M y', strtotime($memberSince));
+        $get_image_avatar = $this->getAvatarPath($user_id);
+        $str_image_avatar = "<img src='$get_image_avatar' />";
+        ob_start();
+        ?>
+        <script>
+            <?php if ($isLogin): ?>
+            $(document).ready(function () {
+                $('#image_avatar').change(function () {
+                    if ($(this).val() != '') {
+                        var formData = new FormData();
+                        formData.append('image_avatar', $(this)[0].files[0]);
+                        formData.append('candidate_post', 'true');
+                        formData.append('post_type', 'image_avatar');
+                        formData.append('candidate_id', <?php echo $user_id; ?>);
+                        showImgLoading();
+                        $.ajax({
+                            url: '',
+                            type: 'POST',
+                            data: formData,
+                            dataType: 'json',
+                            success: function (result) {
+                                showModalMessage(result.msg, 'Message Candidate');
+                                path_avatar = result.path;
+                                hideImgLoading();
+                            },
+                            error: function (result) {
+                                showModalMessage(result.responseText, 'Message Candidate');
+                                hideImgLoading();
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false
+                        });
+
+                    }
+                });
+            });
+            <?php endif; ?>
+        </script>
+        <div id="sectProfile" class="col-md-12">
+            <!--                --><?php //include_once('candidate-menu.php'); ?>
+            <div class="col-md-8" style="padding-top: 10px;">
+                Resume Code: <span class=".font-color-BF2026" style=""><?php echo $resumeCode; ?></span><br/>
+                Status: <span class="font-color-BF2026" style="">Under verification process</span><br/>
+                Last Login Date: <?php echo $lastLogin; ?><br/>
+                Last update: <?php echo $lastUpdate; ?><br/>
+                Member since: <?php echo $memberSince; ?><br/>
+                Your resume is in the verification process <br/>
+                (The process will take 1-2 working days)
+
+            </div>
+            <div class="col-md-4" style="padding-top: 10px;">
+                <?php //echo get_avatar($user_id, 100);
+                //echo do_shortcode( '[avatar_upload]');
+                ?>
+                <!--            <input type="button" class="btn" value="Edit">-->
+                <form>
+                    <div></div>
+                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                        <div id="preview" class="fileinput-preview thumbnail" data-trigger="fileinput"
+                             style="width: 150px;height: 150px;"><?php echo $str_image_avatar; ?></div>
+                        <div>
+                        <span class="btn btn-default btn-file">
+                            <span class="fileinput-new">Select image</span>
+                            <span class="fileinput-exists">Change</span>
+                            <input type="file" name="file" id="image_avatar" class="ephoto-upload" accept="image/jpeg"></span>
+                            <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+    function buildHtmlEditProfile2($user_id, $is_backend = false)
+    {
+        $current_user = $this->getUser($user_id);
+        $objInformation = $this->getInformation($user_id);
+        if ($objInformation)
+            extract((array)$objInformation[0]);
+
+        $objCareerProfile = $this->getCareerProfile($user_id);
+        if ($objCareerProfile)
+            extract((array)$objCareerProfile[0]);
+
+        $objDesiredJob = $this->getDesiredJob($user_id);
+        if ($objDesiredJob)
+            extract((array)$objDesiredJob[0]);
+
+        $objSkillLanguage = $this->getSkillLanguages($user_id);
+        if ($objSkillLanguage)
+            extract((array)$objSkillLanguage[0]);
+        ob_start();
+        ?>
+        <div id="div_step2" class="col-md-12">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+        <div class="panel panel-default" id="panel_information">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a class="tab_panel" data-toggle="collapse" data-parent="#accordion"
+                       href="#candPersonalInformation"
+                       aria-expanded="true"
+                       aria-controls="collapseOne">
+                        PERSONAL INFORMATION
+                    </a>
+                </h4>
+            </div>
+            <div id="candPersonalInformation" class="panel-collapse collapse in" role="tabpanel"
+                 aria-labelledby="headingOne">
+                <form method="post" id="form_candidate1" class="form-horizontal form_candidate">
+                    <input type="hidden" name="information_id" value="<?php echo empty($objInformation)?0:$objInformation[0]->id;?>">
+                    <div class="panel-body">
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="candEmail">User Name<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <span class="form-control"><?php echo $current_user->user_login; ?></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="candEmail">Email<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <span class="form-control"><?php echo $current_user->user_email; ?></span>
+                            </div>
+                        </div>
+                        <?php if (!$is_backend): ?>
+                            <div class="form-group col-md-12">
+                                <div class="col-md-4 text-right clearfix"><label for="old_password">Old Password<span
+                                            class="font-color-red">*</span></label></div>
+                                <div class="col-md-8">
+                                    <input type="password" id="old_password" name="old_password" class="form-control"
+                                           data-bv-stringlength="true"
+                                           data-bv-stringlength-min="8"
+                                           maxlength="50"
+                                        />
+                                </div>
+                            </div>
+
+                        <?php endif; ?>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="new_password">New Password<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <input type="password" id="new_password" name="new_password"
+                                       class="form-control"
+                                       maxlength="50"
+                                       data-bv-stringlength="true"
+                                       data-bv-stringlength-min="8"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="title">Title<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8"><select id="title" name="title" class="form-control">
+                                    <option value="Mr." <?php echo $title == "Mr." ? "selected" : ""; ?>>Mr.
+                                    </option>
+                                    <option value="Ms." <?php echo $title == "Ms." ? "selected" : ""; ?>>Ms.
+                                    </option>
+                                    <option value="Mrs" <?php echo $title == "Mrs" ? "selected" : ""; ?>>Mrs
+                                    </option>
+                                    <option value="Miss" <?php echo $title == "Miss" ? "selected" : ""; ?>>Miss
+                                    </option>
+                                </select></div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="first_name">First Name<span
+                                        class="font-color-red">*</span></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="first_name" name="first_name" class="form-control"
+                                       maxlength="50"
+                                       required="" value="<?php echo empty($first_name) ? "" : $first_name; ?>"
+                                    />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="last_name">Surname / Last
+                                    Name<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <input type="text" maxlength="50"
+                                       id="last_name" name="last_name" class="form-control"
+                                       value="<?php echo empty($last_name) ? "" : $last_name; ?>"
+                                       required/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="gender">Gender<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <select id="gender" name="gender" class="form-control" required>
+                                    <option value="1" <?php echo $gender == "1" ? "selected" : ""; ?>>Male</option>
+                                    <option value="2" <?php echo $gender == "2" ? "selected" : ""; ?>>Female
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="date_of_birth">Date of birth<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <input type="text" maxlength="20"
+                                       id="date_of_birth" name="date_of_birth" class="form-control datepicker"
+                                       required placeholder="dd/mm/yyyy | Ex. 23/02/1980"
+                                       value="<?php echo empty($date_of_birth) ? '' : $date_of_birth; ?>"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="phone">Phone / Mobile<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <input type="text" maxlength="50"
+                                       id="phone" name="phone" class="form-control" required
+                                       value="<?php echo empty($phone) ? '' : $phone; ?>"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="nationality">Nationality<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <select id="nationality" name="nationality" class="form-control" required>
+                                    <option>Thailand</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="county">Country<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8"><select id="county" name="county" class="form-control" required>
+                                    <option>Thailand</option>
+                                </select></div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="province">Province<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8"><select id="province" name="province" class="form-control"
+                                                          required>
+                                    <option>Thailand</option>
+                                </select></div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="district">District<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <select id="district" name="district" class="form-control" required>
+                                    <option>Thailand</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="city">City / Locality<span
+                                        class="font-color-red">*</span></label></div>
+                            <div class="col-md-8">
+                                <select id="city" name="city" class="form-control" required>
+                                    <option>Thailand</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12" style="">
+                            <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save
+                            </button>
+                            <button type="button" class="btn btn-default pull-right btn_reset_from"
+                                    style="border: none;">
+                                reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" id="panel_career_profile">
+            <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                    <a class="tab_panel collapsed" data-toggle="collapse" data-parent="#accordion"
+                       href="#candCareerProfile"
+                       aria-expanded="false" aria-controls="collapseTwo">
+                        CAREER PROFILE
+                    </a>
+                </h4>
+            </div>
+            <div id="candCareerProfile" class="panel-collapse collapse" role="tabpanel"
+                 aria-labelledby="headingTwo">
+                <form method="post" id="form_candidate2" class="form-horizontal form_candidate">
+                    <input type="hidden" name="career_profile_id" value="<?php echo empty($objCareerProfile)?0:$objCareerProfile[0]->id;?>">
+                    <div class="panel-body">
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="year_of_work_exp">Year of Work
+                                    Exp.</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="year_of_work_exp" name="year_of_work_exp"
+                                       class="form-control"
+                                       placeholder="Year(s)" maxlength="50"
+                                       value="<?php echo empty($year_of_work_exp) ? "" : $year_of_work_exp; ?>"/>
+                                    <span
+                                        class="font-color-red">please enter only number No.(-) or (.) and space.</span>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="last_position">Lasted
+                                    Position</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" maxlength="50"
+                                       id="last_position" name="last_position" class="form-control"
+                                       value="<?php echo empty($last_position) ? "" : $last_position; ?>"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="last_industry">Lasted
+                                    Industry</label>
+                            </div>
+
+                            <div class="col-md-8">
+                                <select id="last_industry" name="last_industry" class="form-control">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="last_function">Lasted
+                                    Function</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select id="last_function" name="last_function" class="form-control">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="last_month_salary">Last Monthly
+                                    Salary</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="last_month_salary" name="last_month_salary"
+                                       class="form-control"
+                                       placeholder="THB" maxlength="50"
+                                       value="<?php echo empty($last_month_salary) ? "" : $last_month_salary; ?>"/>
+                                <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12" style="">
+                            <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save
+                            </button>
+                            <button type="button" class="btn btn-default pull-right btn_reset_from"
+                                    style="border: none;">
+                                reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default" id="panel_desired_job">
+            <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                    <a class="tab_panel collapsed" data-toggle="collapse" data-parent="#accordion"
+                       href="#candDesiredJob"
+                       aria-expanded="false" aria-controls="collapseThree">
+                        YOUR DESIRED JOB
+                    </a>
+                </h4>
+            </div>
+            <div id="candDesiredJob" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <form method="post" id="form_candidate3" class="form-horizontal form_candidate">
+                    <input type="hidden" name="desired_job_id" value="<?php echo empty($objDesiredJob)?0:$objDesiredJob[0]->id;?>">
+                    <div class="panel-body">
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="industry">Industry</label></div>
+                            <div class="col-md-8">
+                                <select id="industry" name="industry" class="form-control">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="jop_function">Job Function</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select id="jop_function" name="jop_function" class="form-control">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="job_type">Job Type</label></div>
+                            <div class="col-md-8">
+                                <select id="job_type" name="job_type" class="form-control">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="expect_month_salary">Expect
+                                    Monthly
+                                    Salary</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="expect_month_salary" name="expect_month_salary"
+                                       class="form-control"
+                                       placeholder="THB" maxlength="50"
+                                       value="<?php echo empty($expect_month_salary) ? "" : $expect_month_salary; ?>"/>
+                                <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="available_to_work">Are you
+                                    available to
+                                    work
+                                    ?</label></div>
+                            <div class="col-md-8">
+                                <select id="available_to_work" name="available_to_work" class="form-control">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="start_date">Start Date</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="start_date" name="start_date" maxlength="20"
+                                       class="form-control datepicker" placeholder="dd/mm/yyyy"
+                                       value="<?php echo empty($start_date) ? "" : date("d/m/Y", strtotime($start_date)); ?>"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12" style="">
+                            <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save
+                            </button>
+                            <button type="button" class="btn btn-default pull-right btn_reset_from"
+                                    style="border: none;">
+                                reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default" id="panel_education">
+            <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                    <a class="tab_panel collapsed" data-toggle="collapse" data-parent="#accordion"
+                       href="#candEDUCATION"
+                       aria-expanded="false" aria-controls="collapseThree">
+                        EDUCATION
+                    </a>
+                </h4>
+            </div>
+            <div id="candEDUCATION" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <form method="post" id="form_candidate4" class="form-horizontal form_candidate">
+                    <input type="hidden" id="post_type" name="post_type" value="add_education"/>
+                    <input type="hidden" id="education_id" name="education_id" value="0"/>
+                    <input type="hidden" name="candidate_id" value="<?php echo $userID; ?>"/>
+
+                    <div class="panel-body">
+                        <div id="education_list"></div>
+                        <span>Please provide details of education institutions, dates attended and qualification attained.</span>
+
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="degree">Degree</label></div>
+                            <div class="col-md-8">
+                                <select id="degree" name="degree" class="form-control" required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="university">University /
+                                    Institute</label></div>
+                            <div class="col-md-8">
+                                <input type="text" id="university" name="university" maxlength="80"
+                                       class="form-control" placeholder="" required/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="education_period_from">Education
+                                    Period</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="education_period_from" name="education_period_from"
+                                       maxlength="50"
+                                       class="form-control datepicker" placeholder="From: dd/mm/yyyy" required=""/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix">
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="education_period_to" name="education_period_to"
+                                       maxlength="20"
+                                       class="form-control datepicker" placeholder="To: dd/mm/yyyy" required=""/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="grade_gpa">Grade / GPA</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="grade_gpa" name="grade_gpa" class="form-control"
+                                       placeholder="" required="" maxlength="20"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 text-right">
+                            <input type="button" class="btn btn-default"
+                                   value="Reset"
+                                   onclick="resetPanelEducationValue('reset');"/>
+                            <input type="button" class="btn btn-info"
+                                   id="btn_cancel_education" value="Cancel" style="display: none;"
+                                   onclick="$(this).hide();resetPanelEducationValue('cancel');"/>
+                            <input type="submit" class="btn btn-success"
+                                   id="btn_add_education" value="Add Education"/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" id="panel_work_experience">
+            <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                    <a class="tab_panel collapsed" data-toggle="collapse" data-parent="#accordion"
+                       href="#candWorkExperience"
+                       aria-expanded="false" aria-controls="collapseThree">
+                        WORK EXPERIENCE
+                    </a>
+                </h4>
+            </div>
+            <div id="candWorkExperience" class="panel-collapse collapse" role="tabpanel"
+                 aria-labelledby="headingThree">
+                <form method="post" id="form_candidate5" class="form-horizontal form_candidate">
+                    <input type="hidden" id="post_type" name="post_type" value="add_work_experience"/>
+                    <input type="hidden" id="work_experience_id" name="work_experience_id" value="0"/>
+                    <input type="hidden" name="candidate_id" value="<?php echo $userID; ?>"/>
+
+                    <div class="panel-body">
+                        <div id="work_experience_list"></div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="employment_period_from">Employment
+                                    Period</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="employment_period_from" name="employment_period_from"
+                                       class="form-control" maxlength="20"
+                                       placeholder="From: mm/yyyy" required=""/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"></div>
+                            <div class="col-md-8">
+                                <input type="text" id="employment_period_to" name="employment_period_to"
+                                       class="form-control" maxlength="20"
+                                       placeholder="To: mm/yyyy" required=""/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="company_name">Company Name</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="company_name" name="company_name" class="form-control"
+                                       placeholder="" required="" maxlength="80"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="position">Position</label></div>
+                            <div class="col-md-8">
+                                <input type="text" id="position" name="position" class="form-control"
+                                       placeholder="" required="" maxlength="50"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="month_salary">Monthly
+                                    Salary</label></div>
+                            <div class="col-md-8">
+                                <input type="text" id="month_salary" name="month_salary" class="form-control"
+                                       placeholder="" required="" maxlength="50"/>
+                                <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="job_duties">Job Duties</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea id="job_duties" name="job_duties" class="form-control"
+                                          rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 text-right">
+                            <input type="button" class="btn btn-default"
+                                   value="Reset"
+                                   onclick="resetPanelWorkExperienceValue('reset');"/>
+                            <input type="button" class="btn btn-info"
+                                   id="btn_cancel_work_experience" value="Cancel" style="display: none;"
+                                   onclick="$(this).hide();resetPanelWorkExperienceValue('cancel');"/>
+                            <input type="submit" class="btn btn-success"
+                                   id="btn_add_work_experience" value="Add Work Experience"/>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                    <a class="tab_panel collapsed" data-toggle="collapse" data-parent="#accordion"
+                       href="#candSkillLanguages"
+                       aria-expanded="false" aria-controls="collapseThree">
+                        SKILL'S / LANGUAGES
+                    </a>
+                </h4>
+            </div>
+            <div id="candSkillLanguages" class="panel-collapse collapse" role="tabpanel"
+                 aria-labelledby="headingThree">
+                <form method="post" id="form_candidate6" class="form-horizontal form_candidate">
+                    <input type="hidden" name="skill_languages_id" value="<?php echo empty($objSkillLanguage)?0:$objSkillLanguage[0]->id;?>">
+                    <div class="panel-body">
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="japanese_skill">Japanese
+                                    Skill</label><span
+                                    class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="japanese_skill" name="japanese_skill" class="form-control" required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="japanese_speaking">Japanese
+                                    Speaking</label><span class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="japanese_speaking" name="japanese_speaking" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="japanese_reading">Japanese
+                                    Reading</label><span class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="japanese_reading" name="japanese_reading" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="japanese_writing">Japanese
+                                    Writing</label><span class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="japanese_writing" name="japanese_writing" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="toeic_toefl_ielts">TOEIC / TOEFL /
+                                    IELTS</label><span class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="toeic_toefl_ielts" name="toeic_toefl_ielts" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"></div>
+                            <div class="col-md-8">
+                                <input type="text" id="toeic_toefl_ielts_score" name="toeic_toefl_ielts_score"
+                                       class="form-control" placeholder="Your Score: 999" required="" maxlength="50"
+                                       value="<?php echo empty($toeic_toefl_ielts_score) ? "" : $toeic_toefl_ielts_score; ?>"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="english_speaking">English
+                                    Speaking</label><span
+                                    class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="english_speaking" name="english_speaking" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="english_reading">English
+                                    Reading</label><span class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="english_reading" name="english_reading" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right clearfix"><label for="english_writing">English
+                                    Writing</label><span class="font-color-red">*</span></div>
+                            <div class="col-md-8">
+                                <select id="english_writing" name="english_writing" class="form-control"
+                                        required="">
+                                    <option>xxxx</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12" style="">
+                            <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">Save
+                            </button>
+                            <button type="button" class="btn btn-default pull-right btn_reset_from"
+                                    style="border: none;">
+                                reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        </div>
+        </div>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
     }
 
     public function buildEducationTable($candidate_id = 0)
@@ -505,13 +1340,14 @@ class Candidate
     {
         $fxrootpath = ABSPATH . 'wp-load.php';
         if (!file_exists($fxrootpath)) {
-            return $this->returnMessage('Set value $fxrootpath in file : pages/apply-employer-register.php', true, false);
+            return $this->returnMessage('Error path file "wp-load.php"', true, false);
         }
         include_once($fxrootpath);
         extract($post);
         $email = empty($email) ? false : $email;
         $pass = empty($pass) ? false : $pass;
         $rePass = empty($rePass) ? false : $rePass;
+        $getPostBackend = empty($post['post_backend']) ? false : $post['post_backend'];
         if ($pass != $rePass && $pass && $rePass) {
             return $this->returnMessage('Error! Check your password and confirm password.', true, false);
         }
@@ -519,7 +1355,7 @@ class Candidate
             return $this->returnMessage('Invalid email format.', true, false);
         }
         list($username) = explode('@', $email);
-        $generatedKey = sha1(mt_rand(10000, 99999).time().$email);
+        $generatedKey = sha1(mt_rand(10000, 99999) . time() . $email);
         $userData = array(
             'user_login' => $username,
             'user_pass' => $pass,
@@ -532,7 +1368,7 @@ class Candidate
             add_user_meta($user_id, 'user_type', $user_type);
             add_user_meta($user_id, 'user_status', 'Under verification process');
             add_user_meta($user_id, "activation_key", $generatedKey);
-            add_user_meta($user_id, "activation_confirm", "false");
+            add_user_meta($user_id, "activation_confirm", $getPostBackend ? "true" : "false");
             $postData = $_POST;
             $postData['candidate_id'] = $user_id;
             $result = $this->addInformation($postData);
@@ -559,96 +1395,12 @@ class Candidate
                 wp_delete_user($user_id);
                 return $this->returnMessage('Error add Skill Languages for contact.', true, false);
             }
-            $message = array("msg" => 'Register Success.', 'key'=> $generatedKey);
+            $message = array("msg" => 'Register Success.', 'key' => $generatedKey, 'candidate_id' => $user_id);
             return $this->returnMessage($message, false, false);
         } else {
             $error_string = $user_id->get_error_message();
             return $this->returnMessage($error_string, true, false);
         }
-    }
-
-    public function addCompanyInfo($post)
-    {
-        $employer_id = isset($post['employer_id']) ? $post['employer_id'] : false;
-        $contact_person = isset($post['employerContactPerson']) ? $post['employerContactPerson'] : false;
-        $company_name = isset($post['employerContactCompanyName']) ? $post['employerContactCompanyName'] : false;
-        $business_type = isset($post['employerContactBusinessType']) ? $post['employerContactBusinessType'] : false;
-        $company_profile_and_business_operation = isset($post['employerContactCompanyProfile']) ? $post['employerContactCompanyProfile'] : false;
-        $walfare_and_benefit = isset($post['employerContactWalfare']) ? $post['employerContactWalfare'] : false;
-        $apply_method = isset($post['employerContactApplyMedtod']) ? $post['employerContactApplyMedtod'] : false;
-        $address = isset($post['employerContactAddress']) ? $post['employerContactAddress'] : false;
-        $contact_country = isset($post['employerContactCountry']) ? $post['employerContactCountry'] : false;
-        $contact_industrial_park = isset($post['employerContactIndustrialPark']) ? $post['employerContactIndustrialPark'] : 0;
-        $province = isset($post['employerContactProvince']) ? $post['employerContactProvince'] : false;
-        $district = isset($post['employerContactDistinct']) ? $post['employerContactDistinct'] : false;
-        $sub_district = isset($post['employerContactSubDistinct']) ? $post['employerContactSubDistinct'] : false;
-        $postcode = isset($post['employerContactPostcode']) ? $post['employerContactPostcode'] : false;
-        $tel = isset($post['employerContactTel']) ? $post['employerContactTel'] : false;
-        $fax = isset($post['employerContactFax']) ? $post['employerContactFax'] : false;
-        $email = isset($post['employerContactEmail']) ? $post['employerContactEmail'] : false;
-        $website = isset($post['employerContactWebsite']) ? $post['employerContactWebsite'] : false;
-        $directions = isset($post['employerContactDirections']) ? $post['employerContactDirections'] : false;
-        $options = isset($post['employerContactOption']) ? $post['employerContactOption'] : false;
-        if ($options) {
-            $options = implode(',', $options);
-        }
-        if (!$employer_id)
-            return false;
-        $sql = "
-            INSERT INTO `$this->tableCompanyInfo` (
-              `employer_id`,
-              `contact_person`,
-              `company_name`,
-              `business_type`,
-              `company_profile_and_business_operation`,
-              `walfare_and_benefit`,
-              `apply_method`,
-              `address`,
-              `contact_country`,
-              `contact_industrial_park`,
-              `province`,
-              `district`,
-              `sub_district`,
-              `postcode`,
-              `tel`,
-              `fax`,
-              `email`,
-              `website`,
-              `directions`,
-              `options`,
-              `create_datetime`,
-              `publish`
-            )
-            VALUES
-              (
-                '{$employer_id}',
-                '{$contact_person}',
-                '{$company_name}',
-                '{$business_type}',
-                '{$company_profile_and_business_operation}',
-                '{$walfare_and_benefit}',
-                '{$apply_method}',
-                '{$address}',
-                '{$contact_country}',
-                '{$contact_industrial_park}',
-                '{$province}',
-                '{$district}',
-                '{$sub_district}',
-                '{$postcode}',
-                '{$tel}',
-                '{$fax}',
-                '{$email}',
-                '{$website}',
-                '{$directions}',
-                '{$options}',
-                NOW(),
-                1
-              );
-        ";
-        $result = $this->wpdb->query($sql);
-        if (!$result)
-            return false;
-        return $this->wpdb->insert_id;
     }
 
     public function editInformation($post)
@@ -707,7 +1459,7 @@ class Candidate
             if (!$result)
                 return $this->returnMessage('Sorry Edit Error.', true);
 
-            if ($new_password && $old_password) {//echo $new_password;echo $old_password;
+            if ($new_password && $old_password) { //echo $new_password;echo $old_password;
                 $current_user = wp_get_current_user();
                 $user = get_user_by('login', $current_user->user_login);
                 if ($user && wp_check_password($old_password, $user->data->user_pass, $user->ID)) {
@@ -1027,8 +1779,14 @@ class Candidate
     function returnMessage($msg, $error, $json = true)
     {
         if ($error) {
-            $arrayReturn = (array('msg' => '<div class="font-color-BF2026"><p>' . $msg . '</p></div>', 'error' => $error));
+            if (is_array($msg)) {
+                $arrayReturn = $msg;
+                $msg = $msg['msg'];
+            }
+            $arrayReturn['msg'] = '<div class="font-color-BF2026"><p>' . $msg . '</p></div>';
+            $arrayReturn['error'] = $error;
         } else {
+            $arrayReturn = array();
             if (is_array($msg)) {
                 $arrayReturn = $msg;
                 $msg = $msg['msg'];

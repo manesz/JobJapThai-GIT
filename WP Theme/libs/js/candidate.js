@@ -5,6 +5,7 @@ var data_for_post = $.param({
     candidate_post: 'true',
     post_type: 'register'
 });
+var is_page_backend = false;
 var check_from_post = false;
 var check_education_post = false;
 var check_work_experience_post = false;
@@ -115,6 +116,8 @@ $(document).ready(function () {
                 var bv = $form.data('bootstrapValidator');
                 var data = $form.serialize();
                 data += "&" + data_for_post;
+                if (is_page_backend)
+                    data += "&post_backend=true";
                 // Use Ajax to submit form data
 //                alert(data);return;
                 showImgLoading();
@@ -129,10 +132,18 @@ $(document).ready(function () {
                         if (!result.error) {
                             if (!is_login) {
                                 showModalMessage(result.msg, "Message register Candidate");
-                                setTimeout(function(){
-                                    window.location.href = url_post +"register-success/?mail_confirm=" +
-                                        $("#email").val()
-                                }, 3000);
+                                if (!is_page_backend) {
+                                    setTimeout(function () {
+                                        window.location.href = url_post + "register-success/?mail_confirm=" +
+                                            $("#email").val()
+                                    }, 3000);
+                                } else {
+                                    setTimeout(function () {
+                                        window.location.href = "?page=candidate-list&candidate_page_type=edit&candidate_id=" +
+                                            result.candidate_id
+                                    }, 3000);
+                                }
+
                             }
                             else {
                                 showModalMessage(result.msg, "Message Edit Candidate");
@@ -143,13 +154,11 @@ $(document).ready(function () {
 
                         if (check_education_post) {
                             getEducation();
-//                            $("#panel_education").find('input[type=text], textarea').val('');
-//                            $('#panel_education:input[type=text]:first').select();
+                            resetPanelEducationValue('reset');
                         }
                         if (check_work_experience_post) {
                             getWorkExperience();
-//                            $("#panel_work_experience").find('input[type=text], textarea').val('');
-//                            $('#panel_work_experience:input[type=text]:first').select();
+                            resetPanelWorkExperienceValue('reset');
                         }
 
                         check_from_post = false;
@@ -198,32 +207,28 @@ $(document).ready(function () {
                 data_for_post = $.param({
                     candidate_post: 'true',
                     post_type: 'edit_information',
-                    candidate_id: candidate_id,
-                    information_id: information_id
+                    candidate_id: candidate_id
                 });
                 break;
             case 2:
                 data_for_post = $.param({
                     candidate_post: 'true',
                     post_type: 'edit_career_profile',
-                    candidate_id: candidate_id,
-                    career_profile_id: career_profile_id
+                    candidate_id: candidate_id
                 });
                 break;
             case 3:
                 data_for_post = $.param({
                     candidate_post: 'true',
                     post_type: 'edit_desired_job',
-                    candidate_id: candidate_id,
-                    desired_job_id: desired_job_id
+                    candidate_id: candidate_id
                 });
                 break;
             case 6:
                 data_for_post = $.param({
                     candidate_post: 'true',
                     post_type: 'edit_skill_languages',
-                    candidate_id: candidate_id,
-                    skill_languages_id: skill_languages_id
+                    candidate_id: candidate_id
                 });
                 break;
         }

@@ -93,11 +93,12 @@ if ($_REQUEST) {
     if ($candidatePost == 'true') {
         $classCandidate = new Candidate($wpdb);
         $postType = empty($_REQUEST['post_type'])? false: $_REQUEST['post_type'];
+        $getPostBackend = empty($_REQUEST['post_backend'])? false: $_REQUEST['post_backend'];
         switch ($postType) {
             case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
-//                $generatedKey = sha1(mt_rand(10000,99999).time().$email);;
-                if (!$result['error']) {
+
+                if (!$result['error'] && !$getPostBackend) {
                     //$this->setUserLogin($user_id);
                     $_REQUEST['key'] = $result['key'];
                     ob_start();
@@ -108,7 +109,7 @@ if ($_REQUEST) {
                     if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
                         echo $classCandidate->returnMessage("Sorry error send email.", true);
                     }
-                }
+                }//var_dump($result);
                 echo $classCandidate->returnMessage($result, $result['error'], true);
                 break;
             case "edit":

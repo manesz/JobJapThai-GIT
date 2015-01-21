@@ -6,6 +6,7 @@ require_once("class/ClassContact.php");
 require_once("class/ClassEmployer.php");
 require_once("class/ClassEmployerBackend.php");
 require_once("class/ClassCandidate.php");
+require_once("class/ClassCandidateBackend.php");
 require_once("class/ClassPackage.php");
 require_once("class/ClassFavorite.php");
 require_once("class/ClassApply.php");
@@ -20,4 +21,5 @@ require_once('menu/job-menu.php');
 require_once('menu/news-menu.php');
 
 require_once('menu/employer-list.php');
+require_once('menu/candidate-list.php');
 

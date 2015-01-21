@@ -13,13 +13,12 @@ function my_add_employer_list_menu_items()
         'employer-list',
         'render_employer_list_page_list'
     );
-    add_action("load-$hook", 'add_options');
+    add_action("load-$hook", 'add_employer_options');
 
 }
 
-function add_options()
+function add_employer_options()
 {
-    global $classEmployer;
     $option = 'per_page';
     $args = array(
         'label' => 'Employer',
@@ -27,7 +26,6 @@ function add_options()
         'option' => 'employer_per_page',
     );
     add_screen_option($option, $args);
-    $classEmployer = new Employer_List();
 }
 
 //add_action('admin_menu', 'my_add_employer_list_menu_items');
@@ -35,24 +33,24 @@ function add_options()
 
 function render_employer_list_page_list()
 {
-    global $classEmployer;
+    $classEmployerList = new Employer_List();
     $siteUrl = home_url();
     $getEditEmployer = empty($_GET['employer_page_type'])? false: $_GET['employer_page_type'];
     if ($getEditEmployer == 'add') {
-        $classEmployer->employerAddTemplate();
+        $classEmployerList->employerAddTemplate();
     }  else if ($getEditEmployer == 'edit') {
-        $classEmployer->employerAddTemplate();
+        $classEmployerList->employerAddTemplate();
     } else {
         echo '</pre><div class="wrap"><h2>Employer List
         <a href="?page=employer-list&employer_page_type=add" class="add-new-h2">Add New</a></h2>';
-        $classEmployer->prepare_items();
+        $classEmployerList->prepare_items();
         ?>
 
         <form method="post">
             <input type="hidden" name="page" value="render_employer_list_page_list">
         <?php
-        //$classEmployer->search_box('Search', 'room_name');
-        $classEmployer->display();
+        $classEmployerList->search_box('Search', 'company_name');
+        $classEmployerList->display();
         echo '</form></div>';
     }
 }
