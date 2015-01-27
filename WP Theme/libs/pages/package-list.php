@@ -29,7 +29,7 @@ if (is_user_logged_in()) {
     <?php foreach ($arraySelectPackage as $key => $value) : ?>
         <tr>
             <td><?php echo $key + 1; ?></td>
-            <?php //echo $classPackage->buildTdList($arrayPackage, $value->string_package, $value->id); ?>
+            <?php echo $classPackage->buildTdList($arrayPackage, $value->string_package, $value->id); ?>
         </tr>
     <?php endforeach; ?>
     </tbody>

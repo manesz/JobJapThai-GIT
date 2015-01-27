@@ -4,6 +4,9 @@
            href="<?php echo get_site_url(); ?>/edit-resume/"
            role="button"><?php if (is_page("employer-register") || is_page("Edit Resume")) { ?><strong>Edit
                 Resume</strong><?php } else { ?>Edit Resume<?php } ?></a>
+        <a class="btn btn-default <?php if (is_page("Post Job")) { ?> active<?php } ?>"
+           href="<?php echo get_site_url(); ?>/post-job/" role="button"><?php if (is_page("Post Job")) { ?>
+                <strong>Post Job</strong><?php } else { ?>Post Job<?php } ?></a>
         <a class="btn btn-default <?php if (is_page("Request Resume")) { ?> active<?php } ?>"
            href="<?php echo get_site_url(); ?>/request-resume/" role="button"><?php if (is_page("Request Resume")) { ?>
                 <strong>Request Resume</strong><?php } else { ?>Request Resume<?php } ?></a>

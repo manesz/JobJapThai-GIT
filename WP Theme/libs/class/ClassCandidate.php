@@ -148,55 +148,79 @@ class Candidate
     function buildHtmlFormRegister()
     {
         ob_start();
-       ?>
+        ?>
         <form method="post" id="form_candidate_step1" class="form-horizontal"
-               data-bv-message="This value is not valid"
-               data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
-               data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
-               data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+              data-bv-message="This value is not valid"
+              data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+              data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+              data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
 
-        <div id="div_step1" class="col-md-12">
-            <div class="form-group col-md-12">
-                <div class="col-md-4 text-right clearfix"><label for="email">Email<span
-                            class="font-color-red">*</span></label></div>
-                <div class="col-md-8">
-                    <input type="text" id="email" name="email" class="form-control"
-                           maxlength="50"
-                           data-bv-emailaddress="true"
-                           required data-bv-emailaddress-message="The input is not a valid email address"
-                        />
+            <div id="div_step1" class="col-md-12">
+                <div class="form-group col-md-12">
+                    <div class="col-md-4 text-right clearfix"><label for="email">Email<span
+                                class="font-color-red">*</span></label></div>
+                    <div class="col-md-8">
+                        <input type="text" id="email" name="email" class="form-control"
+                               maxlength="50"
+                               data-bv-emailaddress="true"
+                               required data-bv-emailaddress-message="The input is not a valid email address"
+                            />
+                    </div>
                 </div>
-            </div>
-            <div class="form-group col-md-12">
-                <div class="col-md-4 text-right clearfix"><label for="step1_pass">Password<span
-                            class="font-color-red">*</span></label>
+                <div class="form-group col-md-12">
+                    <div class="col-md-4 text-right clearfix"><label for="step1_pass">Password<span
+                                class="font-color-red">*</span></label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="password" id="pass" name="pass" class="form-control"
+                               maxlength="50"
+                               required
+                               data-bv-stringlength="true"
+                               data-bv-stringlength-min="8"
+                            />
+                    </div>
                 </div>
-                <div class="col-md-8">
-                    <input type="password" id="pass" name="pass" class="form-control"
-                           maxlength="50"
-                           required
-                           data-bv-stringlength="true"
-                           data-bv-stringlength-min="8"
-                        />
-                </div>
-            </div>
 
-            <div class="form-group col-md-12" style="">
-                <button id="submitStep1" type="submit" class="btn btn-primary col-md-6 pull-right">Submit Form
-                </button>
-                <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
-                    Reset
-                </button>
+                <div class="form-group col-md-12" style="">
+                    <button id="submitStep1" type="submit" class="btn btn-primary col-md-6 pull-right">Submit Form
+                    </button>
+                    <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
+                        Reset
+                    </button>
+                </div>
             </div>
-        </div>
-        <!-- END: step 1 -->
-    </form>
+            <!-- END: step 1 -->
+        </form>
         <?php
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
 
     }
+
+    function candidateMenu()
+    {
+        $siteUrl = get_site_url();
+        ob_start();
+        ?>
+        <div class="btn-group">
+            <a href="<?php echo $siteUrl; ?>/candidate"
+               class="btn btn-default <?php echo is_page("candidate-register") || is_page("candidate") ? 'active' : ''; ?>">Edit
+                Resume</a>
+            <a href="<?php echo $siteUrl; ?>/applied-job" class="btn btn-default <?php
+            echo is_page("applied-job") ? 'active' : ''; ?>">Applied Job</a>
+            <a href="<?php echo $siteUrl; ?>/favorite-job" class="btn btn-default <?php
+            echo is_page("favorite-job") ? 'active' : ''; ?>">Favorite Job</a>
+            <a href="#" class="btn btn-default">View by Company</a>
+            <a href="#" class="btn btn-default">Account Setting</a>
+        </div>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+
     function buildHtmlEditProfile1($user_id, $is_backend = false)
     {
         $current_user = $this->getUser($user_id);
@@ -248,7 +272,7 @@ class Candidate
             <?php endif; ?>
         </script>
         <div id="sectProfile" class="col-md-12">
-            <!--                --><?php //include_once('candidate-menu.php'); ?>
+            <?php echo $this->candidateMenu(); ?>
             <div class="col-md-8" style="padding-top: 10px;">
                 Resume Code: <span class=".font-color-BF2026" style=""><?php echo $resumeCode; ?></span><br/>
                 Status: <span class="font-color-BF2026" style="">Under verification process</span><br/>
@@ -324,7 +348,9 @@ class Candidate
             <div id="candPersonalInformation" class="panel-collapse collapse in" role="tabpanel"
                  aria-labelledby="headingOne">
                 <form method="post" id="form_candidate1" class="form-horizontal form_candidate">
-                    <input type="hidden" name="information_id" value="<?php echo empty($objInformation)?0:$objInformation[0]->id;?>">
+                    <input type="hidden" name="information_id"
+                           value="<?php echo empty($objInformation) ? 0 : $objInformation[0]->id; ?>">
+
                     <div class="panel-body">
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="candEmail">User Name<span
@@ -499,7 +525,9 @@ class Candidate
             <div id="candCareerProfile" class="panel-collapse collapse" role="tabpanel"
                  aria-labelledby="headingTwo">
                 <form method="post" id="form_candidate2" class="form-horizontal form_candidate">
-                    <input type="hidden" name="career_profile_id" value="<?php echo empty($objCareerProfile)?0:$objCareerProfile[0]->id;?>">
+                    <input type="hidden" name="career_profile_id"
+                           value="<?php echo empty($objCareerProfile) ? 0 : $objCareerProfile[0]->id; ?>">
+
                     <div class="panel-body">
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="year_of_work_exp">Year of Work
@@ -583,7 +611,9 @@ class Candidate
             </div>
             <div id="candDesiredJob" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                 <form method="post" id="form_candidate3" class="form-horizontal form_candidate">
-                    <input type="hidden" name="desired_job_id" value="<?php echo empty($objDesiredJob)?0:$objDesiredJob[0]->id;?>">
+                    <input type="hidden" name="desired_job_id"
+                           value="<?php echo empty($objDesiredJob) ? 0 : $objDesiredJob[0]->id; ?>">
+
                     <div class="panel-body">
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="industry">Industry</label></div>
@@ -832,7 +862,9 @@ class Candidate
             <div id="candSkillLanguages" class="panel-collapse collapse" role="tabpanel"
                  aria-labelledby="headingThree">
                 <form method="post" id="form_candidate6" class="form-horizontal form_candidate">
-                    <input type="hidden" name="skill_languages_id" value="<?php echo empty($objSkillLanguage)?0:$objSkillLanguage[0]->id;?>">
+                    <input type="hidden" name="skill_languages_id"
+                           value="<?php echo empty($objSkillLanguage) ? 0 : $objSkillLanguage[0]->id; ?>">
+
                     <div class="panel-body">
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="japanese_skill">Japanese

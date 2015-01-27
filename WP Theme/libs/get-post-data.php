@@ -36,6 +36,7 @@ if ($_REQUEST) {
     $newPackage = empty($_REQUEST['new_package']) ? false : $_REQUEST['new_package'];
     $listPackage = empty($_REQUEST['list_package']) ? false : $_REQUEST['list_package'];
     $postPackage = empty($_REQUEST['post_package']) ? false : $_REQUEST['post_package'];
+    $postJob = empty($_REQUEST['post_job']) ? false : $_REQUEST['post_job'];
     if ($newPackage == 'true') {
         require_once("pages/package-new.php");
         exit;
@@ -60,12 +61,40 @@ if ($_REQUEST) {
         }
         exit;
     }
+    if ($postJob) {
+        $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
+        if ($postType == 'add') {
+            $result = $classEmployer->addPostJob($_REQUEST);
+        } else if ($postType == 'edit') {
+            $result = $classEmployer->editPostJob($_REQUEST);
+        } else if ($postType == 'delete') {
+            $result = $classEmployer->deletePosJob($_REQUEST['post_id']);
+        } else if ($postType == 'load_edit') {
+            $result = $classEmployer->buildFormPostJob('edit');
+        } else if ($postType == 'feature_image') {
+            if ($_REQUEST['post_id'] == 0) {
+                $post_id = $classEmployer->addPostJob(array(), 'draft');
+            } else {
+                $post_id = $_REQUEST['post_id'];
+                $classEmployer->deleteOldThumbnail($post_id);
+            }
+            $result = $classEmployer->uploadImage($_FILES['feature_image']);
+            if (!$result['error']) {
+                if ($classEmployer->setFeatureImage($post_id, $result['url'])){
+                    $result['post_id'] = $post_id;
+                }
+            }
+            $result = $classEmployer->returnMessage($result, $result['error']);
+        }
+        echo $result;
+        exit;
+    }
 
     $employerPost = empty($_REQUEST['employer_post']) ? false : $_REQUEST['employer_post'];
     if ($employerPost == 'true') {
         $classEmployer = new Employer($wpdb);
-        $postType = empty($_REQUEST['post_type'])? false: $_REQUEST['post_type'];
-        $getPostBackend = empty($_REQUEST['post_backend'])? false: $_REQUEST['post_backend'];
+        $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
+        $getPostBackend = empty($_REQUEST['post_backend']) ? false : $_REQUEST['post_backend'];
         if ($postType == 'add') {
             $result = $classEmployer->employerRegister($_REQUEST);
             if (!$result['error'] && !$getPostBackend) {
@@ -92,8 +121,8 @@ if ($_REQUEST) {
     $candidatePost = empty($_REQUEST['candidate_post']) ? false : $_REQUEST['candidate_post'];
     if ($candidatePost == 'true') {
         $classCandidate = new Candidate($wpdb);
-        $postType = empty($_REQUEST['post_type'])? false: $_REQUEST['post_type'];
-        $getPostBackend = empty($_REQUEST['post_backend'])? false: $_REQUEST['post_backend'];
+        $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
+        $getPostBackend = empty($_REQUEST['post_backend']) ? false : $_REQUEST['post_backend'];
         switch ($postType) {
             case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
@@ -109,7 +138,8 @@ if ($_REQUEST) {
                     if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
                         echo $classCandidate->returnMessage("Sorry error send email.", true);
                     }
-                }//var_dump($result);
+                }
+                //var_dump($result);
                 echo $classCandidate->returnMessage($result, $result['error'], true);
                 break;
             case "edit":
@@ -256,6 +286,9 @@ if ($_REQUEST) {
                 break;
             case "highlight_jobs":
                 $argc = $classQueryPostJob->queryHighlightJobs();
+                break;
+            case "post_job":
+                $argc = $classQueryPostJob->queryPostJob($_REQUEST['user_id']);
                 break;
         }
         echo $classQueryPostJob->buildListJob($argc);

@@ -76,13 +76,7 @@ if ($arrayContact) {
                 <!--                <li>Jobs in Samut Prakan</li>-->
                 <!--                <li>Jobs in Samut Sakhon</li>-->
                 <?php
-                $all_cats = get_categories('child_of=' . $classQueryPostJob->categoryLocationID . '&hide_empty=0');
-                $arrayLocation = array();
-                foreach ($all_cats as $value) {
-                    if ($value->parent) {
-                        $arrayLocation[] = $value;
-                    }
-                }
+                $arrayLocation = $classQueryPostJob->getArraySubCatLocation();
                 foreach ($arrayLocation as $value) : ?>
                     <li><a href="<?php echo get_category_link($value->term_taxonomy_id); ?>">Jobs
                             in <?php echo $value->name; ?></a></li>

@@ -15,6 +15,8 @@ if (have_posts()) :
             //get_template_part('post-formats/format');
         }else if (is_page("employer-register")) {
             get_template_part('libs/pages/employer-register');
+        } else if (is_page("Post Job")) {
+            get_template_part('libs/pages/post-job');
         } else if (is_page("Edit Resume")) {
             get_template_part('libs/pages/employer-register');
         } else if (is_page("request-resume")) {

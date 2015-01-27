@@ -37,7 +37,7 @@ class Candidate_List extends WP_List_Table
         $result = $classCandidate->getListUser();
         $siteUrl = home_url();
         foreach ($result as $key => $value) {
-            $strEdit = '<a href="?page=candidate-list&candidate-edit=true&id=' . $value->ID . '">Edit</a> |
+            $strEdit = '
             <a class="btn_delete_candidate" href="#" pm-id="' . $value->ID . '">Delete</a> ';
             if ($this->searchInArray((array)$value))
                 $this->candidate_data[] = array(
@@ -48,9 +48,12 @@ class Candidate_List extends WP_List_Table
                     "user_login" => $value->user_login,
 //                "user_nicename" => $value->user_nicename,
                     "email" => $value->user_email,
+                    "create_time" => $value->create_datetime,
+                    "update_time" => $value->update_datetime,
                     "fav_job" => '<a href="' . $siteUrl . '/wp-admin/post-new.php?post_type=job&candidate_id=' . $value->can_id . '">view</a>',
                     "apply_job" => '<a href="?page=candidate-list&candidate-edit=true&id=' . $value->ID . '">view</a>',
-                    "edit" => $strEdit,
+                    "edit" => '<a href="?page=candidate-list&candidate_page_type=edit&candidate_id=' . $value->ID . '">Edit</a>|
+                    <a class="btn_delete_candidate" href="#" pm-id="' . $value->ID . '">Delete</a>',
                 );
         }
 
@@ -164,6 +167,8 @@ class Candidate_List extends WP_List_Table
 //            case 'user_nicename':
 //            case 'passport_no':
             case 'email':
+            case 'create_time':
+            case 'update_time':
             case 'fav_job':
             case 'apply_job':
             case 'edit':
@@ -185,6 +190,8 @@ class Candidate_List extends WP_List_Table
 //            'check_out_date' => array('check_out_date', true),
 ////            'passport_no' => array('passport_no', false),
             'email' => array('email', true),
+            'create_time' => array('create_time', true),
+            'update_time' => array('update_time', true),
 //            'fav_job' => array('fav_job', false),
 //            'apply_job' => array('apply_job', false),
         );
@@ -202,9 +209,11 @@ class Candidate_List extends WP_List_Table
 //            'user_nicename' => __('Nicename', 'mylisttable'),
 //            'passport_no' => __('Passport', 'mylisttable'),
             'email' => __('Email', 'mylisttable'),
+            'create_time' => __('Create Time', 'mylisttable'),
+            'update_time' => __('Update Time', 'mylisttable'),
             'fav_job' => __('Favorite Job', 'mylisttable'),
             'apply_job' => __('Apply Job', 'mylisttable'),
-            'edit' => __('Edit', 'mylisttable'),
+            'edit' => __('Delete', 'mylisttable'),
         );
         return $columns;
     }
@@ -345,6 +354,9 @@ class Candidate_List extends WP_List_Table
                                 <?php else: ?>
                                     <?php echo $classCandidate->buildHtmlEditProfile2($userID, true); ?>
                                 <?php endif; ?>
+                                <div class="form-group col-md-12" style="">
+                                    <a href="?page=candidate-list" class="btn btn-info col-md-3 pull-right">Back</a>
+                                </div>
                             </div>
                         </div>
                     </div>

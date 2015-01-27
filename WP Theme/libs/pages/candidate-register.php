@@ -1,6 +1,7 @@
 <?php
+global $current_user, $wpdb;
+$classCandidate = new Candidate($wpdb);
 if (is_user_logged_in()) {
-    global $current_user, $wpdb;
     $userID = $current_user->ID;
     $userType = get_user_meta($userID, 'user_type', true);
     if ($userType == "employer") {
@@ -8,7 +9,6 @@ if (is_user_logged_in()) {
         $userID = 0;
     } else {
         $isLogin = true;
-        $classCandidate = new Candidate($wpdb);
     }
 } else {
     $isLogin = false;
@@ -48,7 +48,7 @@ if (is_user_logged_in()) {
 <?php if (!$isLogin): ?>
     <?php echo $classCandidate->buildHtmlFormRegister(); ?>
 <?php else: ?>
-    <?php echo $classCandidate->buildHtmlEditProfile2($userID); ?>
+    <?php  echo $classCandidate->buildHtmlEditProfile2($userID); ?>
 <?php endif; ?>
 </div>
 

@@ -16,7 +16,7 @@ class QueryPostJob
     private $ClassFavorite = null;
     private $ClassApply = null;
     private $ClassEmployer = null;
-    public $categoryLocationID = 19;
+    public $categoryLocationID = 0;
 
     public function __construct($wpdb)
     {
@@ -24,6 +24,8 @@ class QueryPostJob
         $this->ClassFavorite = new Favorite($wpdb);
         $this->ClassApply = new Apply($wpdb);
         $this->ClassEmployer = new Employer($wpdb);
+
+        $this->categoryLocationID = get_cat_ID("Location");
     }
 
     public function queryFavoriteJob($user_id)
@@ -277,6 +279,68 @@ class QueryPostJob
         return $argc;
     }
 
+    function queryPostJob($user_id)
+    {
+        $getCompanyInfo = $this->ClassEmployer->getCompanyInfo(0, $user_id);
+        $company_id = $getCompanyInfo[0]->com_id;
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
+        $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
+        $argc = array(
+            'post_type' => $this->postType,
+            'post_status' => 'publish',
+            'posts_per_page' => $posts_per_page,
+            'meta_key' => 'company_id',
+            'meta_value' => $company_id,
+            'paged' => $paged
+        );
+
+        switch ($orderby) {
+            case 1: //last update
+//                $arrayListJobID = array();
+//                foreach ($getListApplyJob as $value) {
+//                    $arrayListJobID[] = $value->job_id;
+//                }
+//                if (!$arrayListJobID)
+//                    return null;
+                $argc['orderby'] = 'modified';
+                $argc['order'] = 'DESC';
+//                $argc['post__in'] = $arrayListJobID;
+                break;
+            case 2: //company name
+//                $arrayCompanyID = array();
+//                foreach ($getListApplyJob as $value) {
+//                    $arrayCompanyID[] = $value->company_id;
+//                }
+//                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
+//                $arrayMetaQuery = array();
+//                foreach ($objListCompany as $value) {
+//                    $arrayMetaQuery[] = array(
+//                        'key' => 'company_id',
+//                        'value' => $value->id,
+//                        'compare' => '='
+//                    );
+//                }
+//                $argc['meta_query'] = array($arrayMetaQuery);
+//                if (!$arrayMetaQuery)
+//                    return null;
+                break;
+        }
+        return $argc;
+    }
+
+    function getArraySubCatLocation()
+    {
+        $all_cats = get_categories('child_of=' . $this->categoryLocationID . '&hide_empty=0');
+        $arrayLocation = array();
+        foreach ($all_cats as $value) {
+            if ($value->parent) {
+                $arrayLocation[] = $value;
+            }
+        }
+        return $arrayLocation;
+    }
+
     function getSubCatLocation($post_id)
     {
         $post_categories = wp_get_post_categories($post_id);
@@ -388,7 +452,7 @@ class QueryPostJob
         return $strPaging;
     }
 
-    function buildListJob($argc, $paging = true)
+    function buildListJob($argc, $paging = true, $showEdit = false)
     {
         if (is_array($argc) || !$argc)
             $loopJobs = new WP_Query($argc);
@@ -436,7 +500,12 @@ class QueryPostJob
                                 </div>
                                 <div class="col-md-2">
                                     <?php the_date('M d, Y'); ?><br/>
-                                    <?php echo empty($job_location) ? "" : $job_location; ?><br/>
+                                    <?php echo empty($job_location) ? "" : $job_location . "<br/>"; ?>
+                                    <?php if ($showEdit): ?>
+                                        <a class="btn btn-primary"
+                                           onclick="loadPostJob(<?php echo $postID; ?>);">Edit</a>
+                                        <a class="btn btn-danger" onclick="deletePostJob(<?php echo $postID; ?>);">Delete</a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </li>

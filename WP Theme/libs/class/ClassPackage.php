@@ -308,7 +308,7 @@ class Package
         $strReturn = "";
         foreach ($array_package as $value) {
             if ($value->id == $id) {
-                return $value->text;
+                return $value;
             }
         }
         return $strReturn;
@@ -319,17 +319,19 @@ class Package
         $strTd = "";
         $arrPosition = explode('|', $str_select_package);
         foreach ($arrPosition as $value) {
-            list($text, $time) = explode(',', $value);
-            list($idText) = explode(':', $text);
-            if ($time) {
-                list($idTime) = explode(':', $time);
-                $strTime = $this->getTextPackageByID($array_package, $idTime);
-            } else {
-                $strTime = "";
-            }
+            $arrExp1 = explode(',', $value);
+            list($idText) = explode(':', $arrExp1[0]);
             $strText = $this->getTextPackageByID($array_package, $idText);
-            $strTd .= "<td>$strText";
-            $strTd .= $strTime ? "/$strTime</td>" : "</td>";
+            $strTd .= "<td>$strText->text";
+
+            if (!empty($arrExp1[1]) && $strText->price > 0) {
+                list($idTime) = explode(':', $arrExp1[1]);
+                $strTime = $this->getTextPackageByID($array_package, $idTime);
+                $strTd .= "/$strTime->text</td>";
+            } else {
+                $strTd .= "</td>";
+            }
+//            $strTd .= $strTime ? "/$strTime</td>" : "</td>";
         }
         $strTd .= "<td>--</td>";
         $strTd .= "<td><a href='#' data-toggle=\"modal\"
@@ -345,12 +347,12 @@ class Package
         $arrPosition = explode('|', $select_package);
         $arraySavePosition = array();
         foreach($arrPosition as $value) {
-            list($text, $time) = explode(',', $value);
-            list($idText) = explode(':', $text);
+            $arrExp1 = explode(',', $value);
+            list($idText) = explode(':', $arrExp1[0]);
             $getValPrice = $this->getPricePackageByID($array_package, $idText);
             $strSelect = "$idText:$getValPrice";
-            if ($time) {
-                list($idTime) = explode(':', $time);
+            if (!empty($arrExp1[1])) {
+                list($idTime) = explode(':', $arrExp1[1]);
                 $getValTime = $this->getPricePackageByID($array_package, $idTime);
                 $strSelect = "$strSelect,$idTime:$getValTime";
             }

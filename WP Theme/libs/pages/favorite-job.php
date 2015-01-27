@@ -58,7 +58,7 @@ if (is_user_logged_in()) {
             <div class="col-md-8">
                 <?php if ($isLogin) { ?>
                     <div id="sectProfile" class="col-md-12">
-                        <?php include_once('candidate-menu.php'); ?>
+                        <?php echo $classCandidate->candidateMenu(); ?>
                     </div>
                 <?php } ?>
                 <div class="clearfix"

@@ -143,8 +143,8 @@ class Employer
         $args = array(
 //        'blog_id'      => $GLOBALS['blog_id'],
 //        'role'         => '',
-            'meta_key'     => 'user_type',
-            'meta_value'   => 'employer',
+            'meta_key' => 'user_type',
+            'meta_value' => 'employer',
 //        'meta_compare' => '',
 //        'meta_query'   => array(),
 //        'include'      => array(),
@@ -220,7 +220,7 @@ class Employer
         $pass = isset($post['employerPassword']) ? $post['employerPassword'] : false;
         $rePass = isset($post['employerConfirmPassword']) ? $post['employerConfirmPassword'] : false;
         $email = isset($post['employerEmail']) ? $post['employerEmail'] : false;
-        $getPostBackend = empty($post['post_backend'])? false: $post['post_backend'];
+        $getPostBackend = empty($post['post_backend']) ? false : $post['post_backend'];
         //$website = isset($post['employerContactWebsite']) ? $post['employerContactWebsite'] : '';
 
         $email = empty($email) ? false : $email;
@@ -243,7 +243,7 @@ class Employer
         $user_id = wp_insert_user($userData);
         if (!is_wp_error($user_id)) {
             add_user_meta($user_id, "activation_key", $generatedKey);
-            add_user_meta($user_id, "activation_confirm", $getPostBackend? "true": "false");
+            add_user_meta($user_id, "activation_confirm", $getPostBackend ? "true" : "false");
             $user_type = 'employer';
             add_user_meta($user_id, 'user_type', $user_type);
             $postData = $post;
@@ -265,10 +265,10 @@ class Employer
 
     function editEmployer($post)
     {
-        $pass = empty($_REQUEST['employerPassword'])? false: $_REQUEST['employerPassword'];
-        $rePass = empty($_REQUEST['employerConfirmPassword'])? false: $_REQUEST['employerConfirmPassword'];
-        $getPostBackend = empty($_REQUEST['post_backend'])? false: $_REQUEST['post_backend'];
-        $employer_id = empty($_REQUEST['employer_id'])? false: $_REQUEST['employer_id'];
+        $pass = empty($_REQUEST['employerPassword']) ? false : $_REQUEST['employerPassword'];
+        $rePass = empty($_REQUEST['employerConfirmPassword']) ? false : $_REQUEST['employerConfirmPassword'];
+        $getPostBackend = empty($_REQUEST['post_backend']) ? false : $_REQUEST['post_backend'];
+        $employer_id = empty($_REQUEST['employer_id']) ? false : $_REQUEST['employer_id'];
         $result = $this->editCompanyInfo($post);
         if (!$result) {
             return $this->returnMessage('Error edit company information for contact.', true);
@@ -282,7 +282,7 @@ class Employer
             } else {
                 return $this->returnMessage('Error check old password.', true);
             }
-        } elseif($getPostBackend && $pass) {
+        } elseif ($getPostBackend && $pass) {
             $user = $this->getUser($employer_id);
             wp_set_password($pass, $user->ID);
 //            if ($user && wp_check_password($rePass, $user->data->user_pass, $user->ID)) {
@@ -616,7 +616,7 @@ class Employer
         </div>
         <div class="clearfix"></div>
         <hr/>
-<?
+        <?
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
@@ -680,113 +680,357 @@ class Employer
         return true;
     }
 
-    public function editPackage($post)
+    function buildFormPostJob($post_type = 'add')
     {
-
-    }
-
-    public function addData($post)
-    {
-        extract($post);
-        $result = $this->wpdb->insert(
-            $this->tableBannerSlide,
-            array(
-                //'title' => @$gtitle,
-                //'description' => @$gdesc,
-                'sort' => @$gsort,
-                'link' => @$glink,
-                'image_path' => @$pathimg,
-                'create_datetime' => date_i18n("Y-m-d H:i:s"),
-                'update_datetime' => date_i18n("Y-m-d H:i:s"),
-                'publish' => 1,
-            ),
-            array(
-//                '%s',
-//                '%s',
-                '%d',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%d',
-            )
-        );
-        if ($result) {
-            return $this->wpdb->insert_id;
+        $user_id = get_current_user_id();
+        $getCompanyInfo = $this->getCompanyInfo(0, $user_id);
+        $company_id = empty($getCompanyInfo) ? 0 : $getCompanyInfo[0]->com_id;
+        $post_id = empty($_REQUEST['post_id']) ? 0 : $_REQUEST['post_id'];
+        $getPost = null;
+        $custom = null;
+        if ($post_type != 'add' && $post_id) {
+            $getPost = get_post($post_id);
+            $custom = get_post_custom($post_id);
         }
-        return false;
+        $qualification = empty($custom["qualification"][0]) ? "" : $custom["qualification"][0];
+        $job_type = empty($custom["job_type"][0]) ? "" : $custom["job_type"][0];
+        $jlpt_level = empty($custom["jlpt_level"][0]) ? "" : $custom["jlpt_level"][0];
+        $job_location = empty($custom["job_location"][0]) ? "" : $custom["job_location"][0];
+        $japanese_skill = empty($custom["japanese_skill"][0]) ? "" : $custom["japanese_skill"][0];
+        $salary = empty($custom["salary"][0]) ? "" : $custom["salary"][0];
+        $working_day = empty($custom["working_day"][0]) ? "" : $custom["working_day"][0];
+        $classQueryPostJob = new QueryPostJob($this->wpdb);
+        $arrayLocation = $classQueryPostJob->getArraySubCatLocation();
+
+        $featureImage = get_the_post_thumbnail($post_id);
+        ob_start();
+        ?>
+        <form class="form-horizontal">
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="feature_image"><?php _e('Image:', 'framework') ?></label></div>
+                <div class="col-md-10">
+                    <div></div>
+                    <div class="fileinput fileinput-new" data-provides="fileinput" style="width: 100%;">
+                        <div id="preview" class="fileinput-preview thumbnail col-md-10" data-trigger="fileinput"
+                             style="width: 100%; height: 200px;"><?php echo $featureImage; ?></div>
+                        <div>
+                        <span class="btn btn-default btn-file">
+                            <span class="fileinput-new">Select image</span>
+                            <span class="fileinput-exists">Change</span>
+                            <input type="file" name="file" id="feature_image" onchange="setFeatureImage(this);"
+                                   class="ephoto-upload" accept="image/jpeg"></span>
+                            <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="form_post_job" method="POST"
+              class="form-horizontal">
+            <input type="hidden" name="post_job" value="true">
+            <input type="hidden" name="post_type" value="<?php echo $post_type; ?>">
+            <input type="hidden" name="company_id" value="<?php echo $company_id; ?>">
+            <input type="hidden" name="post_id" value="<?php echo $post_id; ?>">
+
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="postTitle"><?php _e('Job Title:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <input type="text" class="form-control"
+                           maxlength="20"
+                           data-bv-stringlength="true"
+                           data-bv-stringlength-min="4"
+                           data-bv-message="Job title is not valid" id="postTitle"
+                           name="postTitle"
+                           required
+                           value="<?php echo $getPost ? $getPost->post_title : ""; ?>"
+                           data-bv-notempty-message="Job title is required and cannot be empty"/>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="postContent"><?php _e('Job Content:', 'framework') ?></label></div>
+                <div class="col-md-10">
+                    <textarea name="postContent" id="postContent" rows="8" cols="30"
+                              class="form-control"><?php echo $getPost ? $getPost->post_content : ""; ?></textarea>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="qualification"><?php _e('Qualification:', 'framework') ?></label></div>
+                <div class="col-md-10">
+                    <textarea name="qualification" id="qualification" rows="8" cols="30"
+                              class="form-control"><?php echo $qualification; ?></textarea>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="job_type"><?php _e('Job Type:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <select id="job_type" name="job_type" class="form-control" required="">
+                        <option value="">--Select--</option>
+                        <option value="Permanent">Permanent
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="jlpt_level"><?php _e('JLPT Level:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <select id="jlpt_level" name="jlpt_level" class="form-control" required="">
+                        <option value="">--Select--</option>
+                        <?php for ($i = 1;
+                        $i <= 5;
+                        $i++): ?>
+                        <option value="N<?php echo $i; ?>" <?php echo $jlpt_level == "N$i" ? 'selected' : '' ?>>
+                            N<?php echo $i; ?>
+                            <?php endfor; ?>
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="job_location"><?php _e('Job Location:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <select id="job_location" name="job_location" class="form-control" required="">
+                        <option value="">--Select--</option>
+                        <?php foreach ($arrayLocation as $value): ?>
+                            <option value="<?php echo $value->term_taxonomy_id; ?>"
+                                <?php echo $value->term_taxonomy_id == $job_location ? 'selected' : ''; ?>
+                                ><?php echo $value->name; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="japanese_skill"><?php _e('Japanese Skill:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <select id="japanese_skill" name="japanese_skill" class="form-control" required="">
+                        <option value="">--Select--</option>
+                        <option value="Good">Good
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="salary"><?php _e('Salary:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <input id="salary" class="form-control" name="salary" value="<?php echo $salary; ?>" required="">
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="col-md-2 text-right clearfix">
+                    <label for="working_day"><?php _e('Working Day:', 'framework') ?><span
+                            class="font-color-red">*</span></label></div>
+                <div class="col-md-10">
+                    <select id="working_day" name="working_day" class="form-control" required="">
+                        <option value="">--Select--</option>
+                        <option value="Mon-Fri 8.00 – 17.00">Mon-Fri 8.00 – 17.00
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-12" style="">
+                <button type="submit"
+                        class="btn btn-primary col-md-6 pull-right"><?php _e('Submit', 'framework') ?></button>
+                <button type="reset" class="btn btn-default pull-right" style="border: none;">Reset</button>
+                <?php if ($post_id): ?>
+                    <a type="button" class="btn btn-info pull-right"
+                       href="Javascript:loadPostJob('');">Cancel </a>
+                <?php endif; ?>
+            </div>
+        </form>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
     }
 
-    public function editData($data)
+    function uploadImage($file)
     {
-        extract($data);
-        $sql = "
-            UPDATE $this->tableBannerSlide
-            SET
-                sort='{$gsort}',
-                image_path='{$pathimg}',
-                update_datetime=NOW(),
-                link='{$glink}'
-            WHERE 1
-            AND id = {$galleryid};
-        ";
-        if ($galleryid) {
-            $qupdate = $this->wpdb->query($sql);
-            return $qupdate;
+        $handle = new Upload($file);
+        $upload_dir = wp_upload_dir();//var_dump($upload_dir);exit;
+//        echo get_template_directory() . '/library/res/save_data.txt';
+        $dir_dest = $upload_dir['path'];//"D:\Dropbox\work\jobjapthai/wp-content/uploads/2015/01"
+
+        $dir_pics = $upload_dir['url'];// "http://127.0.0.1:11001/jobjapthai/wp-content/uploads/2015/01"
+        $arrayReturn = array();
+        //$filePath = 'wp-content/uploads/avatar' . $upload_dir['subdir'];;
+        if ($handle->uploaded) {
+            $handle->image_resize = true;
+            $handle->image_ratio_y = true;
+            $handle->image_x = 800;
+
+            // yes, the file is on the server
+            // now, we start the upload 'process'. That is, to copy the uploaded file
+            // from its temporary location to the wanted location
+            // It could be something like $handle->Process('/home/www/my_uploads/');
+            $handle->Process($dir_dest);
+
+            // we check if everything went OK
+            if ($handle->processed) {
+                $dir_pics .= '/' . $handle->file_dst_name;
+//                $filePath .= '/' . $handle->file_dst_name;
+                $arrayReturn['error'] = false;
+                // everything was fine !
+                $msgReturn = '<p class="result">';
+                $msgReturn .= '  <b>File uploaded with success</b><br />';
+                $msgReturn .= '  File: <a target="_blank" href="' . $dir_pics . '">' .
+                    $handle->file_dst_name . '</a>';
+                $msgReturn .= '   (' . round(filesize($handle->file_dst_pathname) / 256) / 4 . 'KB)';
+                $msgReturn .= '</p>';
+            } else {
+                $arrayReturn['error'] = true;
+                // one error occured
+                $msgReturn = '<p class="result">';
+                $msgReturn .= '  <b>File not uploaded to the wanted location</b><br />';
+                $msgReturn .= '  Error: ' . $handle->error . '';
+                $msgReturn .= '</p>';
+            }
+
+            // we delete the temporary files
+            $handle->Clean();
+
         } else {
-            return FALSE;
+            $arrayReturn['error'] = true;
+            // if we're here, the upload file failed for some reasons
+            // i.e. the server didn't receive the file
+            $msgReturn = '<p class="result">';
+            $msgReturn .= '  <b>File not uploaded on the server</b><br />';
+            $msgReturn .= '  Error: ' . $handle->error . '';
+            $msgReturn .= '</p>';
         }
+        $arrayReturn['msg'] = $msgReturn;
+        $arrayReturn['url'] = $dir_pics;
+        return $arrayReturn;
     }
 
-    public function updateOder($array_order)
+    function setFeatureImage($post_id, $image_url)
     {
-        if (!$array_order)
-            return true;
-//        var_dump($array_order);
-        $sql = "";
-        foreach ($array_order as $key => $value) {
-            $sort = $key + 1;
-//            $sql .= "
-//                UPDATE
-//                  $this->tableBannerSlide
-//                SET
-//                    sort={$sort}
-//                WHERE 1
-//                AND id={$value};
-//            ";
+        $upload_dir = wp_upload_dir();
+        $image_data = file_get_contents($image_url);
+        $filename = basename($image_url);
+        if(wp_mkdir_p($upload_dir['path']))
+            $file = $upload_dir['path'] . '/' . $filename;
+        else
+            $file = $upload_dir['basedir'] . '/' . $filename;
+        file_put_contents($file, $image_data);
+//        $file = $image_url;
 
-            $result = $this->wpdb->update(
-                $this->tableBannerSlide,
-                array(
-                    'sort' => $sort,
-                    'update_datetime' => date_i18n('Y-m-d H:i:s'),
-                ),
-                array('id' => $value),
-                array('%d', '%s'),
-                array('%d')
+        $wp_filetype = wp_check_filetype($filename, null );
+        $attachment = array(
+            'post_mime_type' => $wp_filetype['type'],
+            'post_title' => sanitize_file_name($filename),
+            'post_content' => '',
+            'post_status' => 'inherit'
+        );
+        $attach_id = wp_insert_attachment( $attachment, $file, $post_id );
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+        wp_update_attachment_metadata( $attach_id, $attach_data );
 
-            );
-//            $result = $this->wpdb->query($sql);
-            if (!$result)
-                return false;
-        }
+        set_post_thumbnail( $post_id, $attach_id );
         return true;
     }
 
-    public function deleteValue($id)
+    function deleteOldThumbnail($post_id)
     {
-        $sql = "
-            UPDATE $this->tableBannerSlide
-            SET publish = 0
-            WHERE 1
-            AND id = {$id};
-        ";
-        if ($id) {
-            $result = $this->wpdb->query($sql);
-            return $result;
-        } else {
-            return FALSE;
-        }
+        $existing = get_post_thumbnail_id( $post_id );
+        if($existing)
+            wp_delete_attachment($existing, true);
+    }
+
+    function addPostJob($post, $status = "publish")
+    {
+        $userID = get_current_user_id();
+        $postTitle = empty($post['postTitle'])? '': $post['postTitle'];
+        $postContent = empty($post['postContent'])? '': $post['postContent'];
+
+        $qualification = empty($post['qualification'])? '': $post['qualification'];
+        $job_type = empty($post['job_type'])? '': $post['job_type'];
+        $jlpt_level = empty($post['jlpt_level'])? '': $post['jlpt_level'];
+        $job_location = empty($post['job_location'])? '': $post['job_location'];
+        $japanese_skill = empty($post['japanese_skill'])? '': $post['japanese_skill'];
+        $salary = empty($post['salary'])? '': $post['salary'];
+        $working_day = empty($post['working_day'])? '': $post['working_day'];
+        $company_id = empty($post['company_id'])? '': $post['company_id'];
+
+        $post_information = array(
+            'post_author' => $userID,
+            'post_title' => wp_strip_all_tags($postTitle),
+            'post_content' => $postContent,
+            'post_type' => 'job',
+            'post_status' => $status
+        );
+        $postID = wp_insert_post($post_information);
+        if (!$postID)
+            return $this->returnMessage($postID->get_error_message(), true);
+        //we now use $pid (post id) to help add out post meta data
+        add_post_meta($postID, "qualification", $qualification);
+        add_post_meta($postID, "job_type", $job_type);
+        add_post_meta($postID, "jlpt_level", $jlpt_level);
+        add_post_meta($postID, "job_location", $job_location);
+        add_post_meta($postID, "japanese_skill", $japanese_skill);
+        add_post_meta($postID, "salary", $salary);
+        add_post_meta($postID, "working_day", $working_day);
+        add_post_meta($postID, "company_id", $company_id);
+
+        if ($status != 'publish')
+            return $postID;
+        return $this->returnMessage("Add Job success.", false);
+    }
+
+    function editPostJob($post)
+    {
+        $userID = get_current_user_id();
+        $postID = $post["post_id"];
+        $post_information = array(
+            'ID' => $postID,
+            'post_author' => $userID,
+            'post_title' => wp_strip_all_tags($post['postTitle']),
+            'post_content' => $post['postContent'],
+            'post_type' => 'job',
+            'post_status' => 'publish'
+        );
+
+        $result = wp_update_post($post_information);
+        if (!$result)
+            return $this->returnMessage($result->get_error_message(), true);
+        update_post_meta($postID, "qualification", $post["qualification"]);
+        update_post_meta($postID, "job_type", $post["job_type"]);
+        update_post_meta($postID, "jlpt_level", $post["jlpt_level"]);
+        update_post_meta($postID, "job_location", $post["job_location"]);
+        update_post_meta($postID, "japanese_skill", $post["japanese_skill"]);
+        update_post_meta($postID, "salary", $post["salary"]);
+        update_post_meta($postID, "working_day", $post["working_day"]);
+        update_post_meta($postID, "company_id", $post["company_id"]);
+        return $this->returnMessage("Edit Job success.", false);
+    }
+
+    function deletePosJob($post_id)
+    {
+        $userID = get_current_user_id();
+        $post_information = array(
+            'ID' => $post_id,
+            'post_author' => $userID,
+            'post_status' => 'draft'
+        );
+
+        $result = wp_update_post($post_information);
+        if (!$result)
+            return $this->returnMessage($result->get_error_message(), true);
+        return $this->returnMessage("Delete Job success.", false);
     }
 
     function returnMessage($msg, $error, $json = true)
