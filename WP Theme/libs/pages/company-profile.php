@@ -2,6 +2,7 @@
 global $current_user, $wpdb;
 $userID = $current_user->ID;
 $classEmployer = new Employer($wpdb);
+$classCandidate = new Candidate($wpdb);
 $classFavorite = new Favorite($wpdb);
 $classApply = new Apply($wpdb);
 $company_id = empty($_REQUEST['id']) ? false : $_REQUEST['id'];
@@ -22,6 +23,10 @@ if ($company_id):
             $isCompanyApply = false;
         }
         $isAdmin = current_user_can('manage_options');
+
+
+        $get_image_avatar = $classCandidate->getAvatarPath($userID, true);
+        $str_image_avatar = "<img src='$get_image_avatar' />";
         ?>
         <section class="container-fluid" style="margin-top: 10px;">
 
@@ -31,22 +36,22 @@ if ($company_id):
 
                         <div class="clearfix"
                              style="border: 1px #ddd solid; border-radius: 5px; background: #fff; padding: 10px; margin-bottom: 10px;">
-
-                            <img src="<?php echo get_template_directory_uri(); ?>/libs/img/job-desc-01.jpg"
+                            <img src="<?php echo $get_image_avatar; ?>"
                                  style="width: 100%"/>
 
                             <h4 class="font-color-BF2026 clearfix" style="">
                                 <span class="pull-left"><?php echo empty($company_name) ? "" : $company_name; ?></span>
                             <span class="pull-right">
                                     <i class="glyphicon glyphicon-star font-color-BF2026" id="icon_fav" style="<?php
-                                    if ($userType != "candidate" || !$isAdmin) {
+                                    //if ($userType == "employer") {
                                         if (!$isCompanyFavorite){
                                             echo 'display: none;';
                                         }
-                                    }
+                                    //}
                                     ?>"></i>
-                                <?php if ($userID == $company_id || $isAdmin): ?>
-                                    <button class="btn btn-warning" style="background: #BF2026; border: none;">Edit</button>
+                                <?php if ($userID == $company_id): ?>
+                                    <a class="btn btn-warning" style="background: #BF2026; border: none;"
+                                        href="<?php echo home_url(); ?>/post-job/">Edit</a>
                                 <?php endif; ?>
                             </span>
                             </h4>
@@ -177,32 +182,32 @@ if ($company_id):
                                 <div class="col-md-12 margin-top-20">
 
                                 <?php if ($userType == 'candidate' || $isAdmin): ?>
-                                    <button type="button" id="applyNow" name="applyNow"
-                                            class="btn btn-default no-border col-md-2">
-                                        <span class="glyphicon glyphicon-ok"></span>
-                                        apply now
-                                    </button>
+<!--                                    <button type="button" id="applyNow" name="applyNow"-->
+<!--                                            class="btn btn-default no-border col-md-2">-->
+<!--                                        <span class="glyphicon glyphicon-ok"></span>-->
+<!--                                        apply now-->
+<!--                                    </button>-->
                                     <button type="button" id="addFavorite" name="addFavorite"
                                             class="btn btn-default no-border col-md-2">
                                         <span class="glyphicon glyphicon-star"></span>
                                         add favorite
                                     </button>
-                                    <button type="button" id="viewAllFavorite" name="viewAllFavorite"
-                                            class="btn btn-default no-border col-md-2">
-                                        <span class="glyphicon glyphicon-folder-open"></span>
-                                        all favorite
-                                    </button>
+<!--                                    <button type="button" id="viewAllFavorite" name="viewAllFavorite"-->
+<!--                                            class="btn btn-default no-border col-md-2">-->
+<!--                                        <span class="glyphicon glyphicon-folder-open"></span>-->
+<!--                                        all favorite-->
+<!--                                    </button>-->
                                 <?php endif; ?>
-                                    <button type="button" id="map" name="map"
-                                            class="btn btn-default no-border col-md-2">
-                                        <span class="glyphicon glyphicon-map-marker"></span>
-                                        map
-                                    </button>
-                                    <button type="button" id="print" name="print"
-                                            class="btn btn-default no-border col-md-2">
-                                        <span class="glyphicon glyphicon-print"></span>
-                                        print
-                                    </button>
+<!--                                    <button type="button" id="map" name="map"-->
+<!--                                            class="btn btn-default no-border col-md-2">-->
+<!--                                        <span class="glyphicon glyphicon-map-marker"></span>-->
+<!--                                        map-->
+<!--                                    </button>-->
+<!--                                    <button type="button" id="print" name="print"-->
+<!--                                            class="btn btn-default no-border col-md-2">-->
+<!--                                        <span class="glyphicon glyphicon-print"></span>-->
+<!--                                        print-->
+<!--                                    </button>-->
                                     <button type="button" id="share" name="share"
                                             class="btn btn-default no-border col-md-2">
                                         <span class="glyphicon glyphicon-share"></span>
@@ -212,8 +217,7 @@ if ($company_id):
                             <?php endif; ?>
                         </div>
 
-                        <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"
-                             style="width: 100%; height: auto;"/>
+                        <?php require_once("banner1.php"); ?>
 
                     </div>
 

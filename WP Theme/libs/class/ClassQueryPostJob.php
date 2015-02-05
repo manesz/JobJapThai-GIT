@@ -84,6 +84,63 @@ class QueryPostJob
         }
         return $argc;
     }
+    function queryFavoriteEmployer($user_id)
+    {
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
+        $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
+
+        $getListFavJob = $this->ClassFavorite->listFavEmployer(0, 0, $user_id);
+        return $getListFavJob;
+        $argc = array(
+            'post_type' => $this->postType,
+            'post_status' => 'publish',
+            'posts_per_page' => $posts_per_page,
+            'paged' => $paged,
+            //        'meta_query' => array(
+            //            array(
+            //                'key' => 'company_id',
+            //                'value' => $company_id,
+            //                'compare' => '='
+            //            )
+            //
+            //        ),
+        );
+
+        switch ($orderby) {
+            case 1: //last update
+                $arrayListJobID = array();
+                foreach ($getListFavJob as $value) {
+                    $arrayListJobID[] = $value->company_id;
+                }
+                if (!$arrayListJobID)
+                    return null;
+                $argc['orderby'] = 'modified';
+                $argc['order'] = 'DESC';
+                $argc['post__in'] = $arrayListJobID;
+                break;
+            case 2: //company name
+                $arrayCompanyID = array();
+                foreach ($getListFavJob as $value) {
+                    $arrayCompanyID[] = $value->company_id;
+                }
+                $objListCompany = $this->ClassEmployer->getCompanyInfo($arrayCompanyID, 0, " ORDER BY company_name");
+
+                $arrayListJobID = array();
+                foreach ($objListCompany as $value1) {
+                    foreach ($getListFavJob as $value2) {
+                        if ($value1->id == $value2->company_id) {
+                            $arrayListJobID[] = $value2->job_id;
+                        }
+                    }
+                }
+                if (!$arrayListJobID)
+                    return null;
+                $argc['post__in'] = $arrayListJobID;
+                break;
+        }
+        return $argc;
+    }
 
     public function queryApplyJob($user_id)
     {
@@ -354,7 +411,7 @@ class QueryPostJob
         return empty($job_location) ? false : "<a href='$job_location[link]'>$job_location[name]</a>";
     }
 
-    public function buildFormQueryJob($user_id, $search = false)
+    public function buildFormQueryJob($user_id, $search = false, $show_edit = false)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
@@ -365,6 +422,7 @@ class QueryPostJob
         <form method="post" id="frm_query_list_job">
             <input type="hidden" name="paged" value="<?php echo $paged; ?>">
             <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+            <input type="hidden" name="show_edit" value="<?php echo $show_edit? "true": ""; ?>">
             <?php if ($search) : ?>
                 <input type="hidden" name="s" value="<?php echo $s; ?>">
             <?php endif; ?>
@@ -454,6 +512,9 @@ class QueryPostJob
 
     function buildListJob($argc, $paging = true, $showEdit = false)
     {
+        if (!$showEdit) {
+            $showEdit = empty($_REQUEST['show_edit'])? false: $_REQUEST['show_edit'];
+        }
         if (is_array($argc) || !$argc)
             $loopJobs = new WP_Query($argc);
         else
@@ -517,6 +578,57 @@ class QueryPostJob
             <?php else: ?>
                 <div class="no-padding">Not result</div>
             <?php endif; ?>
+            <hr/>
+        </div>
+        <?php
+        $strContent = ob_get_contents();
+        ob_end_clean();
+        return $strContent;
+    }
+
+    function buildListEmployer($data)
+    {
+        $showEdit = false;
+//        if (!$showEdit) {
+//            $showEdit = empty($_REQUEST['show_edit'])? false: $_REQUEST['show_edit'];
+//        }
+//        if (is_array($argc) || !$argc)
+//            $loopJobs = new WP_Query($argc);
+//        else
+//            $loopJobs = $this->wpdb->get_results($argc);
+        ob_start();
+        ?>
+
+        <div id="job_list">
+
+            <?php if ($data):
+                ?>
+                <ul class="job-list no-padding">
+                    <?php foreach($data as $key => $value):
+                        $thumbnail = "";
+                        ?>
+                        <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
+                            <div class="col-md-12">
+                                <div class="col-md-2" style="padding: 0px">
+                                    <a href="<?php echo home_url(); ?>/company-profile?id=<?php echo $value->company_id;?>" target="_blank"><img
+                                            src="<?php echo $thumbnail; ?>"
+                                            style="width: 100%;"/></a>
+                                </div>
+                                <div class="col-md-8">
+                                    <h5 class="font-color-BF2026">
+                                        <a href="<?php echo home_url(); ?>/company-profile?id=<?php echo $value->company_id;?>"
+                                           target="_blank"><?php echo $value->company_name; ?></a>
+                                    </h5>
+                                </div>
+                                <div class="col-md-2">
+                                    <?php echo date_i18n('M d, Y', strtotime($value->fav_time)); ?><br/>
+                                    <?php echo empty($job_location) ? "" : $job_location . "<br/>"; ?>
+                                </div>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
             <hr/>
         </div>
         <?php

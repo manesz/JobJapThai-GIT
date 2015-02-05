@@ -39,6 +39,8 @@ if (have_posts()) :
             get_template_part('libs/pages/candidate-register');
         } else if (is_page("favorite-job")) {
             get_template_part('libs/pages/favorite-job');
+        } else if (is_page("favorite-employer")) {
+            get_template_part('libs/pages/favorite-employer');
         } else if (is_page("applied-job")) {
             get_template_part('libs/pages/applied-job');
         } else if (is_page("highlight-jobs")) {

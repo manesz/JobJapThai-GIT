@@ -153,8 +153,12 @@ function custom_post_job()
                 <td>
                     <select name="jlpt_level" class="select-width">
                         <option value="">--Select--</option>
-                        <option value="N2" <?php echo $jlpt_level == 'N2' ? 'selected' : ''; ?>
-                            >N2
+                        <?php for ($i = 1;
+                        $i <= 5;
+                        $i++): ?>
+                        <option value="N<?php echo $i; ?>" <?php echo $jlpt_level == "N$i" ? 'selected' : '' ?>>
+                            N<?php echo $i; ?>
+                            <?php endfor; ?>
                         </option>
                     </select>
                 </td>

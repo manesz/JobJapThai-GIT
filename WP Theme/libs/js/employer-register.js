@@ -110,6 +110,36 @@ $(document).ready(function () {
     $("#new_package").click(function () {
         showAddPackage();
     });
+
+    $('#employer_image').change(function () {
+        if ($(this).val() != '') {
+            var formData = new FormData();
+            formData.append('image_avatar', $(this)[0].files[0]);
+            formData.append('employer_post', 'true');
+            formData.append('post_type', 'image_avatar');
+            formData.append('employer_id', user_id);
+            showImgLoading();
+            $.ajax({
+                url: '',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function (result) {
+                    showModalMessage(result.msg, 'Message');
+                    path_avatar = result.path;
+                    hideImgLoading();
+                },
+                error: function (result) {
+                    showModalMessage(result.responseText, 'Message');
+                    hideImgLoading();
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+        }
+    });
 });
 
 function showAddPackage(package_id) {

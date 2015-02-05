@@ -52,7 +52,7 @@ if (is_user_logged_in()) {
                          style="padding-bottom: 10px !important;">
                         <input type="hidden" id="type_query" value="post_job">
                         <?php
-                        echo $classQueryPostJob->buildFormQueryJob($userID);
+                        echo $classQueryPostJob->buildFormQueryJob($userID, false, true);
                         ?>
                     </div>
                     <?php

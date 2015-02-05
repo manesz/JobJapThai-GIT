@@ -13,7 +13,7 @@ if (is_user_logged_in()) {
 }
 
 ?>
-<table class="" border="1">
+<table class="table table-bordered table-hover" border="1">
     <thead>
     <tr>
         <td>No.</td>

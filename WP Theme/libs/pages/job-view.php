@@ -61,7 +61,7 @@ $isAdmin = current_user_can('manage_options');
                             <span class="pull-left"><?php the_title(); ?></span>
                                 <span class="pull-right" id="icon_fav" style="<?php
                                 if (!$userType == "candidate" || !$isAdmin) {
-                                    if (!$isJobFavorite){
+                                    if (!$isJobFavorite) {
                                         echo 'display: none;';
                                     }
                                 }
@@ -70,10 +70,10 @@ $isAdmin = current_user_can('manage_options');
                                 </span>
                         </h4>
                         <?php if ($company_id): ?>
-                        <h5 class="font-color-BF2026 clearfix"
-                            style=""><?php echo empty($company_name) ? "" : $company_name; ?>
-                            <a href="<?php echo get_site_url(); ?>/company-profile?id=<?php echo $company_id; ?>"
-                               target="_blank">(View company profile)</a></h5>
+                            <h5 class="font-color-BF2026 clearfix"
+                                style=""><?php echo empty($company_name) ? "" : $company_name; ?>
+                                <a href="<?php echo get_site_url(); ?>/company-profile?id=<?php echo $company_id; ?>"
+                                   target="_blank">(View company profile)</a></h5>
                         <?php endif; ?>
                         <hr/>
                         <?php if (!empty($company_profile_and_business_operation)): ?>
@@ -266,8 +266,9 @@ $isAdmin = current_user_can('manage_options');
                         success: function (result) {
                             hideImgLoading();
                             showModalMessage(result.msg, "Message Job View");
-                            if (!result.error)
+                            if (!result.error) {
                                 is_job_apply = true;
+                            }
                         }
                     })
                         .fail(function () {

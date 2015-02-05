@@ -705,6 +705,11 @@ class Employer
         $featureImage = get_the_post_thumbnail($post_id);
         ob_start();
         ?>
+        <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/js/libs/bootstrap-wysihtml5/css/bootstrap.min.css"></link>
+        <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/js/libs/bootstrap-wysihtml5/src/bootstrap-wysihtml5.css"></link>
+        <script>
+            var wysiwyg_color  = "<?php echo get_template_directory_uri(); ?>/libs/js/libs/bootstrap-wysihtml5/css/wysiwyg-color.css";
+        </script>
         <form class="form-horizontal">
             <div class="form-group col-md-12">
                 <div class="col-md-2 text-right clearfix">
@@ -851,6 +856,16 @@ class Employer
                 <?php endif; ?>
             </div>
         </form>
+
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/libs/bootstrap-wysihtml5/js/wysihtml5-0.3.0.js"></script>
+<!--        <script src="--><?php //echo get_template_directory_uri(); ?><!--/libs/js/libs/bootstrap-wysihtml5/js/jquery-1.7.2.min.js"></script>-->
+<!--        <script src="--><?php //echo get_template_directory_uri(); ?><!--/libs/js/libs/bootstrap-wysihtml5/js/bootstrap.min.js"></script>-->
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/libs/bootstrap-wysihtml5/src/bootstrap-wysihtml5.js"></script>
+
+
+        <script>
+            $('#postContent').wysihtml5();
+        </script>
         <?php
         $html = ob_get_contents();
         ob_end_clean();
@@ -1035,13 +1050,15 @@ class Employer
 
     function returnMessage($msg, $error, $json = true)
     {
+        $arrayReturn = array();
+        if (is_array($msg)) {
+            $arrayReturn = $msg;
+            $msg = $msg['msg'];
+        }
         if ($error) {
-            $arrayReturn = (array('msg' => '<div class="font-color-BF2026"><p>' . $msg . '</p></div>', 'error' => $error));
+            $arrayReturn['msg'] = '<div class="font-color-BF2026"><p>' . $msg . '</p></div>';
+            $arrayReturn['error'] = $error;
         } else {
-            if (is_array($msg)) {
-                $arrayReturn = $msg;
-                $msg = $msg['msg'];
-            }
             $arrayReturn['msg'] = '<div class="font-color-4BB748"><p>' . $msg . '</p></div>';
             $arrayReturn['error'] = $error;
         }

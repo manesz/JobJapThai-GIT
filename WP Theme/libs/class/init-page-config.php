@@ -95,6 +95,13 @@ $init_page = array(
 		  'post_author'=> 1
 	),
 	array(
+		  'post_title' => 'Favorite Employer',
+		  'post_content'  => '',
+		  'post_status'=> 'publish',
+		  'post_type'=>'page',
+		  'post_author'=> 1
+	),
+	array(
 		  'post_title' => 'Contact Candidate',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',

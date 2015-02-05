@@ -49,13 +49,13 @@ function formValidate() {
             validating: 'glyphicon glyphicon-refresh'
         }, excluded: [':disabled'],
         fields: {
-            salary: {
-                validators: {
-                    integer: {
-                        message: 'The value is not an number'
-                    }
-                }
-            }
+//            salary: {
+//                validators: {
+//                    integer: {
+//                        message: 'The value is not an number'
+//                    }
+//                }
+//            }
         }})
         .on('success.form.bv', function (e) {
             if (!check_from_post) {

@@ -11,6 +11,7 @@ class Favorite
     private $wpdb;
     public $tableFavoriteJob = "ics_favorite_job";
     public $tableFavoriteCompany = "ics_favorite_company";
+    public $tableCompany = "ics_company_information_for_contact";
 
     public function __construct($wpdb)
     {
@@ -35,18 +36,22 @@ class Favorite
         return $result;
     }
 
-    public function listFavCompany($id = 0, $company_id = 0, $user_id = 0)
+    public function listFavEmployer($id = 0, $company_id = 0, $user_id = 0)
     {
-        $strAnd = $id ? " AND id=$id": "";
-        $strAnd .= $company_id ? " AND company_id=$company_id": "";
-        $strAnd .= $user_id ? " AND user_id=$user_id": "";
+        $strAnd = $id ? " AND a.id=$id": "";
+        $strAnd .= $company_id ? " AND a.company_id=$company_id": "";
+        $strAnd .= $user_id ? " AND a.user_id=$user_id": "";
         $sql = "
             SELECT
-              *
+              a.*,
+              b.*,
+              a.create_datetime AS fav_time
             FROM
-              $this->tableFavoriteCompany
+              $this->tableFavoriteCompany a
+              INNER JOIN $this->tableCompany b ON
+              (a.company_id = b.id)
             WHERE 1
-            AND publish = 1
+            AND a.publish = 1
             $strAnd
         ";
         $result = $this->wpdb->get_results($sql);
@@ -147,7 +152,7 @@ class Favorite
     }
 
     public function checkCompanyIsFavorite($user_id, $company_id) {
-        $result = $this->listFavCompany(0, $company_id, $user_id);
+        $result = $this->listFavEmployer(0, $company_id, $user_id);
         if ($result) {
             return true;
         } else {

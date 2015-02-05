@@ -4,6 +4,7 @@ if (!session_id())
     session_start();
 global $wpdb;
 if ($_REQUEST) {
+    $classCandidate = new Candidate($wpdb);
     $sendTo = 'ruxchuk@gmail.com'; //email info
     $sendEmailContactUs = empty($_REQUEST['send_email_contact_us']) ? false : $_REQUEST['send_email_contact_us'];
     if ($sendEmailContactUs == 'true') {
@@ -112,6 +113,16 @@ if ($_REQUEST) {
             echo $classEmployer->returnMessage($result, $result['error'], true);
         } else if ($postType == 'edit') {
             echo $classEmployer->editEmployer($_REQUEST);
+        } else if ($postType == 'image_avatar') {
+            $result = $classCandidate->uploadAvatarImage($_FILES['image_avatar'], 700);
+            if (!$result['error']) {
+                if (!$classCandidate->deleteOldAvatar($_REQUEST['employer_id'])) {
+                    echo $classCandidate->returnMessage("Error delete old image.", true);
+                    exit;
+                }
+                $classCandidate->addAvatarPath($_REQUEST['employer_id'], $result['path']);
+            }
+            echo $classCandidate->returnMessage($result, $result['error']);
         }
         exit;
     }
@@ -120,7 +131,6 @@ if ($_REQUEST) {
     //Candidate
     $candidatePost = empty($_REQUEST['candidate_post']) ? false : $_REQUEST['candidate_post'];
     if ($candidatePost == 'true') {
-        $classCandidate = new Candidate($wpdb);
         $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
         $getPostBackend = empty($_REQUEST['post_backend']) ? false : $_REQUEST['post_backend'];
         switch ($postType) {

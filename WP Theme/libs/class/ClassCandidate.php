@@ -211,6 +211,8 @@ class Candidate
             echo is_page("applied-job") ? 'active' : ''; ?>">Applied Job</a>
             <a href="<?php echo $siteUrl; ?>/favorite-job" class="btn btn-default <?php
             echo is_page("favorite-job") ? 'active' : ''; ?>">Favorite Job</a>
+            <a href="<?php echo $siteUrl; ?>/favorite-employer" class="btn btn-default <?php
+            echo is_page("favorite-employer") ? 'active' : ''; ?>">Favorite Employer</a>
             <a href="#" class="btn btn-default">View by Company</a>
             <a href="#" class="btn btn-default">Account Setting</a>
         </div>
@@ -1718,7 +1720,7 @@ class Candidate
         return $this->returnMessage('Edit Success.', false);
     }
 
-    function uploadAvatarImage($file)
+    function uploadAvatarImage($file, $image_x = 150)
     {
         $handle = new Upload($file);
         $upload_dir = wp_upload_dir();
@@ -1731,7 +1733,7 @@ class Candidate
         if ($handle->uploaded) {
             $handle->image_resize = true;
             $handle->image_ratio_y = true;
-            $handle->image_x = 150;
+            $handle->image_x = $image_x;
 
             // yes, the file is on the server
             // now, we start the upload 'process'. That is, to copy the uploaded file
@@ -1782,10 +1784,13 @@ class Candidate
         return update_user_meta($user_id, 'avatar_path', $path);
     }
 
-    function getAvatarPath($user_id)
+    function getAvatarPath($user_id, $employer = false)
     {
         $path = get_user_meta($user_id, 'avatar_path', true);
-        $pathNonAvatar = get_template_directory_uri() . "/libs/images/non-avatar.jpg";
+        if ($employer)
+            $pathNonAvatar = get_template_directory_uri() . "/libs/images/non-image.png";
+        else
+            $pathNonAvatar = get_template_directory_uri() . "/libs/images/non-avatar.jpg";
         if (empty($path)) {
             return $pathNonAvatar;
         }

@@ -22,7 +22,7 @@ if (is_user_logged_in()) {
     </div>
     <?php if (!$isLogin): ?>
         <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post"
-              id="frm_sigin" class="form-horizontal">
+              id="frm_sigin" class="form-horizontal col-md-12">
             <input type="hidden" name="sign_in_post" value="true">
 
             <div class="form-group clearfix" style="margin-bottom: 10px;">
