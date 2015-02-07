@@ -5,6 +5,7 @@ $classEmployer = new Employer($wpdb);
 $classCandidate = new Candidate($wpdb);
 $classFavorite = new Favorite($wpdb);
 $classApply = new Apply($wpdb);
+$classViewProfile = new ViewProfile($wpdb);
 $company_id = empty($_REQUEST['id']) ? false : $_REQUEST['id'];
 if ($company_id):
     $getDataCompany = $company_id ? $classEmployer->getCompanyInfo($company_id) : false;
@@ -18,6 +19,8 @@ if ($company_id):
             $isCompanyFavorite = $classFavorite->checkCompanyIsFavorite($userID, $company_id);
             $isCompanyApply = $classApply->checkCompanyIsApply($userID, $company_id);
             $userType = get_user_meta($userID, 'user_type', true);
+
+            $classViewProfile->addViewEmployer($userID, $company_id);
         } else {
             $isCompanyFavorite = false;
             $isCompanyApply = false;

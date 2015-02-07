@@ -37,6 +37,8 @@ if (have_posts()) :
             get_template_part('libs/pages/contact');
         } else if (is_page("candidate-register") || is_page("candidate")) {
             get_template_part('libs/pages/candidate-register');
+        } else if (is_page("candidate-view")) {
+            get_template_part('libs/pages/candidate-view');
         } else if (is_page("favorite-job")) {
             get_template_part('libs/pages/favorite-job');
         } else if (is_page("favorite-employer")) {

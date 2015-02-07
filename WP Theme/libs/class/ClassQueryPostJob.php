@@ -556,7 +556,7 @@ class QueryPostJob
                                         <a href="<?php the_permalink(); ?>"
                                            target="_blank"><?php the_title(); ?></a>
                                     </h5>
-                                    <?php echo empty($company_name) ? "" : $company_name; ?><br/>
+                                    <?php echo empty($company_name) ? "" : "<a target='_blank' href='company-profile/?id=$company_id'>$company_name</a>"; ?><br/>
                                     <?php echo empty($job_type) ? "" : $job_type; ?><br/>
                                 </div>
                                 <div class="col-md-2">

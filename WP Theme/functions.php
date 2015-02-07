@@ -14,6 +14,19 @@ require_once('libs/menu-control.php');
 require_once('libs/get-post-data.php');
 require_once('libs/class/init-admin.php');
 
+function remove_job_menus()
+{
+    //Tools
+    remove_menu_page('edit.php?post_type=job');
+    remove_menu_page('edit.php');
+    remove_menu_page('edit-comments.php');
+    remove_submenu_page( 'themes.php', 'widgets.php' );
+//    remove_submenu_page( 'themes.php', 'customize.php?return=%2Fjobjapthai%2Fwp-admin%2Fnav-menus.php' );
+
+
+}
+
+add_action('admin_menu', 'remove_job_menus');
 //Post type
 //require_once('libs/custom-post-type.php');
 //require_once('libs/news-menu.php');
