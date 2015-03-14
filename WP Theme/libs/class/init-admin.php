@@ -64,7 +64,10 @@ function my_custom_submenu_page_callback()
                     removeobj = jQuery(this);
                     removeobj.text('Loading...');
                     jQuery('.jjcreatepage').attr('disabled', 'disabled');
-                    jQuery.getJSON(homesite, {adminPage: 'updatepage', arrid: jQuery(this).parent().find('input.arrid').val()}, checkpage.ajaxSuss);
+                    jQuery.getJSON(homesite, {
+                        adminPage: 'updatepage',
+                        arrid: jQuery(this).parent().find('input.arrid').val()
+                    }, checkpage.ajaxSuss);
                     return false;
                 });
             },
@@ -112,7 +115,7 @@ function jj_login($username, $pass, $remember = false)
     if (is_wp_error($user)) {
         echo $user->get_error_message();
     } else {
-        wp_redirect(get_site_url() . '/edit-resume/');
+        wp_redirect(get_site_url() . '/edit-profile/');
     }
     exit();
 }

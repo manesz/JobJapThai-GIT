@@ -74,7 +74,14 @@ $init_page = array(
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Edit Resume',
+		  'post_title' => 'Apply Job',
+		  'post_content'  => '',
+		  'post_status'=> 'publish',
+		  'post_type'=>'page',
+		  'post_author'=> 1
+	),
+	array(
+		  'post_title' => 'Edit Profile',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
@@ -96,6 +103,13 @@ $init_page = array(
 	),
 	array(
 		  'post_title' => 'Favorite Employer',
+		  'post_content'  => '',
+		  'post_status'=> 'publish',
+		  'post_type'=>'page',
+		  'post_author'=> 1
+	),
+	array(
+		  'post_title' => 'Request Profile By Company',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',

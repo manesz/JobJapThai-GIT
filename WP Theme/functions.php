@@ -267,10 +267,10 @@ $GLOBALS['comment'] = $comment; ?>
     <?php
     } // don't remove this bracket!
 
-    if (isset($_REQUEST['company'])) {
-        include_once('company-profile.php');
-        exit();
-    }
+//    if (isset($_REQUEST['company'])) {
+//        include_once('company-profile.php');
+//        exit();
+//    }
     /*
     This is a modification of a function found in the
     twentythirteen theme where we can declare some

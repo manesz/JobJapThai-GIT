@@ -1,0 +1,3 @@
+a:1:{s:11:"working_day";s:38:"dddd 
+dddd de
+Mon-Fri 8.00 – 17.00";}

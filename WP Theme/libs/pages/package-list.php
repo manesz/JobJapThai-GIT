@@ -18,9 +18,8 @@ if (is_user_logged_in()) {
     <tr>
         <td>No.</td>
         <td>Position/Time</td>
-        <td>Super Hotjob</td>
-        <td>Hotjob/Time</td>
-        <td>Urgent</td>
+        <td>Hotjob</td>
+        <td>Auto Update</td>
         <td>Status</td>
         <td>Edit</td>
     </tr>
@@ -29,7 +28,7 @@ if (is_user_logged_in()) {
     <?php foreach ($arraySelectPackage as $key => $value) : ?>
         <tr>
             <td><?php echo $key + 1; ?></td>
-            <?php echo $classPackage->buildTdList($arrayPackage, $value->string_package, $value->id); ?>
+            <?php echo $classPackage->buildTdList($arrayPackage, $value->string_package, $value->id, $value->status); ?>
         </tr>
     <?php endforeach; ?>
     </tbody>

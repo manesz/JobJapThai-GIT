@@ -38,6 +38,7 @@ if ($_REQUEST) {
     $listPackage = empty($_REQUEST['list_package']) ? false : $_REQUEST['list_package'];
     $postPackage = empty($_REQUEST['post_package']) ? false : $_REQUEST['post_package'];
     $postJob = empty($_REQUEST['post_job']) ? false : $_REQUEST['post_job'];
+    $classPackage = new Package($wpdb);
     if ($newPackage == 'true') {
         require_once("pages/package-new.php");
         exit;
@@ -47,7 +48,6 @@ if ($_REQUEST) {
         exit;
     }
     if ($postPackage == 'true') {
-        $classPackage = new Package($wpdb);
         $postType = $_REQUEST['type_post'];
         if ($postType == 'add') {
             $result = $classPackage->addSelectPackage($_REQUEST);
@@ -59,19 +59,37 @@ if ($_REQUEST) {
             if ($result)
                 echo 'success';
             else echo 'fail';
+        } else if ($postType == 'admin_add') {
+            $result = $classPackage->addPackage($_REQUEST);
+            if ($result) {
+                echo $classPackage->returnMessage('Add package success.', false);
+            } else echo $classPackage->returnMessage('Add package fail.', true);
+        } else if ($postType == 'admin_edit') {
+            $result = $classPackage->editPackage($_REQUEST);
+            if ($result) {
+                echo $classPackage->returnMessage('Edit package success.', false);
+            } else echo $classPackage->returnMessage('Edit package fail.', true);
+        } else if ($postType == 'admin_delete') {
+            $result = $classPackage->deletePackage($_REQUEST['package_id']);
+            if ($result) {
+                echo $classPackage->returnMessage('Delete package success.', false);
+            } else echo $classPackage->returnMessage('Delete package fail.', true);
         }
         exit;
     }
-    if ($postJob) {
+
+    if ($postJob == "true") {
         $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
         if ($postType == 'add') {
             $result = $classEmployer->addPostJob($_REQUEST);
         } else if ($postType == 'edit') {
             $result = $classEmployer->editPostJob($_REQUEST);
         } else if ($postType == 'delete') {
-            $result = $classEmployer->deletePosJob($_REQUEST['post_id']);
+            $status = empty($_REQUEST['status']) ? false : $_REQUEST['status'];
+            $result = $classEmployer->deletePosJob($_REQUEST['post_id'], $status);
         } else if ($postType == 'load_edit') {
-            $result = $classEmployer->buildFormPostJob('edit');
+            $getPostID = empty($_REQUEST['post_id']) ? 0: $_REQUEST['post_id'];
+            $result = $classEmployer->buildFormPostJob($getPostID);
         } else if ($postType == 'feature_image') {
             if ($_REQUEST['post_id'] == 0) {
                 $post_id = $classEmployer->addPostJob(array(), 'draft');
@@ -81,11 +99,19 @@ if ($_REQUEST) {
             }
             $result = $classEmployer->uploadImage($_FILES['feature_image']);
             if (!$result['error']) {
-                if ($classEmployer->setFeatureImage($post_id, $result['url'])){
+                if ($classEmployer->setFeatureImage($post_id, $result['url'])) {
                     $result['post_id'] = $post_id;
                 }
             }
             $result = $classEmployer->returnMessage($result, $result['error']);
+        } else if ($postType == 'delete_feature') {
+            $result = $classEmployer->deleteOldThumbnail($post_id);
+            $message = $result ? "Delete success." : "Delete fail.";
+            echo $classEmployer->returnMessage($message, !$result);
+            exit;
+        } else if ($postType == 'get_total_package') {
+            echo $classPackage->buildTotalPackage($_REQUEST['user_id']);
+            exit;
         }
         echo $result;
         exit;
@@ -96,6 +122,7 @@ if ($_REQUEST) {
         $classEmployer = new Employer($wpdb);
         $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
         $getPostBackend = empty($_REQUEST['post_backend']) ? false : $_REQUEST['post_backend'];
+        $employerID = empty($_REQUEST['employer_id']) ? 0 : $_REQUEST['employer_id'];
         if ($postType == 'add') {
             $result = $classEmployer->employerRegister($_REQUEST);
             if (!$result['error'] && !$getPostBackend) {
@@ -113,16 +140,53 @@ if ($_REQUEST) {
             echo $classEmployer->returnMessage($result, $result['error'], true);
         } else if ($postType == 'edit') {
             echo $classEmployer->editEmployer($_REQUEST);
-        } else if ($postType == 'image_avatar') {
-            $result = $classCandidate->uploadAvatarImage($_FILES['image_avatar'], 700);
+        } else if ($postType == 'logo_image') {
+            $result = $classEmployer->uploadLogoImage($_FILES['logo_image'], 700);
             if (!$result['error']) {
-                if (!$classCandidate->deleteOldAvatar($_REQUEST['employer_id'])) {
-                    echo $classCandidate->returnMessage("Error delete old image.", true);
+                if (!$classEmployer->deleteOldLogo($employerID)) {
+                    echo $classEmployer->returnMessage("Error delete old image.", true);
                     exit;
                 }
-                $classCandidate->addAvatarPath($_REQUEST['employer_id'], $result['path']);
+                $classEmployer->setLogoPath($employerID, $result['path']);
             }
-            echo $classCandidate->returnMessage($result, $result['error']);
+            echo $classEmployer->returnMessage($result, $result['error']);
+        } else if ($postType == 'delete_avatar') {
+            $result = $classEmployer->deleteOldLogo($employerID);
+            if ($result)
+                $classEmployer->setBannerPath($employerID, false);
+            $message = $result ? "Delete success." : "Delete fail.";
+            echo $classEmployer->returnMessage($message, !$result);
+        } else if ($postType == 'image_banner') {
+            $result = $classEmployer->uploadBannerImage($_FILES['image_banner'], $employerID, 700);
+            if (!$result['error']) {
+                if (!$classEmployer->deleteOldBanner($employerID)) {
+                    echo $classEmployer->returnMessage("Error delete old image.", true);
+                    exit;
+                }
+                $classEmployer->setBannerPath($employerID, $result['path']);
+            }
+            echo $classEmployer->returnMessage($result, $result['error']);
+        } else if ($postType == 'delete_banner') {
+            $result = $classEmployer->deleteOldBanner($employerID);
+            if ($result)
+                $classEmployer->setBannerPath($employerID, false);
+            $message = $result ? "Delete success." : "Delete fail.";
+            echo $classEmployer->returnMessage($message, !$result);
+        } else if ($postType == 'search_candidate') {
+            $result = $classEmployer->searchCandidate($_REQUEST);
+            echo $result;
+        } else if ($postType == 'request_profile') {
+            $result = $classEmployer->addRequestProfile($_REQUEST['candidate_id'], $_REQUEST['employer_id']);
+            if ($result)
+                echo $classEmployer->returnMessage('Send request profile success.', false);
+            else
+                echo $classEmployer->returnMessage('Send request profile fail.', true);
+        } else if ($postType == 'view_candidate') {
+            $result = $classCandidate->buildViewCandidateProfile($_REQUEST['candidate_id']);
+            echo $result;
+        } else if ($postType == 'set_package_for_job') {
+            $result = $classPackage->setPackageForJob($_REQUEST['post_id']);
+            echo $result;
         }
         exit;
     }
@@ -133,6 +197,7 @@ if ($_REQUEST) {
     if ($candidatePost == 'true') {
         $postType = empty($_REQUEST['post_type']) ? false : $_REQUEST['post_type'];
         $getPostBackend = empty($_REQUEST['post_backend']) ? false : $_REQUEST['post_backend'];
+        $candidateID = empty($_REQUEST['candidate_id']) ? 0 : $_REQUEST['candidate_id'];
         switch ($postType) {
             case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
@@ -152,15 +217,64 @@ if ($_REQUEST) {
                 //var_dump($result);
                 echo $classCandidate->returnMessage($result, $result['error'], true);
                 break;
+            case "none_member":
+                $result = $classCandidate->addNoneMember($_REQUEST);
+                if (!$result['error']) {
+                    $candidateID = $result['candidate_id'];
+                    $jobID = $_REQUEST['job_id'];
+
+                    $resultAddResumeFile = $classCandidate->addAttachResume($_FILES['attach_resume'], $candidateID);
+                    if (!$resultAddResumeFile['error']) {
+                        $classCandidate->setAttachResumePath($candidateID, $resultAddResumeFile['path']);
+
+                        $classApply = new Apply($wpdb);
+                        $checkJobApply = $classApply->checkJobIsApply($candidateID, $jobID);
+                        if (!$checkJobApply) {
+                            $resultApply = $classApply->addApplyJob(
+                                $candidateID,
+                                $jobID,
+                                $_REQUEST['employer_id'],
+                                false
+                            );
+                            if ($resultApply['error']) {
+                                echo $classCandidate->returnMessage($resultApply, $resultApply['error']);
+                                exit;
+                            }
+                        }
+                    }
+                }
+                echo $classCandidate->returnMessage($result, $result['error'], true);
+                exit;
+                break;
             case "edit":
                 break;
+            case "get_career_profile":
+                $result = $classCandidate->buildCareerProfileTable($candidateID);
+                echo $result;
+                break;
+            case "get_desired_job":
+                $result = $classCandidate->buildDesiredJobTable($candidateID);
+                echo $result;
+                break;
             case "get_education":
-                $result = $classCandidate->buildEducationTable($_REQUEST['candidate_id']);
+                $result = $classCandidate->buildEducationTable($candidateID);
                 echo $result;
                 break;
             case "get_work_experience":
-                $result = $classCandidate->buildWorkExperienceTable($_REQUEST['candidate_id']);
+                $result = $classCandidate->buildWorkExperienceTable($candidateID);
                 echo $result;
+                break;
+            case "add_career_profile":
+                $result = $classCandidate->addCareerProfile($_REQUEST);
+                if ($result)
+                    echo $classCandidate->returnMessage("Add career profile success.", false);
+                else echo $classCandidate->returnMessage("Add career profile fail.", true);
+                break;
+            case "add_desired_job":
+                $result = $classCandidate->addDesiredJob($_REQUEST);
+                if ($result)
+                    echo $classCandidate->returnMessage("Add desired job success.", false);
+                else echo $classCandidate->returnMessage("Add desired job fail.", true);
                 break;
             case "add_education":
                 $result = $classCandidate->addEducation($_REQUEST);
@@ -203,17 +317,29 @@ if ($_REQUEST) {
             case "image_avatar":
                 $result = $classCandidate->uploadAvatarImage($_FILES['image_avatar']);
                 if (!$result['error']) {
-                    if (!$classCandidate->deleteOldAvatar($_REQUEST['candidate_id'])) {
+                    if (!$classCandidate->deleteOldAvatar($candidateID)) {
                         echo $classCandidate->returnMessage("Error delete old image.", true);
                         exit;
                     }
-                    $classCandidate->addAvatarPath($_REQUEST['candidate_id'], $result['path']);
+                    $classCandidate->setAvatarPath($candidateID, $result['path']);
                 }
                 echo $classCandidate->returnMessage($result, $result['error']);
+                break;
+            case "approve_request_profile":
+                $result = $classCandidate->setApproveRequestProfile($_REQUEST['request_id']);
+                echo $result;
                 break;
             //End edit
 
             //Delete
+            case "delete_career_profile":
+                $result = $classCandidate->deleteCareerProfile($_REQUEST);
+                echo $result;
+                break;
+            case "delete_desired_job":
+                $result = $classCandidate->deleteDesiredJob($_REQUEST);
+                echo $result;
+                break;
             case "delete_education":
                 $result = $classCandidate->deleteEducation($_REQUEST);
                 echo $result;
@@ -221,6 +347,14 @@ if ($_REQUEST) {
             case "delete_work_experience":
                 $result = $classCandidate->deleteWorkExperience($_REQUEST);
                 echo $result;
+                break;
+            case 'delete_avatar': {
+                $result = $classCandidate->deleteOldAvatar($candidateID);
+                if ($result)
+                    $classCandidate->setAvatarPath($candidateID, false);
+                $message = $result ? "Delete success." : "Delete fail.";
+                echo $classCandidate->returnMessage($message, !$result);
+            }
                 break;
             //End Delete
         }
@@ -234,7 +368,7 @@ if ($_REQUEST) {
         $classFavorite = new Favorite($wpdb);
         if ($_REQUEST['favorite_type'] == 'job') {
             if ($_REQUEST['is_favorite'] == 'true') {
-                $result = $classFavorite->addFavJob($_REQUEST['user_id'], $_REQUEST['id'], $_REQUEST['company_id']);
+                $result = $classFavorite->addFavJob($_REQUEST['user_id'], $_REQUEST['id'], $_REQUEST['employer_id']);
                 echo $result;
             } else {
                 $result = $classFavorite->setPublishJob($_REQUEST['fav_id']);
@@ -260,7 +394,7 @@ if ($_REQUEST) {
         $classApply = new Apply($wpdb);
         if ($_REQUEST['apply_type'] == 'job') {
             if ($_REQUEST['is_apply'] == 'true') {
-                $result = $classApply->addApplyJob($_REQUEST['user_id'], $_REQUEST['id'], $_REQUEST['company_id']);
+                $result = $classApply->addApplyJob($_REQUEST['user_id'], $_REQUEST['id'], $_REQUEST['employer_id']);
                 echo $result;
             } else {
                 $result = $classApply->setPublishJob($_REQUEST['apply_id']);
@@ -312,7 +446,7 @@ if ($_REQUEST) {
         $classAuthentication = new Authentication($wpdb);
         $result = $classAuthentication->checkUserForForgetPassWord($_REQUEST['user_login']);
         if ($result['error']) {
-            echo $classAuthentication->returnMessage($result, true);
+            echo $classAuthentication->returnMessage($result['msg'], true);
         } else {
             $_REQUEST['user_data'] = $result['user_data'];
             $user_data = $result['user_data'];
@@ -325,7 +459,7 @@ if ($_REQUEST) {
                 )
             );
             if (!$update_user) {
-                echo $this->returnMessage('Oops something went wrong updaing your account.', true);
+                echo $this->returnMessage('Oops something went wrong updating your account.', true);
             } else {
                 $_REQUEST['user_login'] = $user_data->user_login;
                 $_REQUEST['new_pass'] = $random_password;
@@ -358,4 +492,15 @@ if ($_REQUEST) {
         echo $classAuthentication->signin($_REQUEST);
         exit;
     }
+
+    //Save other settings
+
+    if (isset($_REQUEST['other_setting_post'])) {
+        $objClassOtherSetting = new OtherSetting($wpdb);
+        $result = $objClassOtherSetting->saveWorkingDay($_REQUEST['working_day']);
+        echo $result;
+        exit;
+    }
+
+    //End Save other settings
 }

@@ -44,6 +44,10 @@ if (is_user_logged_in()) {
     $isLogin = false;
     $userID = 0;
 }
+if (!$isLogin) {
+    wp_redirect(home_url());
+    exit;
+}
 
 ?>
 <script>

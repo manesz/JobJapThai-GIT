@@ -2,6 +2,7 @@ var check_from_post = false;
 var post_id = 0;
 $(function () {
     formValidate();
+    getTotalPackage();
 });
 
 function setFeatureImage(elm) {
@@ -39,6 +40,66 @@ function setFeatureImage(elm) {
     }
 }
 
+function setPackageForJob(job_id) {
+    if (check_from_post)
+        return;
+    if (!confirm("คุณต้องการ Add Package ให้ Job ใช่หรือไม่"))
+        return;
+    showImgLoading();
+    $.ajax({
+        dataType: 'json',
+        cache: false,
+        type: "GET",
+        url: '',
+        data: {
+            employer_post: 'true',
+            post_type: 'set_package_for_job',
+            post_id: job_id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, "Message Employer");
+            if (!result.error) {
+                $('#frm_query_list_job').submit();
+                getTotalPackage();
+            }
+            check_from_post = false;
+        },
+        error: function (result) {
+            showModalMessage(result.responseText, "Error");
+            hideImgLoading();
+            check_from_post = false;
+        }
+    });
+    check_from_post = true;
+}
+
+function removeFeatureImage($elm) {
+    showImgLoading();
+    $.ajax({
+        dataType: 'json',
+        cache: false,
+        type: "GET",
+        url: '',
+        data: {
+            employer_post: 'true',
+            post_type: 'delete_avatar',
+            post_id: post_id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, "Message Employer");
+            if (!result.error) {
+                $($elm).addClass('fileinput-exists');
+            }
+        },
+        error: function (result) {
+            showModalMessage(result.responseText, "Error");
+            hideImgLoading();
+        }
+    });
+}
+
 function formValidate() {
 
     $("#form_post_job").bootstrapValidator({
@@ -56,7 +117,8 @@ function formValidate() {
 //                    }
 //                }
 //            }
-        }})
+        }
+    })
         .on('success.form.bv', function (e) {
             if (!check_from_post) {
                 // Prevent form submission
@@ -86,6 +148,7 @@ function formValidate() {
                             $('#frm_query_list_job').submit();
                             loadPostJob('');
                             post_id = result.post_id;
+                            scrollToTop();
                         }
                     },
                     error: function (result) {
@@ -102,7 +165,7 @@ function formValidate() {
                 data.bv.disableSubmitButtons(false);
             }
         })
-        .on('success.field.bv',function (e, data) {
+        .on('success.field.bv', function (e, data) {
             if (data.bv.getSubmitButton()) {
                 data.bv.disableSubmitButtons(false);
             }
@@ -118,6 +181,7 @@ function deletePostJob(postID) {
         return;
     if (!confirm("คุณต้องการลบ Job ใช่หรือไม่"))
         return;
+
     showImgLoading();
     $.ajax({
         type: "GET",
@@ -127,13 +191,52 @@ function deletePostJob(postID) {
         data: {
             post_job: 'true',
             post_type: 'delete',
-            post_id: postID
+            post_id: postID,
+            status: 'trash'
         },
         success: function (result) {
             hideImgLoading();
             showModalMessage(result.msg, "Message Post Job");
             check_delete_post_job = false;
             $('#frm_query_list_job').submit();
+            loadPostJob("");
+        },
+        error: function (result) {
+            hideImgLoading();
+            showModalMessage("Error:\n" + result.responseText);
+            check_delete_post_job = false;
+        }
+    });
+    check_delete_post_job = true;
+}
+
+function changeStatusJob(postID, status) {
+    if (check_delete_post_job)
+        return;
+    if (!confirm("คุณต้องการเปลี่ยนสถานะ Job ใช่หรือไม่"))
+        return;
+
+    showImgLoading();
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        cache: false,
+        url: url_post,
+        data: {
+            post_job: 'true',
+            post_type: 'delete',
+            post_id: postID,
+            status: status
+        },
+        success: function (result) {
+            hideImgLoading();
+            if (result.error) {
+                showModalMessage("เปลี่ยนสถานะสำเร็จ", "Message Post Job")
+            } else
+                showModalMessage(result.msg, "Message Post Job");
+            check_delete_post_job = false;
+            $('#frm_query_list_job').submit();
+            loadPostJob("")
         },
         error: function (result) {
             hideImgLoading();
@@ -158,6 +261,14 @@ function loadPostJob(postID) {
             post_id = postID;
         hideImgLoading();
         formValidate();
+        getTotalPackage();
+    })
+}
+
+function getTotalPackage() {
+    showImgLoading();
+    $("#total_package").load(url_post + "?post_job=true&post_type=get_total_package&user_id=" + user_id, function () {
+        hideImgLoading();
     })
 }
 

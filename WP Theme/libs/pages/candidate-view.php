@@ -7,7 +7,7 @@ if (is_user_logged_in()) {
     $userType = get_user_meta($userID, 'user_type', true);
     if ($userType == "employer") {
         $isLogin = false;
-        $userID = 0;
+//        $userID = 0;
     } else {
         $isLogin = true;
     }

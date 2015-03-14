@@ -41,41 +41,56 @@ if (is_user_logged_in()) {
             </tr>
         <?php endif; ?>
             <?php if ($savePosition != $value->position):
+            $strHeader = "";
             $strTitle = "";
             $countName = 0;
             switch ($value->position) {
                 case 1:
-                    $strTitle = "เลือกจำนวนตำแหน่ง และระยะเวลา";
+                    $strHeader = "เลือกจำนวนตำแหน่ง";
                     $countName = 1;
                     break;
                 case 2:
-                    $strTitle = 'เลือกระยะเวลา <span class="font-color-BF2026">Super Hotjob</span>';
+                    $strHeader = 'เลือกระยะเวลา';
                     $countName = 2;
                     break;
                 case 3:
-                    $strTitle = 'เลือกประเภท และระยะเวลาของ <span
+                    $strHeader = 'เลือกจำนวน <span
                     class="font-color-BF2026">Hotjob</span>';
                     $countName = 3;
                     break;
                 case 4:
-                    $strTitle = 'เลือกระยะเวลาของ <span class="font-color-BF2026">Urgent</span>
-                                        (บนเว็บไซต์ และ Mobile Application)';
+                    $strHeader = 'เลือกระยะเวลาของ <span
+                    class="font-color-BF2026">Auto Update</span>';
                     $countName = 4;
+                    break;
+            }
+            switch ($value->position) {
+                case 1:
+                    $strTitle = "จำนวนตำแหน่ง";
+                    break;
+                case 2:
+                    $strTitle = 'ระยะเวลา';
+                    break;
+                case 3:
+                    $strTitle = 'จำนวนตำแหน่ง';
+                    break;
+                case 4:
+                    $strTitle = 'ระยะเวลา';
                     break;
             }
             ?>
             <tr>
-                <td colspan="3"><h5><?php echo "$countName. $strTitle"; ?></h5></td>
+                <td colspan="3"><h5><?php echo "$countName. $strHeader"; ?></h5></td>
             </tr>
             <tr class="padding-bottom-10" style="">
-                <?php echo $classPackage->buildTd1($arrayPackage, $value->position); ?>
+                <?php echo $classPackage->buildTd1($arrayPackage, $value->position, $strTitle); ?>
                 <?php echo $classPackage->buildTd2($arrayPackage, $value->position, $strSelectPackage); ?>
                 <?php echo $classPackage->buildTd3($arrayPackage, $value->position); ?>
             </tr>
         <?php endif; ?>
 
             <?php
-            $saveName = $value->name;
+//            $saveName = $value->name;
             $savePosition = $value->position;
         endforeach; ?>
 

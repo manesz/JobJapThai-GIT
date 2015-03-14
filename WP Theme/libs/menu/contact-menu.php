@@ -46,20 +46,13 @@ function render_contact_page()
     if ($arrayContact) {
         extract((array)$arrayContact[0]);
     }
+    require_once('header.php');
     ?>
     <script type="text/javascript"
             src="<?php bloginfo('template_directory'); ?>/libs/js/contact.js"></script>
     <form id="contact-post" method="post">
         <input type="hidden" name="contact_post" id="contact_post" value="true"/>
 
-        <div class="wrap">
-            <div id="icon-themes" class="icon32"><br/></div>
-
-            <h2><?php _e(@$webSiteName . ' theme controller', 'wp_toc'); ?></h2>
-
-            <p><?php echo @$webSiteName; ?> business website theme &copy; developer by <a href="http://www.ideacorners.com"
-                                                                                          target="_blank">IdeaCorners
-                    Developer</a></p>
             <!-- If we have any error by submiting the form, they will appear here -->
             <?php settings_errors('tab1-errors'); ?>
             <h2>Contact</h2>
@@ -142,7 +135,7 @@ function render_contact_page()
                 </table>
                 <input type="submit" class="button-primary" value="Save">
             </div>
-        </div>
     </form>
+        </div>
 <?php
 }

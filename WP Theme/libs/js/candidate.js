@@ -7,6 +7,8 @@ var data_for_post = $.param({
 });
 var is_page_backend = false;
 var check_from_post = false;
+var check_career_profile_post = false;
+var check_desired_job_post = false;
 var check_education_post = false;
 var check_work_experience_post = false;
 var index_post = 1;
@@ -152,6 +154,14 @@ $(document).ready(function () {
                             showModalMessage(result.msg, 'Error');
                         }
 
+                        if (check_career_profile_post) {
+                            getCareerProfile();
+                            resetPanelCareerProfileValue('reset');
+                        }
+                        if (check_desired_job_post) {
+                            getDesiredJob();
+                            resetPanelDesiredJobValue('reset');
+                        }
                         if (check_education_post) {
                             getEducation();
                             resetPanelEducationValue('reset');
@@ -162,6 +172,8 @@ $(document).ready(function () {
                         }
 
                         check_from_post = false;
+                        check_career_profile_post = false;
+                        check_desired_job_post = false;
                         check_education_post = false;
                         check_work_experience_post = false;
                     },
@@ -210,20 +222,20 @@ $(document).ready(function () {
                     candidate_id: candidate_id
                 });
                 break;
-            case 2:
-                data_for_post = $.param({
-                    candidate_post: 'true',
-                    post_type: 'edit_career_profile',
-                    candidate_id: candidate_id
-                });
-                break;
-            case 3:
-                data_for_post = $.param({
-                    candidate_post: 'true',
-                    post_type: 'edit_desired_job',
-                    candidate_id: candidate_id
-                });
-                break;
+//            case 2:
+//                data_for_post = $.param({
+//                    candidate_post: 'true',
+//                    post_type: 'edit_career_profile',
+//                    candidate_id: candidate_id
+//                });
+//                break;
+//            case 3:
+//                data_for_post = $.param({
+//                    candidate_post: 'true',
+//                    post_type: 'edit_desired_job',
+//                    candidate_id: candidate_id
+//                });
+//                break;
             case 6:
                 data_for_post = $.param({
                     candidate_post: 'true',
@@ -257,10 +269,84 @@ $(document).ready(function () {
     });
 
     if (is_login) {
+        getCareerProfile();
+        getDesiredJob();
         getEducation();
         getWorkExperience();
     }
 });
+
+function removeAvatarImage($elm) {
+    showImgLoading();
+    $.ajax({
+        dataType: 'json',
+        cache: false,
+        type: "GET",
+        url: '',
+        data: {
+            candidate_post: 'true',
+            post_type: 'delete_avatar',
+            candidate_id: candidate_id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, "Message Employer");
+            if (!result.error) {
+                $($elm).addClass('fileinput-exists');
+            }
+        },
+        error: function (result) {
+            showModalMessage(result.responseText, "Error");
+            hideImgLoading();
+        }
+    });
+}
+
+function getCareerProfile() {
+    showImgLoading();
+    $.ajax({
+        type: "GET",
+//        dataType: 'json',
+//        cache: false,
+        url: url_post,
+        data: {
+            candidate_post: 'true',
+            post_type: 'get_career_profile',
+            candidate_id: candidate_id
+        },
+        success: function (result) {
+            $("#career_profile_list").html(result);
+            hideImgLoading();
+        },
+        error: function (result) {
+            alert("Error:\n" + result.responseText);
+            hideImgLoading();
+        }
+    });
+}
+
+function getDesiredJob() {
+    showImgLoading();
+    $.ajax({
+        type: "GET",
+//        dataType: 'json',
+//        cache: false,
+        url: url_post,
+        data: {
+            candidate_post: 'true',
+            post_type: 'get_desired_job',
+            candidate_id: candidate_id
+        },
+        success: function (result) {
+            $("#desired_job_list").html(result);
+            hideImgLoading();
+        },
+        error: function (result) {
+            alert("Error:\n" + result.responseText);
+            hideImgLoading();
+        }
+    });
+}
 
 function getEducation() {
     showImgLoading();
@@ -308,6 +394,45 @@ function getWorkExperience() {
     });
 }
 
+function careerProfileSetValue(data) {
+    var $frm = $("#form_candidate2");
+    $("#career_profile_id").val(data.id);
+    $("#year_of_work_exp").val(data.year_of_work_exp);
+    $("#last_position").val(data.last_position);
+    $("#last_industry").val(data.last_industry);
+//    $("#last_function").val(data.last_function);
+    $("#last_month_salary").val(data.last_month_salary);
+
+    $("#btn_cancel", $frm).show();
+    $("#btn_add", $frm).val('Edit');
+    $("#post_type", $frm).val('edit_career_profile');
+
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
+
+function desiredJobSetValue(data) {
+    var $frm = $("#form_candidate3");
+    $("#desired_job_id").val(data.id);
+    $("#industry").val(data.industry);
+    $("#job_position").val(data.job_position);
+    $("#job_type").val(data.job_type);
+    $("#expect_month_salary").val(data.expect_month_salary);
+    $("#available_to_work").val(data.available_to_work);
+    $("#start_date").val(data.start_date);
+
+    $("#btn_cancel", $frm).show();
+    $("#btn_add", $frm).val('Edit');
+    $("#post_type", $frm).val('edit_desired_job');
+
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
+
 function educationSetValue(data) {
     $("#education_id").val(data.id);
     $("#degree").val(data.degree);
@@ -347,6 +472,32 @@ function workExperienceSetValue(data) {
     });
 }
 
+function resetPanelCareerProfileValue(type) {
+    var $frm = $("#form_candidate2");
+    $($frm).closest('form').find('input[type=text], textarea, select').val('');
+//    if (type == 'reset') {
+        $('#post_type', $frm).val('add_career_profile');
+        $('#btn_add', $frm).val('Add');
+        $('#btn_cancel', $frm).hide();
+//    }
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
+function resetPanelDesiredJobValue(type) {
+    var $frm = $("#form_candidate3");
+    $($frm).closest('form').find('input[type=text], textarea, select').val('');
+//    if (type == 'reset') {
+        $('#post_type', $frm).val('add_desired_job');
+        $('#btn_add', $frm).val('Add');
+        $('#btn_cancel', $frm).hide();
+//    }
+    $("input[type=text], select, textarea", $frm).each(function () {
+        if ($(this).attr("required"))
+            $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
 function resetPanelEducationValue(type) {
     var $frm = $("#form_candidate4");
     $($frm).closest('form').find('input[type=text], textarea').val('');
@@ -370,6 +521,58 @@ function resetPanelWorkExperienceValue(type) {
     $("input[type=text], select, textarea", $frm).each(function () {
         if ($(this).attr("required"))
             $($frm).bootstrapValidator('revalidateField', this.id);
+    });
+}
+
+function deleteCareerProfile(id) {
+    if (!confirm("คุณต้องการลบข้อมูล ใช่หรือไม่"))
+        return;
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        cache: false,
+        url: url_post,
+        data: {
+            candidate_post: 'true',
+            post_type: 'delete_career_profile',
+            career_profile_id: id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, result.error ? "Fail" : "Success");
+            if (!result.error)
+                getCareerProfile();
+        },
+        error: function (result) {
+            alert("Error:\n" + result.responseText);
+            hideImgLoading();
+        }
+    });
+}
+
+function deleteDesiredJob(id) {
+    if (!confirm("คุณต้องการลบข้อมูล ใช่หรือไม่"))
+        return;
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        cache: false,
+        url: url_post,
+        data: {
+            candidate_post: 'true',
+            post_type: 'delete_desired_job',
+            desired_job_id: id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, result.error ? "Fail" : "Success");
+            if (!result.error)
+                getDesiredJob();
+        },
+        error: function (result) {
+            alert("Error:\n" + result.responseText);
+            hideImgLoading();
+        }
     });
 }
 

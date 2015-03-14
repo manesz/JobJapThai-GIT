@@ -36,10 +36,10 @@ class Favorite
         return $result;
     }
 
-    public function listFavEmployer($id = 0, $company_id = 0, $user_id = 0)
+    public function listFavEmployer($id = 0, $employer_id = 0, $user_id = 0)
     {
         $strAnd = $id ? " AND a.id=$id": "";
-        $strAnd .= $company_id ? " AND a.company_id=$company_id": "";
+        $strAnd .= $employer_id ? " AND a.employer_id=$employer_id": "";
         $strAnd .= $user_id ? " AND a.user_id=$user_id": "";
         $sql = "
             SELECT
@@ -49,7 +49,7 @@ class Favorite
             FROM
               $this->tableFavoriteCompany a
               INNER JOIN $this->tableCompany b ON
-              (a.company_id = b.id)
+              (a.employer_id = b.id)
             WHERE 1
             AND a.publish = 1
             $strAnd
@@ -58,7 +58,7 @@ class Favorite
         return $result;
     }
 
-    public function addFavJob($user_id, $job_id, $company_id) {
+    public function addFavJob($user_id, $job_id, $employer_id) {
         if (!$user_id || !$job_id)
             return $this->returnMessage('Fail No id.', true);
         $sql = "
@@ -66,14 +66,14 @@ class Favorite
             (
              `user_id`,
              `job_id`,
-             `company_id`,
+             `employer_id`,
              `create_datetime`,
              `update_datetime`,
              `publish`)
             VALUES (
             '{$user_id}',
             '{$job_id}',
-            '{$company_id}',
+            '{$employer_id}',
             NOW(),
             NOW(),
             1
@@ -86,20 +86,20 @@ class Favorite
         return $this->returnMessage('Favorite Success.', false);
     }
 
-    public function addFavCompany($user_id, $company_id) {
-        if (!$user_id || !$company_id)
+    public function addFavCompany($user_id, $employer_id) {
+        if (!$user_id || !$employer_id)
             return $this->returnMessage('Fail No id.', true);
         $sql = "
             INSERT INTO `$this->tableFavoriteCompany`
             (
              `user_id`,
-             `company_id`,
+             `employer_id`,
              `create_datetime`,
              `update_datetime`,
              `publish`)
             VALUES (
             '{$user_id}',
-            '{$company_id}',
+            '{$employer_id}',
             NOW(),
             NOW(),
             1
@@ -151,8 +151,8 @@ class Favorite
         }
     }
 
-    public function checkCompanyIsFavorite($user_id, $company_id) {
-        $result = $this->listFavEmployer(0, $company_id, $user_id);
+    public function checkCompanyIsFavorite($user_id, $employer_id) {
+        $result = $this->listFavEmployer(0, $employer_id, $user_id);
         if ($result) {
             return true;
         } else {

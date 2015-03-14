@@ -87,7 +87,7 @@ function jj_login($username,$pass,$remember=false) {
 	if ( is_wp_error($user) ){
             echo $user->get_error_message();
         }else{
-            wp_redirect(get_site_url().'/edit-resume/');
+            wp_redirect(get_site_url().'/edit-profile/');
         }
         exit();
 }

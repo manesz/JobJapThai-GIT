@@ -44,7 +44,7 @@ class Authentication
             update_user_meta($user->ID, 'last_login', current_time('mysql'));
             $userType = get_user_meta($user->ID, 'user_type', true);
             if ($userType == "employer")
-                return $this->returnMessage(get_site_url() . '/edit-resume/', false, false);
+                return $this->returnMessage(get_site_url() . '/edit-profile/', false, false);
             else if ($userType == 'candidate') {
                 return $this->returnMessage(get_site_url() . '/candidate/', false, false);
             } else {

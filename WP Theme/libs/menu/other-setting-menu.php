@@ -5,61 +5,27 @@
  * Date: 7/11/2557
  * Time: 14:14 น.
  */
-
-$objClassOtherSetting = new OtherSetting($wpdb);
-function add_contact_menu_items()
+function add_other_setting_menu_items()
 {
     add_submenu_page(
         'ics_theme_settings',
         'Other Setting',
         'Other Setting',
         'manage_options',
-        'contact',
-        'render_contact_page'
+        'other_setting',
+        'render_other_setting_page'
     );
 }
 
-
-add_action('admin_menu', 'add_contact_menu_items');
-
-function render_contact_page()
+function render_other_setting_page()
 {
-    global $objClassOtherSetting;
-    global $webSiteName;
-    $arrayOtherSetting = $objClassOtherSetting->getOtherSetting();
-    $massage = "";
-    $tel = "";
-    $address = "";
-    $fax = "";
-    $email = "";
-    $title_facebook = "";
-    $link_facebook = "";
-    $title_twitter = "";
-    $link_twitter = "";
-    $title_line = "";
-    $link_line = "";
-    $qr_code_line = "";
-    $title_ggp = "";
-    $link_ggp = "";
-    $latitude = "";
-    $longitude = "";
-    if ($arrayOtherSetting) {
-        extract((array)$arrayOtherSetting[0]);
-    }
+    global $wpdb;
+    $objClassOtherSetting = new OtherSetting($wpdb);
+    $arrayOtherSetting = $objClassOtherSetting->getDataFromFile($objClassOtherSetting->nameWorkingDay);
+    require_once ('header.php');
     ?>
     <script type="text/javascript"
-            src="<?php bloginfo('template_directory'); ?>/libs/js/contact.js"></script>
-
-        <div class="wrap">
-            <div id="icon-themes" class="icon32"><br/></div>
-
-            <h2><?php _e(@$webSiteName . ' theme controller', 'wp_toc'); ?></h2>
-
-            <p><?php echo @$webSiteName; ?> business website theme &copy; developer by <a href="http://www.ideacorners.com"
-                                                                                          target="_blank">IdeaCorners
-                    Developer</a></p>
-            <!-- If we have any error by submiting the form, they will appear here -->
-
+            src="<?php bloginfo('template_directory'); ?>/libs/js/other-settings.js"></script>
             <h2>Other Setting</h2>
             <hr/>
             <form id="other_setting_post" method="post">
@@ -69,13 +35,12 @@ function render_contact_page()
                     <table class="wp-list-table widefat" cellspacing="0" width="100%">
                         <tbody id="the-list-edit">
                         <tr class="alternate">
-                            <td><label for="pro_title">Title Promotion :</label></td>
+                            <td><label for="working_day">Working Day:</label></td>
                             <td colspan="3">
-                                <textarea cols="80" rows="3"
-                                          id="pro_title" name="title"><?php
-                                    $arrTitle = $objClassOtherSetting->getTitlePromotion();
-                                    echo $arrTitle['promotion_title'];
-                                    ?></textarea>
+                                <textarea cols="80" rows="10"
+                                          id="working_day" name="working_day"><?php
+    echo $arrayOtherSetting[$objClassOtherSetting->nameWorkingDay];
+    ?></textarea>
                             </td>
                         </tr>
                         </tbody>
@@ -86,3 +51,5 @@ function render_contact_page()
         </div>
 <?php
 }
+
+add_action('admin_menu', 'add_other_setting_menu_items');

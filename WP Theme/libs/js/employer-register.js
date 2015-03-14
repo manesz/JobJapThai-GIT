@@ -114,9 +114,9 @@ $(document).ready(function () {
     $('#employer_image').change(function () {
         if ($(this).val() != '') {
             var formData = new FormData();
-            formData.append('image_avatar', $(this)[0].files[0]);
+            formData.append('logo_image', $(this)[0].files[0]);
             formData.append('employer_post', 'true');
-            formData.append('post_type', 'image_avatar');
+            formData.append('post_type', 'logo_image');
             formData.append('employer_id', user_id);
             showImgLoading();
             $.ajax({
@@ -137,10 +137,91 @@ $(document).ready(function () {
                 contentType: false,
                 processData: false
             });
+        }
+    });
+
+    $('#banner_image').change(function () {
+        if ($(this).val() != '') {
+            var formData = new FormData();
+            formData.append('image_banner', $(this)[0].files[0]);
+            formData.append('employer_post', 'true');
+            formData.append('post_type', 'image_banner');
+            formData.append('employer_id', user_id);
+            showImgLoading();
+            $.ajax({
+                url: '',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function (result) {
+                    showModalMessage(result.msg, 'Message');
+//                    path_avatar = result.path;
+                    hideImgLoading();
+                },
+                error: function (result) {
+                    showModalMessage(result.responseText, 'Message');
+                    hideImgLoading();
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
 
         }
     });
 });
+
+function removeAvatarImage($elm) {
+    showImgLoading();
+    $.ajax({
+        dataType: 'json',
+        cache: false,
+        type: "GET",
+        url: '',
+        data: {
+            employer_post: 'true',
+            post_type: 'delete_avatar',
+            employer_id: user_id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, "Message Employer");
+            if (!result.error) {
+                $($elm).addClass('fileinput-exists');
+            }
+        },
+        error: function (result) {
+            showModalMessage(result.responseText, "Error");
+            hideImgLoading();
+        }
+    });
+}
+
+function removeBannerImage($elm) {
+    showImgLoading();
+    $.ajax({
+        dataType: 'json',
+        cache: false,
+        type: "GET",
+        url: '',
+        data: {
+            employer_post: 'true',
+            post_type: 'delete_banner',
+            employer_id: user_id
+        },
+        success: function (result) {
+            hideImgLoading();
+            showModalMessage(result.msg, "Message Employer");
+            if (!result.error) {
+                $($elm).addClass('fileinput-exists');
+            }
+        },
+        error: function (result) {
+            showModalMessage(result.responseText, "Error");
+            hideImgLoading();
+        }
+    });
+}
 
 function showAddPackage(package_id) {
     package_id = package_id | false;

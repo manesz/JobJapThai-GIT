@@ -77,7 +77,9 @@ function custom_post_job()
 
     function meta_job_option()
     {
-        global $post, $classEmployer;
+        global $post, $classEmployer, $wpdb;
+        $objClassOtherSetting = new OtherSetting($wpdb);
+        $classCandidate = new Candidate($wpdb);
         $getEmployerID = empty($_GET['employer_id']) ? "" : $_GET['employer_id'];
         $custom = get_post_custom($post->ID);
         $qualification = empty($custom["qualification"][0]) ? "" : $custom["qualification"][0];
@@ -87,11 +89,12 @@ function custom_post_job()
         $japanese_skill = empty($custom["japanese_skill"][0]) ? "" : $custom["japanese_skill"][0];
         $salary = empty($custom["salary"][0]) ? "" : $custom["salary"][0];
         $working_day = empty($custom["working_day"][0]) ? "" : $custom["working_day"][0];
-        $company_id = empty($custom["company_id"][0]) ? $getEmployerID : $custom["company_id"][0];
+        $employer_id = empty($custom["employer_id"][0]) ? $getEmployerID : $custom["employer_id"][0];
         $highlight_jobs = empty($custom["highlight_jobs"][0]) ? "" : $custom["highlight_jobs"][0];
 
 
         $objCompany = $classEmployer->getCompanyInfo();
+        $getListJapaneseSkill = $classCandidate->japanese_skill;
         ?>
         <style>
             .select-width {
@@ -103,23 +106,24 @@ function custom_post_job()
         <script>
             var $ = jQuery;
             $(document).ready(function () {
-                $("#company_id").select2();
+                $("#employer_id").select2();
             });
         </script>
+        <input type="hidden" name="employer_id" value="<?php echo $employer_id; ?>">
         <table>
-            <tr>
-                <td><label for="company_id">Company:</label></td>
-                <td>
-                    <select id="company_id" name="company_id" class="select-width">
-                        <option value="">--Select--</option>
-                        <?php if ($objCompany) foreach ($objCompany as $value): ?>
-                            <option value="<?php echo $value->id ?>"
-                                <?php echo $company_id == $value->id ? "selected" : ""; ?>
-                                ><?php echo $value->company_name; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
+<!--            <tr>-->
+<!--                <td><label for="employer_id">Company:</label></td>-->
+<!--                <td>-->
+<!--                    <select id="employer_id" name="employer_id" class="select-width">-->
+<!--                        <option value="">--Select--</option>-->
+<!--                        --><?php //if ($objCompany) foreach ($objCompany as $value): ?>
+<!--                            <option value="--><?php //echo $value->id ?><!--"-->
+<!--                                --><?php //echo $employer_id == $value->id ? "selected" : ""; ?>
+<!--                                >--><?php //echo $value->company_name; ?><!--</option>-->
+<!--                        --><?php //endforeach; ?>
+<!--                    </select>-->
+<!--                </td>-->
+<!--            </tr>-->
             <tr>
                 <td><label for="highlight_jobs">Highlight jobs:</label></td>
                 <td>
@@ -179,9 +183,10 @@ function custom_post_job()
                 <td>
                     <select name="japanese_skill" class="select-width">
                         <option value="">--Select--</option>
-                        <option value="Good" <?php echo $japanese_skill == 'Good' ? 'selected' : ''; ?>
-                            >Good
-                        </option>
+                        <?php foreach($getListJapaneseSkill as $value): ?>
+                            <option value="<?php echo $value; ?>"
+                                <?php echo $japanese_skill == $value ? 'selected' : ''; ?>><?php echo $value; ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>
@@ -193,13 +198,7 @@ function custom_post_job()
             <tr>
                 <td><label for="working_day">Working Day:</label></td>
                 <td>
-                    <select name="working_day" class="select-width">
-                        <option value="">--Select--</option>
-                        <option value="Mon-Fri 8.00 – 17.00"
-                            <?php echo $working_day == 'Mon-Fri 8.00 – 17.00' ? 'selected' : ''; ?>
-                            >Mon-Fri 8.00 – 17.00
-                        </option>
-                    </select>
+                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($working_day, "select-width"); ?>
                 </td>
             </tr>
         </table>
@@ -218,7 +217,7 @@ function custom_post_job()
             update_post_meta($post->ID, "japanese_skill", $_POST["japanese_skill"]);
             update_post_meta($post->ID, "salary", $_POST["salary"]);
             update_post_meta($post->ID, "working_day", $_POST["working_day"]);
-            update_post_meta($post->ID, "company_id", $_POST["company_id"]);
+            update_post_meta($post->ID, "employer_id", $_POST["employer_id"]);
             update_post_meta($post->ID, "highlight_jobs", $_POST["highlight_jobs"]);
         }
         return true;
@@ -279,10 +278,10 @@ register_taxonomy('custom_job_cat',
 );
 //filter to add custom category filter and modify request
 //add_filter( 'restrict_manage_posts', 'custom_category_id_filter'  );
-add_filter('request', 'custom_company_id_request');
+add_filter('request', 'custom_employer_id_request');
 
 
-function custom_company_id_request($request)
+function custom_employer_id_request($request)
 {
 
     global $post_type;
@@ -292,9 +291,9 @@ function custom_company_id_request($request)
         return $request;
 
     //check if meta value filter is called. if then set request params
-    if (isset($_GET['company_id']) and !empty($_GET['company_id'])) {
-        $request['meta_key'] = 'company_id';
-        $request['meta_value'] = $_GET['company_id'];
+    if (isset($_GET['employer_id']) and !empty($_GET['employer_id'])) {
+        $request['meta_key'] = 'employer_id';
+        $request['meta_value'] = $_GET['employer_id'];
     }
 
     return $request;
@@ -304,11 +303,11 @@ function custom_company_id_request($request)
 function custom_category_id_filter( ) {
 
     global $wpdb, $post_type;
-$getCompanyID = empty($_GET['company_id'])?null:$_GET['company_id'];
+$getEmployerID = empty($_GET['employer_id'])?null:$_GET['employer_id'];
     //add this if we are in the specified post type
     if ( is_admin() && $post_type == 'job') {
 
-        $mvs = $wpdb->get_col( " SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'company_id' ORDER BY meta_value ASC " );
+        $mvs = $wpdb->get_col( " SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'employer_id' ORDER BY meta_value ASC " );
         //var_dump($mvs);
         ?>
         <select name="mv">
@@ -317,7 +316,7 @@ $getCompanyID = empty($_GET['company_id'])?null:$_GET['company_id'];
             if (!empty ($mvs)) {
                 foreach ( $mvs as $mv ) { ?>
                     <option value="<?php echo $mv?  $mv: ""; ?>" <?php
-                    selected( $getCompanyID, $mv ); ?>><?php echo esc_attr( $mv ); ?></option>
+                    selected( $getEmployerID, $mv ); ?>><?php echo esc_attr( $mv ); ?></option>
                 <?php }
             }
             ?>

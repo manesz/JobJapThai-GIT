@@ -2,14 +2,33 @@
 
 if (is_user_logged_in()) {
     $isLogin = true;
-    global $current_user;
+    global $current_user, $wpdb;
     $userID = $current_user->ID;
     $displayName = $current_user->display_name;
     $userType = get_user_meta($userID, 'user_type', true);
+
+    $resumeCode = str_pad($userID, 7, '0', STR_PAD_LEFT);
+    $countPostJob = 0;
+    $lastLogin = get_user_meta($userID, 'last_login', true);
+    $lastLogin = date_i18n('d M y', strtotime($lastLogin));
+    $lastUpdate = get_the_modified_author();
+    $lastUpdate = date_i18n('d M y', strtotime($lastUpdate));
+    $memberSince = $current_user->user_registered;
+    $memberSince = date_i18n('d M y', strtotime($memberSince));
+    $classCandidate = new Candidate($wpdb);
+    $classQueryPostJob = new QueryPostJob($wpdb);
+
+    $get_image_avatar = $classCandidate->getAvatarPath($userID);
+    $str_image_avatar = "<img src='$get_image_avatar[path]' />";
     if ($userType == 'employer') {
-        $urlEditResume = get_site_url() . "/edit-resume";
+        $urlEditResume = get_site_url() . "/edit-profile";
+        $get_image_avatar = $classCandidate->getAvatarPath($userID, true);
+        $str_image_avatar = "<img src='$get_image_avatar[path]' />";
+
+        $countPostJob = $classQueryPostJob->countPostJob($userID);
     } else if ($userType == "candidate") {
         $urlEditResume = get_site_url() . "/candidate";
+        $isLogin = true;
     } else
         $urlEditResume = get_site_url() . "/wp-admin";
 } else {
@@ -56,10 +75,25 @@ if (is_user_logged_in()) {
         </form>
     <?php else: ?>
         <div class="form-group clearfix" style="margin-bottom: 10px;">
-            <label for="username" class="col-md-4" style="font-size: 12px; padding-right: 0px;">Hello! :</label>
-
-            <div class="col-md-8"><a
-                    href="<?php echo $urlEditResume; ?>"><?php echo $displayName; ?></a></div>
+            <div id="preview" class="fileinput-preview thumbnail"
+                 style="width: 150px;height: 150px;padding-right: 0px;"><a
+                    href="<?php echo $urlEditResume; ?>"><?php echo $str_image_avatar; ?></a></div>
+            <div class="col-md-4"
+                 style="padding-right: 0px;">
+                Hello!:<br/>
+                <?php if ($userType != 'employer'): ?>
+                    Resume Code:<br/>
+                <?php else: ?>
+                    Total job post:<br/>
+                <?php endif; ?>
+                Last update:
+            </div>
+            <div class="col-md-8">
+                <a
+                    href="<?php echo $urlEditResume; ?>"><?php echo $displayName; ?></a><br/>
+                <span class="font-color-BF2026"
+                      style=""><?php echo $userType != 'employer' ? $resumeCode : "<a href='post-job/'>$countPostJob</a>"; ?></span><br/>
+                <?php echo $lastUpdate; ?><br/></div>
         </div>
 
         <hr/>

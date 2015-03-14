@@ -42,8 +42,8 @@ class QueryPostJob
             'paged' => $paged,
             //        'meta_query' => array(
             //            array(
-            //                'key' => 'company_id',
-            //                'value' => $company_id,
+            //                'key' => 'employer_id',
+            //                'value' => $employer_id,
             //                'compare' => '='
             //            )
             //
@@ -63,16 +63,16 @@ class QueryPostJob
                 $argc['post__in'] = $arrayListJobID;
                 break;
             case 2: //company name
-                $arrayCompanyID = array();
+                $arrayEmployerID = array();
                 foreach ($getListFavJob as $value) {
-                    $arrayCompanyID[] = $value->company_id;
+                    $arrayEmployerID[] = $value->employer_id;
                 }
-                $objListCompany = $this->ClassEmployer->getCompanyInfo($arrayCompanyID, 0, " ORDER BY company_name");
+                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, $arrayEmployerID, " ORDER BY company_name");
 
                 $arrayListJobID = array();
                 foreach ($objListCompany as $value1) {
                     foreach ($getListFavJob as $value2) {
-                        if ($value1->id == $value2->company_id) {
+                        if ($value1->id == $value2->employer_id) {
                             $arrayListJobID[] = $value2->job_id;
                         }
                     }
@@ -84,6 +84,7 @@ class QueryPostJob
         }
         return $argc;
     }
+
     function queryFavoriteEmployer($user_id)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
@@ -99,8 +100,8 @@ class QueryPostJob
             'paged' => $paged,
             //        'meta_query' => array(
             //            array(
-            //                'key' => 'company_id',
-            //                'value' => $company_id,
+            //                'key' => 'employer_id',
+            //                'value' => $employer_id,
             //                'compare' => '='
             //            )
             //
@@ -111,7 +112,7 @@ class QueryPostJob
             case 1: //last update
                 $arrayListJobID = array();
                 foreach ($getListFavJob as $value) {
-                    $arrayListJobID[] = $value->company_id;
+                    $arrayListJobID[] = $value->employer_id;
                 }
                 if (!$arrayListJobID)
                     return null;
@@ -120,16 +121,16 @@ class QueryPostJob
                 $argc['post__in'] = $arrayListJobID;
                 break;
             case 2: //company name
-                $arrayCompanyID = array();
+                $arrayEmployerID = array();
                 foreach ($getListFavJob as $value) {
-                    $arrayCompanyID[] = $value->company_id;
+                    $arrayEmployerID[] = $value->employer_id;
                 }
-                $objListCompany = $this->ClassEmployer->getCompanyInfo($arrayCompanyID, 0, " ORDER BY company_name");
+                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, $arrayEmployerID, " ORDER BY company_name");
 
                 $arrayListJobID = array();
                 foreach ($objListCompany as $value1) {
                     foreach ($getListFavJob as $value2) {
-                        if ($value1->id == $value2->company_id) {
+                        if ($value1->id == $value2->employer_id) {
                             $arrayListJobID[] = $value2->job_id;
                         }
                     }
@@ -142,7 +143,7 @@ class QueryPostJob
         return $argc;
     }
 
-    public function queryApplyJob($user_id)
+    function queryApplyJob($user_id)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
@@ -169,15 +170,15 @@ class QueryPostJob
                 $argc['post__in'] = $arrayListJobID;
                 break;
             case 2: //company name
-                $arrayCompanyID = array();
+                $arrayEmployerID = array();
                 foreach ($getListApplyJob as $value) {
-                    $arrayCompanyID[] = $value->company_id;
+                    $arrayEmployerID[] = $value->employer_id;
                 }
                 $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
                 $arrayMetaQuery = array();
                 foreach ($objListCompany as $value) {
                     $arrayMetaQuery[] = array(
-                        'key' => 'company_id',
+                        'key' => 'employer_id',
                         'value' => $value->id,
                         'compare' => '='
                     );
@@ -218,15 +219,15 @@ class QueryPostJob
                 $argc['order'] = 'DESC';
                 break;
             case 2: //company name
-                $arrayCompanyID = array();
+                $arrayEmployerID = array();
 //                foreach ($getListApplyJob as $value) {
-//                    $arrayCompanyID[] = $value->company_id;
+//                    $arrayEmployerID[] = $value->employer_id;
 //                }
 //                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
 //                $arrayMetaQuery = array();
 //                foreach ($objListCompany as $value) {
 //                    $arrayMetaQuery[] = array(
-//                        'key' => 'company_id',
+//                        'key' => 'employer_id',
 //                        'value' => $value->id,
 //                        'compare' => '='
 //                    );
@@ -263,15 +264,15 @@ class QueryPostJob
                 $argc['order'] = 'DESC';
                 break;
             case 2: //company name
-                $arrayCompanyID = array();
+                $arrayEmployerID = array();
 //                foreach ($getListApplyJob as $value) {
-//                    $arrayCompanyID[] = $value->company_id;
+//                    $arrayEmployerID[] = $value->employer_id;
 //                }
 //                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
 //                $arrayMetaQuery = array();
 //                foreach ($objListCompany as $value) {
 //                    $arrayMetaQuery[] = array(
-//                        'key' => 'company_id',
+//                        'key' => 'employer_id',
 //                        'value' => $value->id,
 //                        'compare' => '='
 //                    );
@@ -313,16 +314,16 @@ class QueryPostJob
                 $argc['order'] = 'DESC';
                 break;
             case 2: //company name
-                $arrayCompanyID = array();
+                $arrayEmployerID = array();
                 foreach ($getListCompanyInfo as $value) {
-                    $arrayCompanyID[] = $value->company_id;
+                    $arrayEmployerID[] = $value->employer_id;
                 }
 //                $objListCompany = $this->ClassEmployer->getCompanyInfo();
 //
 //                $arrayListJobID = array();
 //                foreach ($objListCompany as $value1) {
 //                    foreach ($getListCompanyInfo as $value2) {
-//                        if ($value1->employer_id == $value2->company_id) {
+//                        if ($value1->employer_id == $value2->employer_id) {
 //                            $arrayListJobID[] = $value2->job_id;
 //                        }
 //                    }
@@ -336,19 +337,36 @@ class QueryPostJob
         return $argc;
     }
 
+    function countPostJob($user_id)
+    {
+//        $getCompanyInfo = $this->ClassEmployer->getCompanyInfo(0, $user_id);
+        $employer_id = $user_id;
+        $argc = array(
+            'post_type' => $this->postType,
+            'post_status' => 'publish',
+//            'posts_per_page' => $posts_per_page,
+            'meta_key' => 'employer_id',
+            'meta_value' => $employer_id,
+//            'paged' => $paged
+        );
+        $my_query = new WP_Query($argc);
+        $count = $my_query->post_count;
+        return $count;
+    }
+
     function queryPostJob($user_id)
     {
-        $getCompanyInfo = $this->ClassEmployer->getCompanyInfo(0, $user_id);
-        $company_id = $getCompanyInfo[0]->com_id;
+//        $getCompanyInfo = $this->ClassEmployer->getCompanyInfo(0, $user_id);
+        $employer_id = $user_id;
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
         $orderby = empty($_GET['orderby']) ? 1 : $_GET['orderby'];
         $argc = array(
             'post_type' => $this->postType,
-            'post_status' => 'publish',
+            'post_status' => array('draft', 'publish'),
             'posts_per_page' => $posts_per_page,
-            'meta_key' => 'company_id',
-            'meta_value' => $company_id,
+            'meta_key' => 'employer_id',
+            'meta_value' => $employer_id,
             'paged' => $paged
         );
 
@@ -365,15 +383,15 @@ class QueryPostJob
 //                $argc['post__in'] = $arrayListJobID;
                 break;
             case 2: //company name
-//                $arrayCompanyID = array();
+//                $arrayEmployerID = array();
 //                foreach ($getListApplyJob as $value) {
-//                    $arrayCompanyID[] = $value->company_id;
+//                    $arrayEmployerID[] = $value->employer_id;
 //                }
 //                $objListCompany = $this->ClassEmployer->getCompanyInfo(0, 0, " ORDER BY company_name");
 //                $arrayMetaQuery = array();
 //                foreach ($objListCompany as $value) {
 //                    $arrayMetaQuery[] = array(
-//                        'key' => 'company_id',
+//                        'key' => 'employer_id',
 //                        'value' => $value->id,
 //                        'compare' => '='
 //                    );
@@ -411,7 +429,7 @@ class QueryPostJob
         return empty($job_location) ? false : "<a href='$job_location[link]'>$job_location[name]</a>";
     }
 
-    public function buildFormQueryJob($user_id, $search = false, $show_edit = false)
+    function buildFormQueryJob($user_id, $search = false, $show_edit = false)
     {
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $posts_per_page = empty($_GET['posts_per_page']) ? 10 : $_GET['posts_per_page'];
@@ -422,7 +440,7 @@ class QueryPostJob
         <form method="post" id="frm_query_list_job">
             <input type="hidden" name="paged" value="<?php echo $paged; ?>">
             <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-            <input type="hidden" name="show_edit" value="<?php echo $show_edit? "true": ""; ?>">
+            <input type="hidden" name="show_edit" value="<?php echo $show_edit ? "true" : ""; ?>">
             <?php if ($search) : ?>
                 <input type="hidden" name="s" value="<?php echo $s; ?>">
             <?php endif; ?>
@@ -512,13 +530,17 @@ class QueryPostJob
 
     function buildListJob($argc, $paging = true, $showEdit = false)
     {
+        global $wpdb;
         if (!$showEdit) {
-            $showEdit = empty($_REQUEST['show_edit'])? false: $_REQUEST['show_edit'];
+            $showEdit = empty($_REQUEST['show_edit']) ? false : $_REQUEST['show_edit'];
         }
         if (is_array($argc) || !$argc)
             $loopJobs = new WP_Query($argc);
         else
             $loopJobs = $this->wpdb->get_results($argc);
+        $classCandidate = new Candidate($wpdb);
+        $classEmployer = new Employer($wpdb);
+        $classPackage = new Package($wpdb);
         ob_start();
         ?>
 
@@ -530,46 +552,88 @@ class QueryPostJob
                     <?php while ($loopJobs->have_posts()) :
                         $loopJobs->the_post();
                         $postID = get_the_id();
-                        $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
-                        if (empty($url)) {
-                            $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
-                        } else {
-                            $thumbnail = $url;
-                        }
                         $customField = get_post_custom($postID);
-                        $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
+                        $dateCreate = $classPackage->getDateCreateJob($postID);
+                        $dayDisplay = $classPackage->getDayDisplay($postID);
+                        $checkDisplayPost = $classPackage->checkDisplayJob($dateCreate, $dayDisplay);
+                        $employer_id = empty($customField["employer_id"][0]) ? '' : $customField["employer_id"][0];
+                        $getPostStatus = get_post_status($postID);
+                        $getHavePackage = $classPackage->checkHavePackage($employer_id);
+                        $getTotalPostJob = $classPackage->getTotalPost($employer_id);
+                        if ($checkDisplayPost && $employer_id || $showEdit):
+                            $getLogo = $classEmployer->getLogoPath($employer_id);
+                            if ($getLogo['have_image']) {
+                                $thumbnail = $getLogo['path'];
+                            } else {
+                                $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
+                            }
+                            $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
 //                        $job_location = empty($customField["job_location"][0]) ? '' : $customField["job_location"][0];
-                        $company_id = empty($customField["company_id"][0]) ? '' : $customField["company_id"][0];
-                        $getDataCompany = $company_id ? $this->ClassEmployer->getCompanyInfo($company_id) : false;
-                        $company_name = $getDataCompany ? $getDataCompany[0]->company_name : "";
-                        $job_location = $this->getSubCatLocation($postID);
-                        ?>
-                        <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
-                            <div class="col-md-12">
-                                <div class="col-md-2" style="padding: 0px">
-                                    <a href="<?php the_permalink(); ?>" target="_blank"><img
-                                            src="<?php echo $thumbnail; ?>"
-                                            style="width: 100%;"/></a>
+                            $getDataCompany = $employer_id ? $this->ClassEmployer->getCompanyInfo(0, $employer_id) : false;
+                            $company_name = $getDataCompany ? $getDataCompany[0]->company_name : "";
+                            $job_location = $this->getSubCatLocation($postID);
+                            ?>
+                            <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
+                                <div class="col-md-12">
+                                    <div class="col-md-2" style="padding: 0px">
+                                        <a href="<?php the_permalink(); ?>" target="_blank"><img
+                                                src="<?php echo $thumbnail; ?>"
+                                                style="width: 100%;"/></a>
+                                    </div>
+                                    <div class="col-md-8 position">
+                                        <h5 class="font-color-BF2026">
+                                            <a href="<?php the_permalink(); ?>" class="<?php
+                                            if ($showEdit) {
+                                                if ($getPostStatus == 'publish')
+                                                    echo "font-color-4BB748";
+                                                else
+                                                    echo "font-color-999";
+                                            } else {
+                                                echo "font-color-BF2026";
+                                            }
+                                            ?>"
+                                               target="_blank"><?php the_title(); ?>
+                                                <?php if ($showEdit):
+                                                    if ($checkDisplayPost):
+                                                        ?>
+                                                        <span
+                                                            class="font-color-4BB748 glyphicon glyphicon-ok"></span>
+                                                    <?php else: ?><span
+                                                        class="glyphicon glyphicon-remove"></span>
+                                                    <?php endif;endif; ?>
+                                            </a>
+                                        </h5>
+                                        <?php echo empty($company_name) ? "" : "<a target='_blank' href='company-profile/?id=$employer_id'>$company_name</a>"; ?>
+                                        <br/>
+                                        <?php echo empty($job_type) ? "" : $job_type; ?><br/>
+                                        <?php if ($showEdit): ?>
+                                            <a class="btn btn-primary" title="Edit"
+                                               onclick="loadPostJob(<?php echo $postID; ?>);"><span
+                                                    class="glyphicon glyphicon-pencil"></span></a>
+                                            <a title="Delete"
+                                               class="btn btn-danger" onclick="deletePostJob(<?php echo $postID; ?>);">
+                                                <span class="glyphicon glyphicon-trash"></span></a>
+                                            <a class="btn btn-info"
+                                               onclick="changeStatusJob(<?php echo $postID; ?>,
+                                                   '<?php echo $getPostStatus == "publish" ? "draft" : "publish"; ?>');"><?php
+                                                if ($getPostStatus == "publish")
+                                                    echo "Draft";
+                                                else echo "Published";
+                                                ?></a>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <?php echo get_the_date('M d, Y', $postID); ?><br/>
+                                        <?php echo empty($job_location) ? "" : $job_location . "<br/>"; ?>
+
+                                        <?php if ($showEdit && !$checkDisplayPost && $getHavePackage && $getTotalPostJob > 0): ?>
+                                            <a title="Add Package" onclick="setPackageForJob(<?php echo $postID; ?>);"
+                                               class="btn btn-success">Add Package To Job</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <h5 class="font-color-BF2026">
-                                        <a href="<?php the_permalink(); ?>"
-                                           target="_blank"><?php the_title(); ?></a>
-                                    </h5>
-                                    <?php echo empty($company_name) ? "" : "<a target='_blank' href='company-profile/?id=$company_id'>$company_name</a>"; ?><br/>
-                                    <?php echo empty($job_type) ? "" : $job_type; ?><br/>
-                                </div>
-                                <div class="col-md-2">
-                                    <?php the_date('M d, Y'); ?><br/>
-                                    <?php echo empty($job_location) ? "" : $job_location . "<br/>"; ?>
-                                    <?php if ($showEdit): ?>
-                                        <a class="btn btn-primary"
-                                           onclick="loadPostJob(<?php echo $postID; ?>);">Edit</a>
-                                        <a class="btn btn-danger" onclick="deletePostJob(<?php echo $postID; ?>);">Delete</a>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </li>
+                            </li>
+                        <?php endif; ?>
                     <?php endwhile; ?>
                 </ul>
                 <?php
@@ -604,19 +668,20 @@ class QueryPostJob
             <?php if ($data):
                 ?>
                 <ul class="job-list no-padding">
-                    <?php foreach($data as $key => $value):
+                    <?php foreach ($data as $key => $value):
                         $thumbnail = "";
                         ?>
                         <li class="clearfix border-bottom-1-ddd padding-top-10 padding-bottom-10">
                             <div class="col-md-12">
                                 <div class="col-md-2" style="padding: 0px">
-                                    <a href="<?php echo home_url(); ?>/company-profile?id=<?php echo $value->company_id;?>" target="_blank"><img
+                                    <a href="<?php echo home_url(); ?>/company-profile?id=<?php echo $value->employer_id; ?>"
+                                       target="_blank"><img
                                             src="<?php echo $thumbnail; ?>"
                                             style="width: 100%;"/></a>
                                 </div>
                                 <div class="col-md-8">
                                     <h5 class="font-color-BF2026">
-                                        <a href="<?php echo home_url(); ?>/company-profile?id=<?php echo $value->company_id;?>"
+                                        <a href="<?php echo home_url(); ?>/company-profile?id=<?php echo $value->employer_id; ?>"
                                            target="_blank"><?php echo $value->company_name; ?></a>
                                     </h5>
                                 </div>
@@ -628,7 +693,7 @@ class QueryPostJob
                         </li>
                     <?php endforeach; ?>
                 </ul>
-                <?php endif; ?>
+            <?php endif; ?>
             <hr/>
         </div>
         <?php
@@ -639,6 +704,8 @@ class QueryPostJob
 
     function buildHighlightJobs()
     {
+        $classPackage = new Package($this->wpdb);
+        $classEmployer = new Employer($this->wpdb);
         $argc = $this->queryHighlightJobs(-1);
         $loopHighlightJobs = new WP_Query($argc);
         $i = 0;
@@ -650,44 +717,54 @@ class QueryPostJob
                 <?php while ($loopHighlightJobs->have_posts()) :
                     $loopHighlightJobs->the_post();
                     $postID = get_the_id();
-                    $url = wp_get_attachment_url(get_post_thumbnail_id($postID));
-                    if (empty($url)) {
-                        $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
-                    } else {
-                        $thumbnail = $url;
-                    }
                     $customField = get_post_custom($postID);
-                    $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
-                    $job_location = $this->getSubCatLocation($postID);
-                    ?>
-                    <?php if ($i % 4 == 0 && $i > 0): ?>
-                    <div class="item">
-                    <ul class="job-list" style="padding: 0px;">
-                <?php else: ?>
-                    <li class="col-md-6 clearfix">
-                        <div class="col-md-4" style="padding: 0px;">
-                            <a href="<?php the_permalink(); ?>" target="_blank"><img
-                                    src="<?php echo $thumbnail; ?>"
-                                    style="width: 100%"/></a>
-                        </div>
-                        <div class="col-md-8" style="padding: 0 0 0 10px;">
-                            <h4 style="font-size: 14px !important; color: #BF2026"><a
-                                    href="<?php the_permalink(); ?>"
-                                    target="_blank"><?php the_title(); ?></a></h4>
 
-                            <p class="font-size-12">
-                                <span class="font-color-4D94CC"><?php echo $job_location; ?></span><br/>
-                                <?php echo $job_type; ?><br/>
-                                <?php the_date('d F, Y'); ?>
-                            </p>
-                        </div>
-                    </li>
-                <?php endif; ?>
+                    $dateCreate = $classPackage->getDateCreateJob($postID);
+                    $dayDisplay = $classPackage->getDayDisplay($postID);
+                    $checkDisplayPost = $classPackage->checkDisplayJob($dateCreate, $dayDisplay);
+                    $employer_id = empty($customField["employer_id"][0]) ? '' : $customField["employer_id"][0];
 
-                    <?php if ($i % 4 == 0 && $i > 0): ?>
-                    </ul>
-                    </div>
-                <?php endif; ?>
+                    if ($checkDisplayPost && $employer_id):
+                        $getLogo = $classEmployer->getLogoPath($employer_id);
+                        if ($getLogo['have_image']) {
+                            $thumbnail = $getLogo['path'];
+                        } else {
+                            $thumbnail = get_template_directory_uri() . "/libs/img/blank-logo.png";
+                        }
+
+
+                        $job_type = empty($customField["job_type"][0]) ? '' : $customField["job_type"][0];
+                        $job_location = $this->getSubCatLocation($postID);
+                        ?>
+                        <?php if ($i % 4 == 0 && $i > 0): ?>
+                        <div class="item">
+                        <ul class="job-list" style="padding: 0px;">
+                    <?php else: ?>
+                        <li class="col-md-6 clearfix">
+                            <div class="col-md-4" style="padding: 0px;">
+                                <a href="<?php the_permalink(); ?>" target="_blank"><img
+                                        src="<?php echo $thumbnail; ?>"
+                                        style="width: 100%"/></a>
+                            </div>
+                            <div class="col-md-8" style="padding: 0 0 0 10px;">
+                                <h4 style="font-size: 14px !important; color: #BF2026"><a
+                                        href="<?php the_permalink(); ?>"
+                                        target="_blank"><?php the_title(); ?></a></h4>
+
+                                <p class="font-size-12">
+                                    <span class="font-color-4D94CC"><?php echo $job_location; ?></span><br/>
+                                    <?php echo $job_type; ?><br/>
+                                    <?php the_date('d F, Y'); ?>
+                                </p>
+                            </div>
+                        </li>
+                    <?php endif; ?>
+
+                        <?php if ($i % 4 == 0 && $i > 0): ?>
+                        </ul>
+                        </div>
+                    <?php endif; ?>
+                    <?php endif; ?>
 
                     <?php $i++;
                 endwhile;?>

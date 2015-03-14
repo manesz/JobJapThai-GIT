@@ -10,11 +10,11 @@
 if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
-if (!class_exists('Employer')) {
-    require_once('ClassEmployer.php');
+if (!class_exists('Package')) {
+    require_once('ClassPackage.php');
 }
 
-class Employer_List extends WP_List_Table
+class Package_List extends WP_List_Table
 {
 
     var $employer_data = null;
@@ -32,9 +32,9 @@ class Employer_List extends WP_List_Table
         ));
         add_action('admin_head', array(&$this, 'admin_header'));
 
-        $classEmployer = new Employer($wpdb);
+        $classPackage = new Package($wpdb);
         $this->employer_data = array();
-        $result = $classEmployer->getListUser();
+        $result = $classPackage->getSelectPackage();
         $siteUrl = home_url();
         foreach ($result as $key => $value) {
             if ($this->searchInArray((array)$value))
@@ -52,43 +52,6 @@ class Employer_List extends WP_List_Table
                     "edit" => '<a class="btn_delete_employer" href="#" pm-id="' . $value->ID . '">Delete</a>',
                 );
         }
-        /*foreach ($result as $key => $value) {
-            $permalink = get_permalink($value->room_id);
-            $checkTimeOut = $classEmployer->checkTimeOut($value->pm_create_time, $value->timeout);
-            $paid = $value->paid;
-            if (!$checkTimeOut || $paid) {
-                $strShowPaidField = $paid ? '<input type="checkbox" checked onclick="return setApprove(this, ' .
-                    $value->payment_id . ');" />'
-                    : '<input type="checkbox" onclick="return setApprove(this, ' . $value->payment_id .
-                    ');" />';
-            } else {
-                $strShowPaidField = "Time Out";
-            }
-            $strShowTime = '<div class="clock" date-create="' .
-                $value->create_time . '" timeout="' . $value->timeout . '" paid="' . $value->paid . '"></div>';
-            $strEdit = '<a href="?page=employer-list&employer-edit=true&id=' . $value->payment_id . '">Edit</a> |';
-            $strDelete = '<a class="btn_delete_employer" href="#" pm-id="' . $value->payment_id . '">Delete</a> ';
-//            if ($checkAddData)
-            $this->employer_data[] = array(
-                'id' => $value->id,
-                'count' => $value->payment_id,
-                'room_name' => "<a href='$permalink' target='_blank'>$value->room_name</a>",
-//                'employer_date' => $value->employer_date,
-                'name' => $value->name ? "$value->name $value->last_name" : '-',
-//                'passport_no' => $value->passport_no,
-//                'email' => $value->email,
-//                'tel' => $value->tel,
-                'check_in_date' => $value->check_in_date,
-                'check_out_date' => $value->check_out_date,
-                'adults' => $value->adults,
-                'need_airport_pickup' => $value->need_airport_pickup ? 'YES' : 'NO',
-//                'price'=>number_format($value->total),
-//                    'timeout' => $strShowTime,
-//                    'paid' => $strShowPaidField,
-                'pm_create_time' => $value->pm_create_time,
-                'edit' => $strEdit . $strDelete,
-            );
-        }*/
 
     }
 
@@ -238,9 +201,7 @@ class Employer_List extends WP_List_Table
             'count' => __('#', 'mylisttable'),
             'company_name' => __('Company name', 'mylisttable'),
             'user_login' => __('Login name', 'mylisttable'),
-//            'employer_date' => __('Employer Date', 'mylisttable'),
             'user_nicename' => __('Nicename', 'mylisttable'),
-//            'passport_no' => __('Passport', 'mylisttable'),
             'email' => __('Email', 'mylisttable'),
             'create_time' => __('Create', 'mylisttable'),
             'update_time' => __('Update', 'mylisttable'),
@@ -310,19 +271,19 @@ class Employer_List extends WP_List_Table
         $this->items = $this->found_data;
     }
 
-    function employerAddTemplate()
+    function approvePackageTemplate()
     {
         global $webSiteName, $wpdb;
-        $classEmployer = new Employer($wpdb);
+        $classPackage = new Package($wpdb);
         $classQueryPostJob = new QueryPostJob($wpdb);
         $userID = empty($_GET['employer_id']) ? 0 : $_GET['employer_id'];
-        $dataEmployer = null;
+        $dataPackage = null;
         if ($userID) {
-            $current_user = $classEmployer->getUser($userID);
-            $arrayCompanyInfo = $classEmployer->getCompanyInfo(0, $userID);
+            $current_user = $classPackage->getUser($userID);
+            $arrayCompanyInfo = $classPackage->getCompanyInfo(0, $userID);
             if ($arrayCompanyInfo) {
                 extract((array)$arrayCompanyInfo[0]);
-                $dataEmployer = (array)$arrayCompanyInfo[0];
+                $dataPackage = (array)$arrayCompanyInfo[0];
             }
             $isEdit = true;
         } else {
@@ -330,7 +291,7 @@ class Employer_List extends WP_List_Table
         }
         ?>
         </pre>
-        <div class="wrap"><h2><?php echo $isEdit ? "Edit" : "Add New"; ?> Employer</h2>
+        <div class="wrap"><h2>Approve</h2>
         <link rel="stylesheet" type="text/css"
               href="<?php echo get_template_directory_uri(); ?>/libs/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/css/style.css"/>
@@ -469,7 +430,7 @@ class Employer_List extends WP_List_Table
                                 <!-- ----------------------------------------- Section : Company information for contact -->
                                 <h5 class="bg-ddd padding-10 clearfix">Company information for contact</h5>
 
-                                <?php echo $classEmployer->buildHtmlCompanyInfo($dataEmployer); ?>
+                                <?php echo $classPackage->buildHtmlCompanyInfo($dataPackage); ?>
                                 <div class="form-group col-md-12" style="">
                                     <div id="show_message"></div>
                                     <a type="button" id="btn_success"
@@ -506,7 +467,7 @@ class Employer_List extends WP_List_Table
                         <h5 id="head_text_edit_job" class="bg-ddd padding-10 clearfix">Add New Post Job</h5>
 
                         <div id="div_form_job">
-                            <?php echo $classEmployer->buildFormPostJob(); ?>
+                            <?php echo $classPackage->buildFormPostJob(); ?>
                         </div>
 
                     </div>

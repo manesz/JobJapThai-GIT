@@ -19,8 +19,11 @@ if (is_user_logged_in()) {
                 extract((array)$arrayCompanyInfo[0]);
                 $dataEmployer = (array)$arrayCompanyInfo[0];
             }
-            $get_image_avatar = $classCandidate->getAvatarPath($userID, true);
-            $str_image_avatar = "<img src='$get_image_avatar' />";
+            $getLogoImage = $classEmployer->getLogoPath($userID);
+            $strLogoImage = "<img src='$getLogoImage[path]' />";
+
+            $get_image_banner = $classEmployer->getBannerPath($userID);
+            $str_image_banner = "<img src='$get_image_banner[path]' />";
         } else if ($userType == 'candidate') {
             $isLogin = false;
         }
@@ -186,23 +189,48 @@ if (is_user_logged_in()) {
                         <!-- ----------------------------------------- Section : Company information for contact -->
                         <h5 class="bg-ddd padding-10 clearfix">Company information for contact</h5>
                         <?php if ($isLogin) :?>
-                        <div class="form-group col-md-12">
-                            <div class="col-md-2 text-right clearfix">
-                                <label for="employer_image"><?php _e('Image:', 'framework') ?></label></div>
-                            <div class="col-md-10">
-                                <div></div>
-                                <div class="fileinput fileinput-new" data-provides="fileinput" style="width: 100%;">
-                                    <div id="preview" class="fileinput-preview thumbnail col-md-10"
-                                         data-trigger="fileinput"
-                                         style="width: 100%; height: 200px;"><?php echo $str_image_avatar; ?></div>
-                                    <div>
+                            <div class="form-group col-md-12">
+                                <div class="col-md-2 text-right clearfix">
+                                    <label for="employer_image"><?php _e('Logo:', 'framework') ?></label></div>
+                                <div class="col-md-10">
+                                    <div></div>
+                                    <div class="fileinput fileinput-new" data-provides="fileinput" style="width: 100%;">
+                                        <div id="preview" class="fileinput-preview thumbnail col-md-10"
+                                             data-trigger="fileinput"
+                                             style="width: 100%; height: 200px;"><?php echo $strLogoImage; ?></div>
+                                        <div>
                         <span class="btn btn-default btn-file">
                             <span class="fileinput-new">Select image</span>
                             <span class="fileinput-exists">Change</span>
                             <input type="file" name="file" id="employer_image"
                                    class="ephoto-upload" accept="image/jpeg"></span>
-                                        <a href="#" class="btn btn-default fileinput-exists"
-                                           data-dismiss="fileinput">Remove</a>
+                                            <a href="#" class="btn btn-default <?php
+                                            echo $getLogoImage['have_image'] ? "": "fileinput-exists";?>"
+                                               data-dismiss="fileinput"
+                                                onclick="return removeAvatarImage(this);">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-2 text-right clearfix">
+                                <label for="banner_image"><?php _e('Banner:', 'framework') ?></label></div>
+                            <div class="col-md-10">
+                                <div></div>
+                                <div class="fileinput fileinput-new" data-provides="fileinput" style="width: 100%;">
+                                    <div id="preview" class="fileinput-preview thumbnail col-md-10"
+                                         data-trigger="fileinput"
+                                         style="width: 100%; height: 200px;"><?php echo $str_image_banner; ?></div>
+                                    <div>
+                        <span class="btn btn-default btn-file">
+                            <span class="fileinput-new">Select image</span>
+                            <span class="fileinput-exists">Change</span>
+                            <input type="file" name="file" id="banner_image"
+                                   class="ephoto-upload" accept="image/jpeg"></span>
+                                        <a href="#" class="btn btn-default <?php
+                                        echo $get_image_banner['have_image'] ? "": "fileinput-exists";?>"
+                                           data-dismiss="fileinput"
+                                            onclick="removeBannerImage(this);">Remove</a>
                                     </div>
                                 </div>
                             </div>
@@ -222,8 +250,7 @@ if (is_user_logged_in()) {
 
                 </div>
 
-                <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"
-                     style="width: 100%; height: auto;"/>
+                <?php require_once("banner1.php"); ?>
 
             </div>
             <!--</div>-->
