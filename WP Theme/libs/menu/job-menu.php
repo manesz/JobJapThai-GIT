@@ -198,7 +198,7 @@ function custom_post_job()
             <tr>
                 <td><label for="working_day">Working Day:</label></td>
                 <td>
-                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($working_day, "select-width"); ?>
+                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($objClassOtherSetting->nameWorkingDay, $working_day, "select-width"); ?>
                 </td>
             </tr>
         </table>

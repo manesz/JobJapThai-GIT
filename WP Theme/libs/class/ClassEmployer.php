@@ -1102,7 +1102,7 @@ class Employer
                     <label for="working_day"><?php _e('Working Day:', 'framework') ?><span
                             class="font-color-red">*</span></label></div>
                 <div class="col-md-10">
-                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($working_day); ?>
+                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($objClassOtherSetting->nameWorkingDay, $working_day); ?>
                 </div>
             </div>
             <div class="form-group col-md-12" style="">

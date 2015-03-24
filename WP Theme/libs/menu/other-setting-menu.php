@@ -20,9 +20,9 @@ function add_other_setting_menu_items()
 function render_other_setting_page()
 {
     global $wpdb;
-    $objClassOtherSetting = new OtherSetting($wpdb);
-    $arrayOtherSetting = $objClassOtherSetting->getDataFromFile($objClassOtherSetting->nameWorkingDay);
-    require_once ('header.php');
+    $classOthSetting = new OtherSetting($wpdb);
+    $arrOthSetting = $classOthSetting->getDataFromFile($classOthSetting->nameWorkingDay);
+    require_once('header.php');
     ?>
     <script type="text/javascript"
             src="<?php bloginfo('template_directory'); ?>/libs/js/other-settings.js"></script>
@@ -38,9 +38,31 @@ function render_other_setting_page()
                             <td><label for="working_day">Working Day:</label></td>
                             <td colspan="3">
                                 <textarea cols="80" rows="10"
-                                          id="working_day" name="working_day"><?php
-    echo $arrayOtherSetting[$objClassOtherSetting->nameWorkingDay];
+                                          id="working_day" name="<?php echo $classOthSetting->nameWorkingDay; ?>"><?php
+    echo empty($arrOthSetting[$classOthSetting->nameWorkingDay]) ? "" :
+        $arrOthSetting[$classOthSetting->nameWorkingDay];
+
     ?></textarea>
+                            </td>
+                        </tr>
+                        <tr class="alternate">
+                            <td><label for="<?php echo $classOthSetting->namePositionList; ?>">Position List:</label></td>
+                            <td colspan="3">
+                                <textarea cols="80" rows="10"
+                                          id="position_list" name="<?php echo $classOthSetting->namePositionList; ?>"><?php
+                                echo empty($arrOthSetting[$classOthSetting->namePositionList]) ? "" :
+                                    $arrOthSetting[$classOthSetting->namePositionList];
+                                ?></textarea>
+                            </td>
+                        </tr>
+                        <tr class="alternate">
+                            <td><label for="<?php echo $classOthSetting->nameJobLocation; ?>">Job Location:</label></td>
+                            <td colspan="3">
+                                <textarea cols="80" rows="10"
+                                          id="position_list" name="<?php echo $classOthSetting->nameJobLocation; ?>"><?php
+                                echo empty($arrOthSetting[$classOthSetting->nameJobLocation]) ? "" :
+                                    $arrOthSetting[$classOthSetting->nameJobLocation];
+                                ?></textarea>
                             </td>
                         </tr>
                         </tbody>

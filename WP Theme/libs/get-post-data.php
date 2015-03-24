@@ -192,6 +192,13 @@ if ($_REQUEST) {
     }
     //End Employer
 
+    //Pre register
+    $preRegister = empty($_REQUEST['pre_register']) ? false : $_REQUEST['pre_register'];
+    if ($preRegister){
+        $result = $classCandidate->addPreRegister($_REQUEST);
+        echo strip_tags($classCandidate->returnMessage($result, $result['error'], true));
+        exit;
+    }
     //Candidate
     $candidatePost = empty($_REQUEST['candidate_post']) ? false : $_REQUEST['candidate_post'];
     if ($candidatePost == 'true') {
@@ -434,6 +441,19 @@ if ($_REQUEST) {
             case "post_job":
                 $argc = $classQueryPostJob->queryPostJob($_REQUEST['user_id']);
                 break;
+            case "job_update":
+                $titlePage = "News jobs update";
+
+                $cat = empty($_GET['cat']) ? false : $_GET['cat'];
+                $current_cat_id = get_query_var('cat');
+                if ($cat) {
+                    $getTerm = get_term_by('slug', $cat, 'custom_job_cat');
+                    $titlePage = $getTerm->name;
+                } else if ($current_cat_id) {
+                    $titlePage = get_cat_name($current_cat_id);
+                }
+                $argc = $classQueryPostJob->queryJobUpdate($cat, $current_cat_id);
+                break;
         }
         echo $classQueryPostJob->buildListJob($argc);
         exit;
@@ -496,8 +516,14 @@ if ($_REQUEST) {
     //Save other settings
 
     if (isset($_REQUEST['other_setting_post'])) {
-        $objClassOtherSetting = new OtherSetting($wpdb);
-        $result = $objClassOtherSetting->saveWorkingDay($_REQUEST['working_day']);
+        $classOthSetting = new OtherSetting($wpdb);
+        $result = $classOthSetting->saveData(
+            $_REQUEST[$classOthSetting->nameWorkingDay],
+            $_REQUEST[$classOthSetting->namePositionList],
+            $_REQUEST[$classOthSetting->nameJobLocation]
+        );
+        
+//        $result = $classOthSetting->saveWorkingDay($_REQUEST[$classOthSetting->namePositionList]);
         echo $result;
         exit;
     }

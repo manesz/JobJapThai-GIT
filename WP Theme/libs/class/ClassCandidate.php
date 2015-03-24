@@ -12,6 +12,7 @@ class Candidate
     public $tableDesiredJob = "ics_candidate_desired_job";
     public $tableEducation = "ics_candidate_education";
     public $tableWorkExperience = "ics_candidate_work_experience";
+    public $tableYourExperience = "ics_candidate_your_experiences";
     public $tableSkillLanguages = "ics_candidate_skill_languages";
     public $tableRequestProfile = "ics_request_profile";
     public $tableCompanyInfo = "ics_company_information_for_contact";
@@ -191,24 +192,24 @@ class Candidate
         ?>
         <div class="panel-group" id="accordion" role="tablist">
             <?php if ($isNoneMember && $getResumePath): ?>
-            <div class="panel panel-default" id="panel_career_profile">
-                <div class="panel-heading" role="tab" id="headingTwo">
-                    <h4 class="panel-title">
-                        <a class="tab_panel collapsed" data-toggle="collapse" data-parent=""
-                           href=""
-                           aria-expanded="false" aria-controls="collapseTwo">
-                            Attach Resume
-                        </a>
-                    </h4>
-                </div>
-                <div class="panel-collapse collapse in" role="tabpanel"
-                     aria-labelledby="headingTwo">
-                    <div class="panel-body">
-                        <a href="<?php echo $getResumePath; ?>"
-                            target="_blank"><?php echo basename($getResumePath); ?></a>
+                <div class="panel panel-default" id="panel_career_profile">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <h4 class="panel-title">
+                            <a class="tab_panel collapsed" data-toggle="collapse" data-parent=""
+                               href=""
+                               aria-expanded="false" aria-controls="collapseTwo">
+                                Attach Resume
+                            </a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse in" role="tabpanel"
+                         aria-labelledby="headingTwo">
+                        <div class="panel-body">
+                            <a href="<?php echo $getResumePath; ?>"
+                               target="_blank"><?php echo basename($getResumePath); ?></a>
+                        </div>
                     </div>
                 </div>
-            </div>
             <?php endif; ?>
             <div class="panel panel-default" id="panel_information">
                 <div class="panel-heading" role="tab" id="headingOne">
@@ -227,7 +228,8 @@ class Candidate
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="candEmail">Email</label></div>
                             <div class="col-md-8">
-                                <span class="form-control"><a href="mailto:<?php echo $current_user->user_email; ?>"><?php echo $current_user->user_email; ?></a></span>
+                                <span class="form-control"><a
+                                        href="mailto:<?php echo $current_user->user_email; ?>"><?php echo $current_user->user_email; ?></a></span>
                             </div>
                         </div>
                         <?php if (!$isNoneMember): ?>
@@ -748,6 +750,7 @@ class Candidate
 
     function buildHtmlEditProfile2($user_id, $is_backend = false, $edit = false)
     {
+        $classOtherSetting = new OtherSetting($this->wpdb);
         $current_user = $this->getUser($user_id);
         $objInformation = $this->getInformation($user_id);
         if ($objInformation)
@@ -1083,9 +1086,8 @@ class Candidate
                                             Position</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select id="job_position" name="job_position" class="form-control">
-                                            <option>xxxx</option>
-                                        </select>
+                                        <?php echo $classOtherSetting->buildWorkingDayToSelect($classOtherSetting->namePositionList,
+                                            empty($job_position) ? "" : $job_position); ?>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
@@ -1822,6 +1824,7 @@ class Candidate
         $candidate_id = empty($candidate_id) ? false : $candidate_id;
         $industry = empty($industry) ? false : $industry;
         $job_position = empty($job_position) ? false : $job_position;
+        $job_location = empty($job_location) ? false : $job_location;
         $job_type = empty($job_type) ? false : $job_type;
         $expect_month_salary = empty($expect_month_salary) ? false : $expect_month_salary;
         $available_to_work = empty($available_to_work) ? false : $available_to_work;
@@ -1833,6 +1836,7 @@ class Candidate
                 `candidate_id`,
                 `industry`,
                 `job_position`,
+                `job_location`,
                 `job_type`,
                 `expect_month_salary`,
                 `available_to_work`,
@@ -1843,6 +1847,7 @@ class Candidate
                 '{$candidate_id}',
                 '{$industry}',
                 '{$job_position}',
+                '{$job_location}',
                 '{$job_type}',
                 '{$expect_month_salary}',
                 '{$available_to_work}',
@@ -1936,6 +1941,38 @@ class Candidate
         return $this->wpdb->insert_id;
     }
 
+    function addYourExperience($post)
+    {
+        extract($post);
+        $candidate_id = empty($candidate_id) ? false : $candidate_id;
+        $candRegistJPStudyExp = empty($candRegistJPStudyExp) ? false : $candRegistJPStudyExp;
+        $candRegistJPWorkExp = empty($candRegistJPWorkExp) ? false : $candRegistJPWorkExp;
+        $candRegistJPCompWorkExp = empty($candRegistJPCompWorkExp) ? false : $candRegistJPCompWorkExp;
+        if (!$candidate_id)
+            return false;
+        $sql = "
+            INSERT INTO `$this->tableYourExperience` (
+                `candidate_id`,
+                `studying_in_japan`,
+                `working_in_japan`,
+                `working_in_japan_company`,
+                `create_datetime`,
+                `publish`)
+            VALUES (
+                '{$candidate_id}',
+                '{$candRegistJPStudyExp}',
+                '{$candRegistJPWorkExp}',
+                '{$candRegistJPCompWorkExp}',
+                NOW(),
+                1
+              );
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return false;
+        return $this->wpdb->insert_id;
+    }
+
     private function addSkillLanguages($post)
     {
         extract($post);
@@ -1986,6 +2023,73 @@ class Candidate
         return $this->wpdb->insert_id;
     }
 
+    function addPreRegister($post)
+    {
+        $fxrootpath = ABSPATH . 'wp-load.php';
+        if (!file_exists($fxrootpath)) {
+            return $this->returnMessage('Error path file "wp-load.php"', true, false);
+        }
+        include_once($fxrootpath);
+        extract($post);
+        $email = empty($email) ? false : $email;
+        $pass = "1234asdf";
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->returnMessage('Invalid email format.', true, false);
+        }
+        list($username) = explode('@', $email);
+        $generatedKey = sha1(mt_rand(10000, 99999) . time() . $email);
+        $userData = array(
+            'user_login' => $username,
+            'user_pass' => $pass,
+            'user_email' => $email,
+        );
+        $user_id = wp_insert_user($userData);
+
+        $user_type = 'candidate';
+        if (!is_wp_error($user_id)) {
+            add_user_meta($user_id, 'user_type', $user_type);
+            add_user_meta($user_id, 'user_status', 'Under verification process');
+            add_user_meta($user_id, "activation_key", $generatedKey);
+            add_user_meta($user_id, "activation_confirm", "true");
+            $postData = $post;
+            $postData['candidate_id'] = $user_id;
+            $result = $this->addInformation($postData);
+            if (!$result) {
+                wp_revoke_user($user_id);
+                wp_delete_user($user_id);
+                return $this->returnMessage('Error add information for contact.', true, false);
+            }
+            $result = $this->addSkillLanguages($postData);
+            if (!$result) {
+                wp_revoke_user($user_id);
+                wp_delete_user($user_id);
+                return $this->returnMessage('Error add Skill Languages for contact.', true, false);
+            }
+            $result = $this->addYourExperience($postData);
+            if (!$result) {
+                wp_revoke_user($user_id);
+                wp_delete_user($user_id);
+                return $this->returnMessage('Error add Your Experience for contact.', true, false);
+            }
+            $result = $this->addDesiredJob($postData);
+            if (!$result) {
+                wp_revoke_user($user_id);
+                wp_delete_user($user_id);
+                return $this->returnMessage('Error add Desired Job for contact.', true, false);
+            }
+            $message = array(
+                "msg" => 'Register Success.',
+                'key' => $generatedKey,
+                'pass' => $pass,
+                'candidate_id' => $user_id
+            );
+            return $this->returnMessage($message, false, false);
+        } else {
+            $error_string = $user_id->get_error_message();
+            return $this->returnMessage($error_string, true, false);
+        }
+    }
+
     function addCandidate($post)
     {
         $fxrootpath = ABSPATH . 'wp-load.php';
@@ -2019,7 +2123,7 @@ class Candidate
             add_user_meta($user_id, 'user_status', 'Under verification process');
             add_user_meta($user_id, "activation_key", $generatedKey);
             add_user_meta($user_id, "activation_confirm", $getPostBackend ? "true" : "false");
-            $postData = $_POST;
+            $postData = $post;
             $postData['candidate_id'] = $user_id;
             $result = $this->addInformation($postData);
             if (!$result) {
@@ -2350,6 +2454,7 @@ class Candidate
         $desired_job_id = empty($desired_job_id) ? false : $desired_job_id;
         $industry = empty($industry) ? false : $industry;
         $job_position = empty($job_position) ? false : $job_position;
+        $job_location = empty($job_location) ? false : $job_location;
         $job_type = empty($job_type) ? false : $job_type;
         $expect_month_salary = empty($expect_month_salary) ? false : $expect_month_salary;
         $available_to_work = empty($available_to_work) ? false : $available_to_work;
@@ -2375,6 +2480,7 @@ class Candidate
             SET
               `industry` = '{$industry}',
               `job_position` = '{$job_position}',
+              `job_location` = '{$job_location}',
               `job_type` = '{$job_type}',
               `expect_month_salary` = '{$expect_month_salary}',
               `available_to_work` = '{$available_to_work}',
@@ -2410,6 +2516,30 @@ class Candidate
               `grade_gpa` = '{$grade_gpa}',
               `update_datetime` = NOW()
             WHERE `id` = '$education_id';
+        ";
+        $result = $this->wpdb->query($sql);
+        if (!$result)
+            return $this->returnMessage('Sorry Edit Error.', true);
+        return $this->returnMessage('Edit Success.', false);
+    }
+
+    function editYourExperience($post)
+    {
+        extract($post);
+        $candidate_id = empty($candidate_id) ? false : $candidate_id;
+        $candRegistJPStudyExp = empty($candRegistJPStudyExp) ? false : $candRegistJPStudyExp;
+        $candRegistJPWorkExp = empty($candRegistJPWorkExp) ? false : $candRegistJPWorkExp;
+        $candRegistJPCompWorkExp = empty($candRegistJPCompWorkExp) ? false : $candRegistJPCompWorkExp;
+        if (!$candidate_id)
+            return $this->returnMessage('Error no id.', true);
+        $sql = "
+            UPDATE `$this->tableYourExperience`
+            SET
+              `studying_in_japan` = '{$candRegistJPStudyExp}',
+              `working_in_japan` = '{$candRegistJPWorkExp}',
+              `working_in_japan_company` = '{$candRegistJPCompWorkExp}',
+              `update_datetime` = NOW()
+            WHERE `id` = '$candidate_id';
         ";
         $result = $this->wpdb->query($sql);
         if (!$result)

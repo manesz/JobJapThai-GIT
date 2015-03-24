@@ -37,9 +37,15 @@ if (have_posts()) :
             get_template_part('libs/pages/company-profile');
         } else if (is_page("contact")) {
             get_template_part('libs/pages/contact');
-        } else if (is_page("candidate-register") || is_page("candidate")) {
-            get_template_part('libs/pages/candidate-register');
-        } else if (is_page("candidate-view")) {
+        }
+
+        else if (is_page("candidate-register") || is_page("candidate")) {
+//            get_template_part('libs/pages/candidate-register');
+            get_template_part('libs/pages/cover-register');
+            exit;
+        }
+
+        else if (is_page("candidate-view")) {
             get_template_part('libs/pages/candidate-view');
         } else if (is_page("favorite-job")) {
             get_template_part('libs/pages/favorite-job');

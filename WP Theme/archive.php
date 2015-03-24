@@ -38,7 +38,7 @@ if ($cat) {
                         <hr/>
                         <div class="col-md-12 border-bottom-1-ddd no-padding"
                              style="padding-bottom: 10px !important;">
-                            <input type="hidden" id="type_query" value="favorite">
+                            <input type="hidden" id="type_query" value="job_update">
                             <?php
                             echo $classQueryPostJob->buildFormQueryJob(0);
                             ?>

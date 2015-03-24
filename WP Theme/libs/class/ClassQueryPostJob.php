@@ -763,10 +763,10 @@ class QueryPostJob
                         <?php if ($i % 4 == 0 && $i > 0): ?>
                         </ul>
                         </div>
-                    <?php endif; ?>
+                    <?php endif; $i++;?>
                     <?php endif; ?>
 
-                    <?php $i++;
+                    <?php
                 endwhile;?>
 
             </ul> <?php

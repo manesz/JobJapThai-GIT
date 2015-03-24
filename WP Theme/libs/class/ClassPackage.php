@@ -889,7 +889,7 @@ class Package
         $dateNow = date_i18n('Y-m-d H:i:s');
         $date1 = new DateTime($dateNow);
         $date2 = new DateTime($date_create);
-        $diff = $date1->diff($date2);
+        $diff = $date2->diff($date1);
         if ($diff->days >= $day_display)
             return false;
         return true;

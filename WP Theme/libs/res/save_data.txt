@@ -1,3 +1,203 @@
-a:1:{s:11:"working_day";s:38:"dddd 
-dddd de
-Mon-Fri 8.00 – 17.00";}
+a:3:{s:11:"working_day";s:28:"test
+Mon-Fri 8.00 – 17.00";s:13:"position_list";s:705:"Japanese speaking Interpretation and Translation
+Japanese speaking Secretary
+Japanese speaking Coordinator
+Japanese speaking HR/Admin
+Japanese speaking Purchasing
+Japanese speaking Sales and Marketing
+Japanese speaking Engineering
+Japanese speaking Service
+Japanese speaking IT and Computer science
+Japanese speaking Management
+Japanese speaking Other(Please specify)
+English speaking Interpretation and Translation
+English speaking Secretary
+English speaking Coordinator
+English speaking HR/Admin
+English speaking Purchasing
+English speaking Sales and Marketing
+English speaking Engineering
+English speaking Service
+English speaking IT and Computer science
+English speaking Management";s:12:"job_location";s:3787:"Amnat Charoen
+Ang Thong
+Bangkok Metropolis
+Bung Karn
+Buri Ram
+Chachoengsao
+Chai Nat
+Chaiyaphum
+Chanthaburi
+Chiang Mai
+Chiang Rai
+Chon Buri
+Chumphon
+Kalasin
+Kamphaeng Phet
+Kanchanaburi
+Khon Kaen
+Krabi
+Lampang
+Lamphun
+Loei
+Lop Buri
+Mae Hong Son
+Maha Sarakham
+Mukdahan
+Nakhon Nayok
+Nakhon Pathom
+Nakhon Phanom
+Nakhon Ratchasima
+Nakhon Sawan
+Nakhon Si Thammarat
+Nan
+Narathiwat
+Nong Bua Lam Phu
+Nong Khai
+Nonthaburi
+Pathum Thani
+Pattani
+Phangnga
+Phatthalung
+Phayao
+Phetchabun
+Phetchaburi
+Phichit
+Phitsanulok
+Phra Nakhon Si Ayutthaya
+Phrae
+Phuket
+Prachin Buri
+Prachuap Khiri Khan
+Ranong
+Ratchaburi
+Rayong
+Roi Et
+Sa Kaeo
+Sakon Nakhon
+Samut Prakan
+Samut Sakhon
+Samut Songkhram
+Saraburi
+Satun
+Si Sa Ket
+Sing Buri
+Songkhla
+Sukhothai
+Suphan Buri
+Surat Thani
+Surin
+Tak
+Trang
+Trat
+Ubon Ratchathani
+Udon Thani
+Uthai Thani
+Uttaradit
+Yala
+Yasothon
+Bang Bon District
+Bang Kapi District
+Bang Khae District
+Bang Khen District
+Bang Kho Laem District
+Bang Khun Thian District
+Bang Na District
+Bang Phlat District
+Bang Rak District
+Bang Sue District
+Bangkok Noi District
+Bangkok Yai District
+Bueng Kum District
+Chatuchak District
+Chom Thong District
+Din Daeng District
+Don Mueang District
+Dusit District
+Huai Khwang District
+Khan Na Yao District
+Khlong Sam Wa District
+Khlong San District
+Khlong Toei District
+Lak Si District
+Lat Krabang District
+Lat Phrao District
+Min Buri District
+Nong Chok District
+Nong Khaem District
+Pathum Wan District
+Phasi Charoen District
+Phaya Thai District
+Phra Khanong District
+Pom Prap Sattru Phai District
+Prawet District
+Rat Burana District
+Ratchathewi District
+Sai Mai District
+Samphanthawong District
+Saphan Sung District
+Sathon District
+Suan Luang District
+Taling Chan District
+Thawi Watthana District
+Thon Buri District
+Thung Khru District
+Wang Thonglang District
+Vadhana District
+Yan Nawa District
+TFD Industrial Estate
+Thai diamond city Industrial Estate
+Bangchan Industrial Estate
+Bang pa-in Industrial Estate
+Bang poo Industrial Estate
+Bang poo Nua Industrial Estate
+Bangplee Industrial Estate
+Baan bung Industrial Estate
+Baan wa(Hi-tech) Industrial Estate
+Pinthong Industrial Estate
+Pinthong Industrial Estate(Lam chabang)
+Pinthong Industrial Estate(Project3)
+Pinthong Industrial Estate(Project4)
+Pinthong Industrial Estate(Project5)
+Pha Dang Industrial Estate
+Phichit Industrial Estate
+Northern Industrial Estate
+Southern Industrial Estate
+Maharatnakorn Industrial Estate
+Maptaput Industrial Estate
+Yamato Industries Industrial Estate
+Rayong Industrial Estate(Baan Khaai)
+Ratchburi Industrial Estate
+Ladkrabang Industrial Estate
+Lampoon Industrial Estate
+Lampoon Industrial Estate2
+V.R.M Industrial Estate
+Samutsakhorn Industrial Estate
+Saharattananakorn Industrial Estate
+Sinsakorn Industrial Estate
+Nongkhae Industrial Estate
+Lakchai Muangyang Industrial Estate
+Amata city Industrial Estate
+Amatanakorn Industrial Estate
+Amatanakorn Industrial Estate(Project2)
+Anyathani Industrial Estate
+Anyathani Industrial Estate(Project2)
+RIL Industrial Estate
+Halal foods Industrial Estate
+Eastern Seaboard Industrial Estate(Rayong)
+Udonthani Industrial Estate
+Gateway city Industrial Estate
+Wellgrow Industrial Estate
+Hemmaraj Chonburi Industrial Estate
+Hemmaraj Chonburi Industrial Estate(Project2)
+Eastern Hemaraj Industrial Estate(Maptaput)
+Hemmaraj rayong36 Industrial Estate
+Hemaraj Eastern Seaboard Industrial Estate
+Hemaraj Eastern Seaboard Industrial Estate(2nd)
+Asia Industrial Estate
+Asia Industrial Estate(Suvannabhumi)
+Kang Khoi Industrial Estate
+Hemaraj Eastern Seaboard Industrial Estate(3rd)
+Laamchabang Industrial Estate
+Hi-Tech Kabin Industrial Estate
+Rojana Industrial Estate";}

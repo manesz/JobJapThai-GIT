@@ -5,6 +5,8 @@ class OtherSetting
     private $wpdb;
     private $pathSaveFile = "";
     public $nameWorkingDay = "working_day";
+    public $namePositionList = "position_list";
+    public $nameJobLocation = "job_location";
 
 
     function __construct($wpdb)
@@ -28,36 +30,36 @@ class OtherSetting
         }
     }
 
-    function saveWorkingDay($data)
+    function saveData($data1, $data2, $data3)
     {
         $pathSaveFile = $this->pathSaveFile;
-        $arrContent = $this->getDataFromFile($this->nameWorkingDay);
-        $arrContent[$this->nameWorkingDay] = $data;
+        $arrContent[$this->nameWorkingDay] = $data1;
+        $arrContent[$this->namePositionList] = $data2;
+        $arrContent[$this->nameJobLocation] = $data3;
         $strContent = serialize($arrContent);
         $result = file_put_contents($pathSaveFile, $strContent);
         if ($result) {
             return json_encode(array('error' => false, 'message' => 'Save success'));
         }
         return json_encode(array('error' => true, 'message' => 'Save error'));
-
     }
 
-    function convertWorkingDayToArray()
+    function dataToArray($name)
     {
-        $arrContent = $this->getDataFromFile($this->nameWorkingDay);
-        $contentWorkingDay = $arrContent[$this->nameWorkingDay];
+        $arrContent = $this->getDataFromFile($name);
+        $contentWorkingDay = $arrContent[$name];
         $contentWorkingDay = str_replace(',', ' ', $contentWorkingDay);
         $stringWorkingDay = trim(preg_replace('/\n+/', ',', $contentWorkingDay));
         $arrayWorkingDay = explode(',', $stringWorkingDay);
         return $arrayWorkingDay;
     }
 
-    function buildWorkingDayToSelect($select = "", $class = "form-control")
+    function buildWorkingDayToSelect($name, $select = "", $class = "form-control")
     {
-        $arrayWorkingDay = $this->convertWorkingDayToArray();
+        $arrayWorkingDay = $this->dataToArray($name);
         ob_start();
         ?>
-        <select id="working_day" name="working_day" class="<?php echo $class; ?>" required="">
+        <select id="working_day" name="<?php echo $name; ?>" class="<?php echo $class; ?>" required="">
             <option value="">--Select--</option>
             <?
             foreach ($arrayWorkingDay as $value) {
