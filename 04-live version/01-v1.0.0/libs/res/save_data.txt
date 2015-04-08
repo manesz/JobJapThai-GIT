@@ -1,0 +1,1 @@
+a:3:{s:11:"working_day";s:22:"Mon-Fri 8.00 – 17.00";s:12:"job_position";N;s:12:"job_location";N;}
