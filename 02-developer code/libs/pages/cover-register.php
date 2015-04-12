@@ -4,12 +4,7 @@ global $wpdb;
 $classCandidate = new Candidate($wpdb);
 $classOthSetting = new OtherSetting($wpdb);
 ?>
-
-<style>
-    .panel-default > .panel-heading {
-        background-color: #BE2026;
-        color: #fff;
-</style>
+<style type="text/css">.panel-default>.panel-heading{background-color:#BE2026;color:#fff}</style>
 <script>
     var check_from_post = false;
     $(document).ready(function () {

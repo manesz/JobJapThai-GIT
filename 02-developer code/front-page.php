@@ -1,5 +1,12 @@
 <?php
 get_template_part("header");
+if(!session_id()){
+    session_start();
+}
+$first_checkin = $_SESSION['fci']?$_SESSION['fci']:FALSE;
+if((!$first_checkin)||(!is_user_logged_in())){
+    get_template_part('libs/pages/cover-register');
+}else{
 get_template_part("libs/nav");
 get_template_part("libs/front-banner");
 
@@ -75,8 +82,7 @@ $classQueryPostJob = new QueryPostJob($wpdb);
 
         </div>
 
-        <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png"
-             style="width: 100%; height: auto; margin-top: 10px;"/>
+        <img src="<?php echo get_template_directory_uri(); ?>/libs/img/blank-banner-ads-01.png" style="width: 100%; height: auto; margin-top: 10px;"/>
     </div>
 
     <?php include_once('libs/pages/sidebar.php'); ?>
@@ -85,4 +91,4 @@ $classQueryPostJob = new QueryPostJob($wpdb);
     </div>
 
     </section><!-- END : section.container-fluid -->
-<?php include_once('footer.php'); ?>
+<?php } include_once('footer.php');

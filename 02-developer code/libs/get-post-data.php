@@ -197,6 +197,7 @@ if ($_REQUEST) {
     if ($preRegister){
         $result = $classCandidate->addPreRegister($_REQUEST);
         echo strip_tags($classCandidate->returnMessage($result, $result['error'], true));
+        $_SESSION['fci'] = 1;
         exit;
     }
     //Candidate
