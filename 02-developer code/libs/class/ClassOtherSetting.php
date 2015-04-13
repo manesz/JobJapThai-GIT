@@ -61,7 +61,7 @@ class OtherSetting
         ?>
         <select id="working_day" name="<?php echo $name; ?>" class="<?php echo $class; ?>" required="">
             <option value="">--Select--</option>
-            <?
+            <?php
             foreach ($arrayWorkingDay as $value) {
                 ?>
                 <option value="<?php echo $value; ?>"
