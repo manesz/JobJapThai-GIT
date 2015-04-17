@@ -5,6 +5,9 @@ if(!session_id()){
 }
 $first_checkin = $_SESSION['fci']?$_SESSION['fci']:FALSE;
 if((!$first_checkin)||(!is_user_logged_in())){
+	if(!class_exists ('OtherSetting')){
+		include("libs/class/ClassOtherSetting.php");
+	}
     get_template_part('libs/pages/cover-register');
 }else{
 get_template_part("libs/nav");
