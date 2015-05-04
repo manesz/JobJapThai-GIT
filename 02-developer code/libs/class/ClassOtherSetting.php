@@ -5,7 +5,7 @@ class OtherSetting
     private $wpdb;
     private $pathSaveFile = "";
     public $nameWorkingDay = "working_day";
-    public $namePositionList = "position_list";
+    public $namePositionList = "job_position";
     public $nameJobLocation = "job_location";
 
 
@@ -59,7 +59,7 @@ class OtherSetting
         $arrayWorkingDay = $this->dataToArray($name);
         ob_start();
         ?>
-        <select id="working_day" name="<?php echo $name; ?>" class="<?php echo $class; ?>" required="">
+        <select id="<?php echo $name; ?>" name="<?php echo $name; ?>" class="<?php echo $class; ?>" required="">
             <option value="">--Select--</option>
             <?php
             foreach ($arrayWorkingDay as $value) {

@@ -2,7 +2,8 @@ var check_from_post = false;
 var post_id = 0;
 $(function () {
     formValidate();
-    getTotalPackage();
+    if (user_id)
+        getTotalPackage();
 });
 
 function setFeatureImage(elm) {

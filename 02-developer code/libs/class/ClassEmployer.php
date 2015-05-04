@@ -422,54 +422,84 @@ class Employer
                     $employer_id = empty($customField["employer_id"][0]) ? '' : $customField["employer_id"][0];
 
 //                    if ($employer_id):
-                        $getApplyJob = $classApply->listCandidateApplyJob($postID, 0, $employer_id);
-                        ?>
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingOne<?php echo $postID; ?>">
-                                <h4 class="panel-title">
-                                    <a class="tab_panel" data-toggle="collapse" data-parent="#accordion"
-                                       href="#panel<?php echo $postID; ?>"
-                                       aria-expanded="true"
-                                       aria-controls="collapseOne">
-                                        <span class="font-color-BF2026"><?php the_title(); ?>(<?php echo count($getApplyJob); ?>)</span>
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="panel<?php echo $postID; ?>" class="panel-collapse collapse" role="tabpanel"
-                                 aria-labelledby="headingOne<?php echo $postID; ?>">
-                                <table border="0" class="table table-hover">
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>Degree</td>
-                                        <td>University / Institute</td>
-                                        <td>Japanese Skill</td>
-                                        <td>View</td>
-                                    </tr>
-                                    <?php
-                                    foreach ($getApplyJob as $value) :
-                                        ?>
-                                        <tr>
-                                            <td><?php echo "$value->title$value->first_name $value->last_name" ?></td>
-                                            <td><?php echo $value->degree; ?></td>
-                                            <td><?php echo $value->university; ?></td>
-                                            <td><?php echo $value->japanese_skill; ?></td>
-                                            <td>
-                                                <a onclick="viewCandidateProfile(<?php echo $value->user_id; ?>)"
-                                                   data-toggle="modal" data-target="#modal_candidate_profile" href="#">
-                                                    View Profile</a>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </table>
-                            </div>
+                    $getApplyJob = $classApply->listCandidateApplyJob($postID, 0, $employer_id);
+                    ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne<?php echo $postID; ?>">
+                            <h4 class="panel-title">
+                                <a class="tab_panel" data-toggle="collapse" data-parent="#accordion"
+                                   href="#panel<?php echo $postID; ?>"
+                                   aria-expanded="true"
+                                   aria-controls="collapseOne">
+                                    <span class="font-color-BF2026"><?php the_title(); ?>
+                                        (<?php echo count($getApplyJob); ?>)</span>
+                                </a>
+                            </h4>
                         </div>
-                    <?php //endif; ?>
+                        <div id="panel<?php echo $postID; ?>" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOne<?php echo $postID; ?>">
+                            <table border="0" class="table table-hover">
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Degree</td>
+                                    <td>University / Institute</td>
+                                    <td>Japanese Skill</td>
+                                    <td>View</td>
+                                </tr>
+                                <?php
+                                foreach ($getApplyJob as $value) :
+                                    ?>
+                                    <tr>
+                                        <td><?php echo "$value->title$value->first_name $value->last_name" ?></td>
+                                        <td><?php echo $value->degree; ?></td>
+                                        <td><?php echo $value->university; ?></td>
+                                        <td><?php echo $value->japanese_skill; ?></td>
+                                        <td>
+                                            <a onclick="viewCandidateProfile(<?php echo $value->user_id; ?>)"
+                                               data-toggle="modal" data-target="#modal_candidate_profile" href="#">
+                                                View Profile</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </table>
+                        </div>
+                    </div>
+                    <?php //endif;
+                    ?>
                 <?php endwhile; endif; ?>
         </div>
         <?php
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
+    }
+
+    function buildPostJob($userID)
+    {
+        $classQueryPostJob = new QueryPostJob($this->wpdb);
+        ?>
+        <div id="show_message" class="col-md-12">
+        </div>
+        <hr/>
+        <h5 class="bg-ddd padding-10 clearfix">Post Job List</h5>
+        <div id="total_package"></div>
+        <div class="col-md-12 border-bottom-1-ddd no-padding"
+             style="padding-bottom: 10px !important;">
+            <input type="hidden" id="type_query" value="post_job">
+            <?php
+            echo $classQueryPostJob->buildFormQueryJob($userID, false, true);
+            ?>
+        </div>
+        <?php
+        $argc = $classQueryPostJob->queryPostJob($userID);
+        echo $classQueryPostJob->buildListJob($argc, true, true);
+        ?>
+        <h5 id="head_text_edit_job" class="bg-ddd padding-10 clearfix">Add New Post Job</h5>
+
+        <div id="div_form_job">
+            <?php echo $this->buildFormPostJob(); ?>
+        </div>
+    <?php
     }
 
     function buildHtmlCompanyInfo($data)
@@ -930,9 +960,8 @@ class Employer
         $objClassOtherSetting = new OtherSetting($this->wpdb);
         $classCandidate = new Candidate($this->wpdb);
         $classPackage = new Package($this->wpdb);
-        $user_id = get_current_user_id();
+//        $user_id = get_current_user_id();
 //        $getCompanyInfo = $this->getCompanyInfo(0, $user_id);
-        $employer_id = $user_id;
         $getPost = null;
         $custom = null;
         if ($post_id) {
@@ -942,6 +971,8 @@ class Employer
         } else {
             $post_type = 'add';
         }
+        $employer_id = empty($custom["employer_id"][0]) ? "" : $custom["employer_id"][0];
+        $user_id = $employer_id;
         $qualification = empty($custom["qualification"][0]) ? "" : $custom["qualification"][0];
         $highlight_jobs = empty($custom["highlight_jobs"][0]) ? "" : $custom["highlight_jobs"][0];
         $job_type = empty($custom["job_type"][0]) ? "" : $custom["job_type"][0];
@@ -1102,7 +1133,7 @@ class Employer
                     <label for="working_day"><?php _e('Working Day:', 'framework') ?><span
                             class="font-color-red">*</span></label></div>
                 <div class="col-md-10">
-                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($objClassOtherSetting->nameWorkingDay, $working_day); ?>
+                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect('working_day', $working_day); ?>
                 </div>
             </div>
             <div class="form-group col-md-12" style="">
@@ -1128,7 +1159,8 @@ class Employer
             $('#postContent').wysihtml5();
         </script>
     <?php else: ?>
-        <a class="btn btn-success" href="edit-profile/"><span class="glyphicon glyphicon-shopping-cart"></span> Buy Package</a>
+        <a class="btn btn-success" href="edit-profile/"><span class="glyphicon glyphicon-shopping-cart"></span> Buy
+            Package</a>
     <?php endif; ?>
         <?php
         $html = ob_get_contents();

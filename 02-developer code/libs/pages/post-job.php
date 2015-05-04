@@ -65,27 +65,7 @@ if (!$isLogin) {
                     <?php if (is_user_logged_in()) {
                         include_once('emp_menu.php');
                     } ?>
-                    <div id="show_message" class="col-md-12">
-                    </div>
-                    <hr/>
-                    <h5 class="bg-ddd padding-10 clearfix">Post Job List</h5>
-                    <div id="total_package"></div>
-                    <div class="col-md-12 border-bottom-1-ddd no-padding"
-                         style="padding-bottom: 10px !important;">
-                        <input type="hidden" id="type_query" value="post_job">
-                        <?php
-                        echo $classQueryPostJob->buildFormQueryJob($userID, false, true);
-                        ?>
-                    </div>
-                    <?php
-                    $argc = $classQueryPostJob->queryPostJob($userID);
-                    echo $classQueryPostJob->buildListJob($argc, true, true);
-                    ?>
-                    <h5 id="head_text_edit_job" class="bg-ddd padding-10 clearfix">Add New Post Job</h5>
-
-                    <div id="div_form_job">
-                            <?php echo $classEmployer->buildFormPostJob(); ?>
-                    </div>
+                    <?php $classEmployer->buildPostJob($userID); ?>
                 </div>
 
                 <?php require_once("banner1.php"); ?>

@@ -36,7 +36,7 @@ class Candidate
         $this->tableUserMeta = $this->wpdb->usermeta;
     }
 
-    function getListUser($candidate_id = 0, $order_by = "")
+    function getListUser($candidate_id = 0, $order_by = "", $user_type = "candidate")
     {
         $strAnd = $candidate_id ? " AND a.ID=$candidate_id" : "";
         $sql = "
@@ -51,10 +51,57 @@ class Candidate
             ON (a.ID = b.candidate_id)
             INNER JOIN
               $this->tableUserMeta c
-            ON (c.user_id = a.ID AND c.meta_key = 'user_type'
-            AND c.meta_value='candidate')
+            ON (
+              c.user_id = a.ID
+              AND c.meta_key = 'user_type'
+              AND c.meta_value='$user_type'
+              )
             WHERE 1
             $strAnd
+            $order_by
+        ";
+        $result = $this->wpdb->get_results($sql);
+        return $result;
+    }
+
+    function getListUserPreRegister($candidate_id = 0, $order_by = "", $user_type = "candidate")
+    {
+        $strAnd = $candidate_id ? " AND a.ID=$candidate_id" : "";
+        $sql = "
+            SELECT
+              a.*,
+              b.*,
+              b.id as can_id,
+              d.*,
+              e.*,
+              f.*
+            FROM
+              $this->tableUser a
+            INNER JOIN
+              $this->tableInformation b
+            ON (a.ID = b.candidate_id)
+            INNER JOIN
+              $this->tableUserMeta c
+            ON (
+              c.user_id = a.ID
+              AND c.meta_key = 'user_type'
+              AND c.meta_value='$user_type'
+              )
+            INNER JOIN $this->tableYourExperience d
+            ON (
+              a.ID = d.candidate_id
+            )
+            INNER JOIN $this->tableSkillLanguages e
+            ON (
+              a.ID = e.candidate_id
+            )
+            INNER JOIN $this->tableDesiredJob F
+            ON (
+              a.ID = f.candidate_id
+            )
+            WHERE 1
+            $strAnd
+            GROUP BY a.ID
             $order_by
         ";
         $result = $this->wpdb->get_results($sql);
@@ -1086,7 +1133,7 @@ class Candidate
                                             Position</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <?php echo $classOtherSetting->buildWorkingDayToSelect($classOtherSetting->namePositionList,
+                                        <?php echo $classOtherSetting->buildWorkingDayToSelect('job_position',
                                             empty($job_position) ? "" : $job_position); ?>
                                     </div>
                                 </div>

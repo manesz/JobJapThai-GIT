@@ -490,24 +490,7 @@ class Employer_List extends WP_List_Table
                         </div>
 
 
-
-                        <h5 class="bg-ddd padding-10 clearfix">Post Job List</h5>
-                        <div class="col-md-12 border-bottom-1-ddd no-padding"
-                             style="padding-bottom: 10px !important;">
-                            <input type="hidden" id="type_query" value="post_job">
-                            <?php
-                            echo $classQueryPostJob->buildFormQueryJob($userID, false, true);
-                            ?>
-                        </div>
-                        <?php
-                        $argc = $classQueryPostJob->queryPostJob($userID);
-                        echo $classQueryPostJob->buildListJob($argc, true, true);
-                        ?>
-                        <h5 id="head_text_edit_job" class="bg-ddd padding-10 clearfix">Add New Post Job</h5>
-
-                        <div id="div_form_job">
-                            <?php echo $classEmployer->buildFormPostJob(); ?>
-                        </div>
+                    <?php if ($userID) $classEmployer->buildPostJob($userID); ?>
 
                     </div>
                     <!--</div>-->
@@ -537,6 +520,7 @@ class Employer_List extends WP_List_Table
         </style>
         <script type="text/javascript">
             var employer_id = <?php echo $userID; ?>;
+            var user_id = <?php echo $userID; ?>;
             var ajaxPageurl = '<?php echo get_home_url() ?>/';
             var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
             var distinct = <?php echo empty($district) ? 0: $district; ?>;
