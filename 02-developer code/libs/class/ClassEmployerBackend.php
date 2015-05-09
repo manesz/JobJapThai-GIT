@@ -47,8 +47,8 @@ class Employer_List extends WP_List_Table
                     "email" => $value->user_email,
                     "create_time" => $value->create_datetime,
                     "update_time" => $value->update_datetime,
-                    "add_job" => '<a href="' . $siteUrl . '/wp-admin/post-new.php?post_type=job&employer_id=' . $value->com_id . '">add</a>',
-                    "view_job" => '<a href="edit.php?post_type=job&employer_id=' . $value->com_id . '">view</a>',
+                    //"add_job" => '<a href="' . $siteUrl . '/wp-admin/post-new.php?post_type=job&employer_id=' . $value->com_id . '">add</a>',
+                    //"view_job" => '<a href="edit.php?post_type=job&employer_id=' . $value->com_id . '">view</a>',
                     "edit" => '<a class="btn_delete_employer" href="#" pm-id="' . $value->ID . '">Delete</a>',
                 );
         }
@@ -202,8 +202,8 @@ class Employer_List extends WP_List_Table
             case 'email':
             case 'create_time':
             case 'update_time':
-            case 'add_job':
-            case 'view_job':
+//            case 'add_job':
+//            case 'view_job':
             case 'edit':
                 return $item[$column_name];
             default:
@@ -244,8 +244,8 @@ class Employer_List extends WP_List_Table
             'email' => __('Email', 'mylisttable'),
             'create_time' => __('Create', 'mylisttable'),
             'update_time' => __('Update', 'mylisttable'),
-            'add_job' => __('Add Job', 'mylisttable'),
-            'view_job' => __('View Job', 'mylisttable'),
+//            'add_job' => __('Add Job', 'mylisttable'),
+//            'view_job' => __('View Job', 'mylisttable'),
             'edit' => __('Delete', 'mylisttable'),
         );
         return $columns;

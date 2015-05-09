@@ -753,10 +753,10 @@ class Candidate
             <?php endif; ?>
         </script>
         <div id="sectProfile" class="col-md-12">
-            <?php echo $this->candidateMenu(); ?>
+            <?php echo $is_backend ? "" : $this->candidateMenu(); ?>
             <div class="col-md-8" style="padding-top: 10px;">
                 Resume Code: <span class=".font-color-BF2026" style=""><?php echo $resumeCode; ?></span><br/>
-                Status: <span class="font-color-BF2026" style="">Under verification process</span><br/>
+                <?php /*Status: <span class="font-color-BF2026" style="">Under verification process</span><br/> */ ?>
                 Last Login Date: <?php echo $lastLogin; ?><br/>
                 Last update: <?php echo $lastUpdate; ?><br/>
                 Member since: <?php echo $memberSince; ?><br/>
