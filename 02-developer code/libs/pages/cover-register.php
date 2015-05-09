@@ -4,9 +4,11 @@ global $wpdb;
 $classCandidate = new Candidate($wpdb);
 $classOthSetting = new OtherSetting($wpdb);
 ?>
+<script src="<?php echo get_template_directory_uri(); ?>/libs/js/header.js"></script>
 <style type="text/css">.panel-default>.panel-heading{background-color:#BE2026;color:#fff}</style>
 <script>
     var check_from_post = false;
+    var url_post = "<?php echo home_url(); ?>/";
     $(document).ready(function () {
         $("#form_candidate").bootstrapValidator({
             feedbackIcons: {
@@ -279,7 +281,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                         <div class="col-md-8">
                                             <select id="japanese_reading" name="japanese_reading" class="form-control"
                                                     required="">
-                                                <option value=""></option>
+                                                <option value="">--Select--</option>
                                                 <?php foreach ($classCandidate->japanese_reading as $value): ?>
                                                     <option
                                                         value="<?php echo $value; ?>"><?php echo $value; ?></option>
@@ -293,7 +295,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                         <div class="col-md-8">
                                             <select id="japanese_writing" name="japanese_writing" class="form-control"
                                                     required="">
-                                                <option value=""></option>
+                                                <option value="">--Select--</option>
                                                 <?php foreach ($classCandidate->japanese_writing as $value): ?>
                                                     <option
                                                         value="<?php echo $value; ?>"><?php echo $value; ?></option>
@@ -309,7 +311,7 @@ $classOthSetting = new OtherSetting($wpdb);
 
                                             <select id="toeic_toefl_ielts" name="toeic_toefl_ielts" class="form-control"
                                                     required="">
-                                                <option value=""></option>
+                                                <option value="">--Select--</option>
                                                 <?php foreach ($classCandidate->toeic_toefl_ielts as $value): ?>
                                                     <option
                                                         value="<?php echo $value; ?>"><?php echo $value; ?></option>
@@ -334,7 +336,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                         <div class="col-md-8">
                                             <select id="english_speaking" name="english_speaking" class="form-control"
                                                     required="">
-                                                <option value=""></option>
+                                                <option value="">--Select--</option>
                                                 <?php foreach ($classCandidate->english_speaking as $value): ?>
                                                     <option
                                                         value="<?php echo $value; ?>"><?php echo $value; ?></option>
@@ -348,7 +350,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                         <div class="col-md-8">
                                             <select id="english_reading" name="english_reading" class="form-control"
                                                     required="">
-                                                <option value=""></option>
+                                                <option value="">--Select--</option>
                                                 <?php foreach ($classCandidate->english_reading as $value): ?>
                                                     <option
                                                         value="<?php echo $value; ?>"><?php echo $value; ?></option>
@@ -362,7 +364,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                         <div class="col-md-8">
                                             <select id="english_writing" name="english_writing" class="form-control"
                                                     required="">
-                                                <option value=""></option>
+                                                <option value="">--Select--</option>
                                                 <?php foreach ($classCandidate->english_writing as $value): ?>
                                                     <option
                                                         value="<?php echo $value; ?>"><?php echo $value; ?></option>

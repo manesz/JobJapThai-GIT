@@ -28,5 +28,5 @@ require_once('menu/other-setting-menu.php');
 
 require_once('menu/employer-list.php');
 require_once('menu/candidate-list.php');
-require_once('menu/pre-register-list.php');
+//require_once('menu/pre-register-list.php');
 
