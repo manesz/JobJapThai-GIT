@@ -3,13 +3,13 @@ get_template_part("header");
 if(!session_id()){
     session_start();
 }
-$first_checkin = $_SESSION['fci']?$_SESSION['fci']:FALSE;
-if((!$first_checkin)||(!is_user_logged_in())){
+//$first_checkin = $_SESSION['fci']?$_SESSION['fci']:FALSE;
+/*if((!$first_checkin)||(!is_user_logged_in())){
 	if(!class_exists ('OtherSetting')){
 		include("libs/class/ClassOtherSetting.php");
 	}
-    get_template_part('libs/pages/cover-register');
-}else{
+    //get_template_part('libs/pages/cover-register');
+}else{*/
 get_template_part("libs/nav");
 get_template_part("libs/front-banner");
 
@@ -94,4 +94,4 @@ $classQueryPostJob = new QueryPostJob($wpdb);
     </div>
 
     </section><!-- END : section.container-fluid -->
-<?php } include_once('footer.php');
+<?php  include_once('footer.php');

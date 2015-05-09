@@ -14,6 +14,9 @@ if (is_user_logged_in()) {
     $isLogin = false;
     $userID = 0;
 }
+$objInformation = $classCandidate->getInformation($userID);
+if ($objInformation)
+    extract((array)$objInformation[0]);
 
 ?>
 <!-- Latest compiled and minified CSS -->
@@ -25,6 +28,8 @@ if (is_user_logged_in()) {
     var is_login = <?php echo $isLogin ? 'true': 'false'; ?>;
     var post_type = '<?php echo $isLogin ? 'edit': 'add'; ?>';
     var candidate_id = <?php echo $userID; ?>;
+    var distinct = <?php echo empty($district) ? 0: $district; ?>;
+    var sub_district = <?php echo empty($city) ? 0: $city; ?>;
 </script>
 
 <script src="<?php echo get_template_directory_uri(); ?>/libs/js/candidate.js"></script>

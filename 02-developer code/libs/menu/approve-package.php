@@ -33,26 +33,47 @@ function add_approve_package_options()
 
 function render_approve_package_page_list()
 {
-    $classEmployerList = new Employer_List();
+    global $wpdb;
+//    $classEmployerList = new Employer_List();
+    $approvePackage = new Approve_Package();
     require_once('header.php');
-    $siteUrl = home_url();
-    $getEditEmployer = empty($_GET['employer_page_type'])? false: $_GET['employer_page_type'];
-    if ($getEditEmployer == 'add') {
-        $classEmployerList->employerAddTemplate();
-    }  else if ($getEditEmployer == 'edit') {
-        $classEmployerList->employerAddTemplate();
-    } else {?>
+    ?>
+    <link rel="stylesheet" type="text/css"
+          href="<?php echo get_template_directory_uri(); ?>/libs/css/bootstrap.min.css"/>
+    <script src="<?php echo get_template_directory_uri(); ?>/libs/js/jquery.1.11.1.min.js"></script>
+    <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap.min.js"></script>
+    <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrapValidator.min.js"></script>
+    <script src="<?php echo get_template_directory_uri(); ?>/libs/js/employer-register.js"></script>
+    <script src="<?php echo get_template_directory_uri(); ?>/libs/js/header.js"></script>
+    <script>
+        var url_post = "<?php echo home_url(); ?>/";
+        var str_loading = '<div class="img_loading"><img src="<?php
+    bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
+    </script>
         <div class="wrap"><h2>Approve</h2>
-        <?php $classEmployerList->prepare_items();
+        <?php $approvePackage->prepare_items();
         ?>
 
         <form method="post">
             <input type="hidden" name="page" value="render_approve_package_page_list">
         <?php
-        $classEmployerList->search_box('Search', 'company_name');
-        $classEmployerList->display();
-        echo '</form></div>';
-    }
+        $approvePackage->search_box('Search', 'company_name');
+        $approvePackage->display();
+        ?>
+        </form></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal_package" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true"
+         style="font-size: 12px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+<?php
+
 }
 //------------------------------- End Approve Package--------------------------------//
 

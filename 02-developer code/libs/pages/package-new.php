@@ -2,8 +2,11 @@
 if (is_user_logged_in()) {
     global $current_user;
     get_currentuserinfo();
-    $userID = $current_user->ID;
     $packageID = empty($_GET['package_id']) ? 0 : $_GET['package_id'];
+    $userID = empty($_GET['user_id']) ? 0 : $_GET['user_id'];
+    if (!$userID) {
+        $userID = $current_user->ID;
+    }
     $classPackage = new Package($wpdb);
     $arrayPackage = $classPackage->getPackage();
     $arraySelectPackage = $packageID ? $classPackage->getSelectPackage($userID, $packageID) : null;

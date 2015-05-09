@@ -816,6 +816,96 @@ class Candidate
             extract((array)$objSkillLanguage[0]);
         ob_start();
         ?>
+        <script>
+
+            var ajaxPageurl = '<?php echo get_home_url() ?>/';
+            var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
+            var proselect = {
+                proval: 0,
+                amval: 0,
+                init: function () {
+                    proselect.proval = $('#province').val();
+                    proselect.selectProvince();
+                    proselect.setEvent();
+                },
+                setEvent: function () {
+                    $('#province').on('change', proselect.selectProvince);
+                },
+                selectProvince: function () {
+                    proselect.proval = $('#province').val();
+                    proselect.clearampporSelect();
+                    $('#aupher-select').slideUp('fast', function () {
+                        if (proselect.proval !== '0') {
+                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
+                                if (typeof data['hasfile'] === 'undefined') {
+                                    alert(0)
+                                    proselect.createSelect(data);
+                                    $('#aupher-select').slideDown('fast');
+                                } else {
+                                    $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
+                                        proselect.createSelect(data);
+                                        $('#aupher-select').slideDown('fast');
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                },
+                createSelect: function (data) {
+                    $.each(data, function (index, dat) {
+                        var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
+                        var mytxt = '<option value="' + dat.AMPHUR_ID + '" ' + checkSelect + '>' +
+                            dat.AMPHUR_NAME + '</option>';
+                        $('#district').append(mytxt);
+                    });
+                    if ($('#district').html()) {
+                        proselect.selectAmphor();
+                    }
+                    $('#district').unbind('change');
+                    $('#district').on('change', proselect.selectAmphor);
+                },
+                clearampporSelect: function () {
+                    $('#district option[value!=0]').remove();
+                    $('#district').val(0);
+                    proselect.clearDistinctSelect();
+                },
+                clearDistinctSelect: function () {
+                    $('#sub_distinct option[value!=0]').remove();
+                    $('#sub_distinct').val(0);
+                    $('#distinct-select').css('display', 'none');
+                },
+                selectAmphor: function () {
+                    proselect.amval = $('#district').val();
+                    proselect.clearDistinctSelect();
+                    $('#distinct-select').slideUp('fast', function () {
+                        if (proselect.amval != '0') {
+                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
+                                if (typeof data['hasfile'] === 'undefined') {
+                                    proselect.createDistinctSelect(data);
+                                    $('#distinct-select').slideDown('fast');
+                                } else {
+                                    $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
+                                        proselect.createDistinctSelect(data);
+                                        $('#distinct-select').slideDown('fast');
+                                    });
+                                }
+                            });
+                        }
+                    });
+                },
+                createDistinctSelect: function (data) {//console.log(data);
+                    $.each(data, function (index, dat) {
+                        var checkSelect = dat.DISTRICT_ID == sub_district ? 'selected' : '';
+                        var mytxt = '<option value="' + dat.DISTRICT_ID + '" ' + checkSelect + '> ' + dat.DISTRICT_NAME + '</option>';
+                        $('#sub_distinct').append(mytxt);
+                    });
+                }
+            };
+            $(document).ready(function () {
+                proselect.init();
+            });
+        </script>
         <div id="div_step2" class="col-md-12">
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
@@ -966,26 +1056,43 @@ class Candidate
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="province">Province<span
                                                 class="font-color-red">*</span></label></div>
-                                    <div class="col-md-8"><select id="province" name="province" class="form-control"
-                                                                  required>
-                                            <option>Thailand</option>
-                                        </select></div>
+                                    <div class="col-md-8">
+                                        <?php
+                                        $provinces = $classOtherSetting->getProvinces();
+                                        if ($provinces) {
+                                            ?>
+                                            <select id="province" name="province" class="form-control"
+                                                    required>
+                                                <option value="0" selected="selected">---------------- Please select
+                                                    ----------------
+                                                </option>
+                                                <?php foreach ($provinces as $value) {
+                                                    ?>
+                                                    <option <?php if (!empty($province)) echo $value->PROVINCE_ID == $province ? "selected" : ""; ?>
+                                                    value="<?php echo $value->PROVINCE_ID; ?>"><?php echo $value->PROVINCE_NAME; ?></option><?php } ?>
+                                            </select>
+                                        <?php } else { ?> ลงฐานข้อมูล จังหวัดที่ <?php echo get_template_directory() . '/libs/res/thailand.sql' ?><?php } ?>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="district">District<span
+                                <div class="form-group col-md-12" id="aupher-select">
+                                    <div class="col-md-4 text-right clearfix">
+                                        <label for="district">District<span
                                                 class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
-                                        <select id="district" name="district" class="form-control" required>
-                                            <option>Thailand</option>
+                                        <select id="district" name="district"
+                                                class="form-control" required>
+                                            <option value="0">---------------- Please select ----------------</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="city">City / Locality<span
+                                <div class="form-group col-md-12" id="distinct-select">
+                                    <div class="col-md-4 text-right clearfix"><label for="sub_distinct">City /
+                                            Locality<span
                                                 class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
-                                        <select id="city" name="city" class="form-control" required>
-                                            <option>Thailand</option>
+                                        <select id="sub_distinct" name="city"
+                                                class="form-control" required>
+                                            <option value="0">---------------- Please select ----------------</option>
                                         </select>
                                     </div>
                                 </div>
@@ -2363,6 +2470,7 @@ class Candidate
     function editInformation($post)
     {
         extract($post);
+        $post_backend = empty($post_backend) ? 'false' : $post_backend;
         $information_id = empty($information_id) ? false : $information_id;
         $new_password = empty($new_password) ? false : $new_password;
         $old_password = empty($old_password) ? false : $old_password;
@@ -2416,16 +2524,21 @@ class Candidate
             if (!$result)
                 return $this->returnMessage('Sorry Edit Error.', true);
 
-            if ($new_password && $old_password) { //echo $new_password;echo $old_password;
-                $current_user = wp_get_current_user();
-                $user = get_user_by('login', $current_user->user_login);
-                if ($user && wp_check_password($old_password, $user->data->user_pass, $user->ID)) {
-                    wp_set_password($new_password, $user->ID);
+            //if ($new_password && $old_password) { //echo $new_password;echo $old_password;
+            $current_user = $this->getUser($candidate_id);
+            $user = get_user_by('login', $current_user->user_login);
+            $checkOldPass = $post_backend == 'true'? true: wp_check_password($old_password, $user->data->user_pass, $user->ID);
+            if ($user && $checkOldPass) {
+                wp_set_password($new_password, $user->ID);
+                if ($post_backend != 'true')
                     return $this->returnMessage('<script>setTimeout(function(){window.location.reload()}, 3000);</script>Edit Success.', false);
-                } else {
-                    return $this->returnMessage('Error check old password.', true);
-                }
+            } else {
+                return $this->returnMessage('Error check old password.', true);
             }
+            //}
+        }
+        if ($post_backend == "true") {
+            update_user_meta($candidate_id, "activation_confirm", "true");
         }
         return $this->returnMessage('Edit Success.', false);
     }

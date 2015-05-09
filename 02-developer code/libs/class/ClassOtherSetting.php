@@ -65,7 +65,7 @@ class OtherSetting
             foreach ($arrayWorkingDay as $value) {
                 ?>
                 <option value="<?php echo $value; ?>"
-                    <?php echo $select == $value? "selected": ""; ?>
+                    <?php echo $select == $value ? "selected" : ""; ?>
                     ><?php echo $value; ?></option>
             <?php
             }
@@ -75,5 +75,17 @@ class OtherSetting
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
+    }
+
+    function getProvinces($id = "")
+    {
+        $strAnd = $id ? " AND PROVINCE_ID = '$id'" : "";
+        $sql = "
+          SELECT * FROM `province` WHERE 1
+          $strAnd
+          ORDER BY PROVINCE_NAME ASC
+        ";
+        $provinces = $this->wpdb->get_results($sql);
+        return $provinces;
     }
 }

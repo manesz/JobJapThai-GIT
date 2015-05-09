@@ -7,8 +7,8 @@ function my_add_package_menu_items()
 {
     $hook = add_submenu_page(
         'ics_theme_settings',
-        'Package',
-        'Package',
+        'Package Setting',
+        'Package Setting',
         'manage_options',
         'package-page',
         'render_package_page'
@@ -38,7 +38,7 @@ function render_package_page()
     $classPackage = new Package($wpdb);
     $getPage = empty($_GET['page-position']) ? 1 : $_GET['page-position'];
     ?>
-    <h2>Package</h2>
+    <h2>Package Setting</h2>
     <script type="text/javascript"
             src="<?php bloginfo('template_directory'); ?>/libs/js/package.js"></script>
     <link rel="stylesheet" type="text/css"

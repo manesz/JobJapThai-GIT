@@ -288,6 +288,9 @@ class Candidate_List extends WP_List_Table
             $isLogin = true;
 
         }
+        $objInformation = $classCandidate->getInformation($userID);
+        if ($objInformation)
+            extract((array)$objInformation[0]);
         ?>
 
         <style type="text/css">
@@ -327,6 +330,8 @@ class Candidate_List extends WP_List_Table
                 var is_login = <?php echo $isLogin ? 'true': 'false'; ?>;
                 var post_type = '<?php echo $isLogin ? 'edit': 'add'; ?>';
                 var candidate_id = <?php echo $userID; ?>;
+                var distinct = <?php echo empty($district) ? 0: $district; ?>;
+                var sub_district = <?php echo empty($city) ? 0: $city; ?>;
 
                 var url_post = "<?php echo home_url(); ?>/";
                 var str_loading = '<div class="img_loading"><img src="<?php

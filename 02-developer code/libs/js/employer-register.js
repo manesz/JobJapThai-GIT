@@ -223,13 +223,14 @@ function removeBannerImage($elm) {
     });
 }
 
-function showAddPackage(package_id) {
+function showAddPackage(package_id, user_id) {
     package_id = package_id | false;
-    var strUrl = ajaxPageurl + "?new_package=true";
-    strUrl += package_id ? "&package_id=" + package_id : "";
+    user_id = user_id | false;
+    var strUrl = "?new_package=true";
+    strUrl += package_id ? "&package_id=" + package_id + "&user_id=" + user_id: "&user_id=" + user_id;
     $(".modal-content").load(strUrl);
 }
 
 function showListPackage() {
-    $("#list_package").load(ajaxPageurl + "?list_package=true");
+    $("#list_package").load("?list_package=true");
 }

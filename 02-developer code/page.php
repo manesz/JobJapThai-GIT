@@ -40,9 +40,9 @@ if (have_posts()) :
         }
 
         else if (is_page("candidate-register") || is_page("candidate")) {
-//            get_template_part('libs/pages/candidate-register');
-            get_template_part('libs/pages/cover-register');
-            exit;
+            get_template_part('libs/pages/candidate-register');
+//            get_template_part('libs/pages/cover-register');
+            //exit;
         }
 
         else if (is_page("candidate-view")) {

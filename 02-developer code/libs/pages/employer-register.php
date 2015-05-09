@@ -280,93 +280,10 @@ if (is_user_logged_in()) {
 </style>
 <script type="text/javascript">
     var employer_id = <?php echo $userID; ?>;
-    var ajaxPageurl = '<?php echo get_home_url() ?>/';
-    var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
     var distinct = <?php echo empty($district) ? 0: $district; ?>;
     var sub_district = <?php echo empty($sub_district) ? 0: $sub_district; ?>;
-    var proselect = {
-        proval: 0,
-        amval: 0,
-        init: function () {
-            proselect.proval = $('#employerContactProvince').val();
-            proselect.selectProvince();
-            proselect.setEvent();
-        },
-        setEvent: function () {
-            $('#employerContactProvince').on('change', proselect.selectProvince);
-        },
-        selectProvince: function () {
-            proselect.proval = $('#employerContactProvince').val();
-            proselect.clearampporSelect();
-            $('#aupher-select').slideUp('fast', function () {
-                if (proselect.proval !== '0') {
-                    $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
-                        if (typeof data['hasfile'] === 'undefined') {
-                            proselect.createSelect(data);
-                            $('#aupher-select').slideDown('fast');
-                        } else {
-                            $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
-                                proselect.createSelect(data);
-                                $('#aupher-select').slideDown('fast');
-                            });
-                        }
-                    });
-                }
-            });
 
-        },
-        createSelect: function (data) {
-            $.each(data, function (index, dat) {
-                var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
-                var mytxt = '<option value="' + dat.AMPHUR_ID + '" ' + checkSelect + '>' +
-                    dat.AMPHUR_NAME + '</option>';
-                $('#employerContactDistinct').append(mytxt);
-            });
-            if ($('#employerContactDistinct').html()) {
-                proselect.selectAmphor();
-            }
-            $('#employerContactDistinct').unbind('change');
-            $('#employerContactDistinct').on('change', proselect.selectAmphor);
-        },
-        clearampporSelect: function () {
-            $('#employerContactDistinct option[value!=0]').remove();
-            $('#employerContactDistinct').val(0);
-            proselect.clearDistinctSelect();
-        },
-        clearDistinctSelect: function () {
-            $('#employerContactSubDistinct option[value!=0]').remove();
-            $('#employerContactSubDistinct').val(0);
-            $('#distinct-select').css('display', 'none');
-        },
-        selectAmphor: function () {
-            proselect.amval = $('#employerContactDistinct').val();
-            proselect.clearDistinctSelect();
-            $('#distinct-select').slideUp('fast', function () {
-                if (proselect.amval != '0') {
-                    $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
-                        if (typeof data['hasfile'] === 'undefined') {
-                            proselect.createDistinctSelect(data);
-                            $('#distinct-select').slideDown('fast');
-                        } else {
-                            $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
-                                proselect.createDistinctSelect(data);
-                                $('#distinct-select').slideDown('fast');
-                            });
-                        }
-                    });
-                }
-            });
-        },
-        createDistinctSelect: function (data) {//console.log(data);
-            $.each(data, function (index, dat) {
-                var checkSelect = dat.DISTRICT_ID == sub_district ? 'selected' : '';
-                var mytxt = '<option value="' + dat.DISTRICT_ID + '" ' + checkSelect + '> ' + dat.DISTRICT_NAME + '</option>';
-                $('#employerContactSubDistinct').append(mytxt);
-            });
-        }
-    };
     $(document).ready(function () {
-        proselect.init();
         <?php if ($isLogin): ?>
         showListPackage();
         <?php endif;?>

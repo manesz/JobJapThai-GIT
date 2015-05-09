@@ -5,6 +5,8 @@ class Package
     private $wpdb;
     public $tablePackage = "ics_employer_package";
     public $tableSelectPackage = "ics_employer_select_package";
+    public $tableCompanyInfo = "ics_company_information_for_contact";
+    public $tableRequestProfile = "ics_request_profile";
     public $tableApplyHotJob = "ics_apply_hot_job";
     public $strDateCreate = 'start_display';
     public $numDayDisplay = 'num_day_display';
@@ -53,21 +55,32 @@ class Package
         return $myRows;
     }
 
-    function getUserSelectPackage($employer_id, $approve = 0, $status = "")
+    function getUserSelectPackage($id = 0, $employer_id = 0, $approve = "", $status = "", $order_by = "")
     {
-        $strAnd = $employer_id ? " AND employer_id=$employer_id" : "";
-        $strAnd .= $approve ? " AND approve=$approve" : "";
-        $strAnd .= $status ? " AND status='$status'" : "";
+        $strAnd = $id ? " AND a.id=$id" : "";
+        $strAnd .= $employer_id ? " AND a.employer_id=$employer_id" : "";
+        $strAnd .= $approve ? " AND a.approve=$approve" : "";
+        $strAnd .= $status ? " AND a.status='$status'" : "";
         $sql = "
             SELECT
-              *
-            FROM `$this->tableSelectPackage` a
+              a.*,
+              b.*,
+              c.*,
+              c.id AS select_package_id
+            FROM
+              $this->tableUser a
+            INNER JOIN
+              $this->tableCompanyInfo b
+            ON (a.ID = b.employer_id)
+            INNER JOIN
+              $this->tableSelectPackage c
+            ON (a.ID = c.employer_id)
             WHERE 1
-            AND publish=1
             $strAnd
+            $order_by
         ";
-        $myRows = $this->wpdb->get_results($sql);
-        return $myRows;
+        $result = $this->wpdb->get_results($sql);
+        return $result;
     }
 
     public function buildTd1($array_package, $position, $title = "")
@@ -916,7 +929,7 @@ class Package
             - Post Jobs :<?php echo $this->getTotalPost($user_id); ?><br/>
             - Set hot jobs :<?php echo $this->getTotalHotJob($user_id); ?>
         </div>
-    <?php
+        <?php
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
