@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <div class="col-md-6 btn">
-                    <a href="<?php echo get_site_url(); ?>/candidate-register/">User</a>
+                    <a href="<?php echo get_site_url(); ?>/candidate-register/">Candidate</a>
                 </div>
                 <div class="col-md-6 btn">
                     <a href="<?php echo get_site_url(); ?>/employer-register/">Employer</a>

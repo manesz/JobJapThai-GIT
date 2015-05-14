@@ -49,6 +49,7 @@ $(document).on("click", ".edit_package", function (e) {
 });
 
 $(document).ready(function () {
+    showListPackage();
     $('#frm_employer_register')
         .bootstrapValidator()
         .on('success.form.bv', function (e) {

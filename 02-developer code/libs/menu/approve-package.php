@@ -49,6 +49,32 @@ function render_approve_package_page_list()
         var url_post = "<?php echo home_url(); ?>/";
         var str_loading = '<div class="img_loading"><img src="<?php
     bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
+        function setApprove(id){
+            showImgLoading();
+            $.ajax({
+                type: "GET",
+                cache: false,
+                dataType: 'json',
+                url: '',
+                data: {
+                    approve_package: 'true',
+                    package_id: id
+                },
+                success: function (data) {
+                    if (data.error) {
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                    hideImgLoading();
+                }
+            })
+                .fail(function () {
+                    hideImgLoading();
+                    alert("เกิดข้อผิดพลาด");
+                });
+            return false;
+        }
     </script>
         <div class="wrap"><h2>Approve</h2>
         <?php $approvePackage->prepare_items();

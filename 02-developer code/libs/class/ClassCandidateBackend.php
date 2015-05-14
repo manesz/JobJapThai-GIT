@@ -145,10 +145,13 @@ class Candidate_List extends WP_List_Table
             }
         </style>
         <!--        <script type="text/javascript"-->
-        <!--                src="--><?php //bloginfo('template_directory'); ?><!--/library/js/candidate_edit.js"></script>-->
+        <!--                src="--><?php //bloginfo('template_directory');
+        ?><!--/library/js/candidate_edit.js"></script>-->
 
-        <!--        <link rel="stylesheet" href="--><?php //bloginfo('template_directory'); ?><!--/library/css/flip-clock/flipclock.css">-->
-        <!--        <script src="--><?php //bloginfo('template_directory'); ?><!--/library/js/flip-clock/flipclock.js"></script>-->
+        <!--        <link rel="stylesheet" href="--><?php //bloginfo('template_directory');
+        ?><!--/library/css/flip-clock/flipclock.css">-->
+        <!--        <script src="--><?php //bloginfo('template_directory');
+        ?><!--/library/js/flip-clock/flipclock.js"></script>-->
     <?php
     }
 
@@ -282,7 +285,9 @@ class Candidate_List extends WP_List_Table
         global $wpdb;
         $classCandidate = new Candidate($wpdb);
         $userID = empty($_GET['candidate_id']) ? 0 : $_GET['candidate_id'];
-
+        $userData = $classCandidate->getUser($userID);
+        $key = get_user_meta($userID, 'activation_key', true);
+        $isConfirm = get_user_meta($userID, 'activation_confirm', true);
         $isLogin = false;
         if ($userID) {
             $isLogin = true;
@@ -332,10 +337,45 @@ class Candidate_List extends WP_List_Table
                 var candidate_id = <?php echo $userID; ?>;
                 var distinct = <?php echo empty($district) ? 0: $district; ?>;
                 var sub_district = <?php echo empty($city) ? 0: $city; ?>;
+                var check_post = false;
 
                 var url_post = "<?php echo home_url(); ?>/";
                 var str_loading = '<div class="img_loading"><img src="<?php
     bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
+                $(document).ready(function () {
+                    $("#btn_send_confirm_email").click(function () {
+                        check_post = true;
+                        showImgLoading();
+                        $.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            cache: false,
+                            url: url_post,
+                            data: {
+                                candidate_post: 'true',
+                                post_type: 'send_email_confirm',
+                                show_style: 'false',
+                                email: '<?php echo $userData->user_email; ?>',
+                                key: '<?php echo $key; ?>'
+                            },
+                            success: function (result) {
+                                hideImgLoading();
+                                check_post = false;
+                                if (result.error) {
+                                    alert(result.msg);
+                                } else {
+                                    alert(result.msg);
+                                }
+                            },
+                            error: function (result) {
+                                showModalMessage("Error:\n" + result.responseText, "Error");
+                                hideImgLoading();
+                                check_post = false;
+                            }
+                        });
+                        return false;
+                    });
+                });
             </script>
 
             <script src="<?php echo get_template_directory_uri(); ?>/libs/js/candidate.js"></script>
@@ -358,6 +398,12 @@ class Candidate_List extends WP_List_Table
                                     <?php echo $classCandidate->buildHtmlFormRegister(); ?>
                                 <?php else: ?>
                                     <?php echo $classCandidate->buildHtmlEditProfile2($userID, true); ?>
+                                <?php endif; ?>
+                                <?php if ($isConfirm == 'false'): ?>
+                                    <div class="form-group col-md-12" style="">
+                                        <a href="#" class="btn btn-success col-md-3 pull-right"
+                                           id="btn_send_confirm_email">Send confirm email</a>
+                                    </div>
                                 <?php endif; ?>
                                 <div class="form-group col-md-12" style="">
                                     <a href="?page=candidate-list" class="btn btn-info col-md-3 pull-right">Back</a>

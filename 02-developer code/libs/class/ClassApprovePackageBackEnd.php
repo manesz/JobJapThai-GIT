@@ -44,27 +44,33 @@ class Approve_Package extends WP_List_Table
                     "company_name" => $value->company_name,
                     "email" => $value->user_email,
                     "user_login" => $value->user_login,
-                    "status" => $this->checkStatus($value->status),
+//                    "status" => $this->checkStatus($value->status),
                     "create_time" => $value->create_datetime,
                     "update_time" => $value->update_datetime,
-                    "edit" => '<a href="#" data-toggle="modal" id="new_package" onclick="showAddPackage('. $value->select_package_id .', ' .$value->ID.')"
-                                                   data-target="#modal_package">View</a>'.
-                    " | ".
-                        '<a class="btn_delete_employer" href="#" pm-id="' . $value->ID . '">Delete</a>',
-                    'approve' => '<a></a>'
+                    "edit" => $this->buildBtnApprove($value->select_package_id, $value->approve) . " | "
+                        . '<a href="#" data-toggle="modal" id="new_package" onclick="showAddPackage(' .
+                        $value->select_package_id . ', ' . $value->ID . ')" data-target="#modal_package">View</a>' .
+                        " | " .
+                        '<a class="btn_delete_approve" href="#" pm-id="' . $value->ID . '">Delete</a>'
                 );
         }
 
     }
 
-    //function build
+    function buildBtnApprove($id, $approve)
+    {
+        if ($approve == 1)
+            return "<span style='color:green'>Approved</span>";
+        return "<a href='#' onclick='return setApprove($id);'>Approve</a>";
+    }
 
     function checkStatus($status)
     {
-        switch($status){
-            case "approve": return "<span style='background-color:green;color:white'>Approve</span>";
-            case "": return "";
+        switch ($status) {
+            case "approve":
+                return "<span style='background-color:green;color:white'>Approve</span>";
         }
+        return "<span style='background-color:blue;color:white'>No Approve</span>";
     }
 
     function searchInArray($data)
@@ -86,13 +92,23 @@ class Approve_Package extends WP_List_Table
     function admin_header()
     {
         $page = (isset($_GET['page'])) ? esc_attr($_GET['page']) : false;
-        if ('employer-list' != $page && 'employer-list-na' != $page)
+        if ('approve-list' != $page && 'approve-list-na' != $page)
             return;
+        ?>
+        <style type="text/css">
+            .wp-list-table .column-id {
+                width: 1%;
+            }
+
+            .wp-list-table .column-count {
+                width: 5%;
+            }
+        </style><?php
     }
 
     function no_items()
     {
-        _e('No employer found, dude.');
+        _e('No approve found, dude.');
     }
 
     function column_default($item, $column_name)
@@ -101,11 +117,10 @@ class Approve_Package extends WP_List_Table
             case 'count':
             case 'company_name':
             case 'user_login':
-//            case 'employer_date':
 //            case 'user_nicename':
 //            case 'passport_no':
             case 'email':
-            case 'status':
+//            case 'status':
             case 'create_time':
             case 'update_time':
             case 'edit':
@@ -122,7 +137,7 @@ class Approve_Package extends WP_List_Table
             'company_name' => array('company_name', true),
             'user_login' => array('user_login', true),
             'user_nicename' => array('user_nicename', true),
-            'status' => array('status', true),
+//            'status' => array('status', true),
             'create_time' => array('create_time', true),
             'update_time' => array('update_time', true),
             'email' => array('email', true),
@@ -138,7 +153,7 @@ class Approve_Package extends WP_List_Table
             'company_name' => __('Company name', 'mylisttable'),
             'user_login' => __('Login name', 'mylisttable'),
             'email' => __('Email', 'mylisttable'),
-            'status' => __('Status', 'mylisttable'),
+//            'status' => __('Status', 'mylisttable'),
             'create_time' => __('Create', 'mylisttable'),
             'update_time' => __('Update', 'mylisttable'),
             'edit' => __('', 'mylisttable'),

@@ -88,7 +88,7 @@ if ($_REQUEST) {
             $status = empty($_REQUEST['status']) ? false : $_REQUEST['status'];
             $result = $classEmployer->deletePosJob($_REQUEST['post_id'], $status);
         } else if ($postType == 'load_edit') {
-            $getPostID = empty($_REQUEST['post_id']) ? 0: $_REQUEST['post_id'];
+            $getPostID = empty($_REQUEST['post_id']) ? 0 : $_REQUEST['post_id'];
             $result = $classEmployer->buildFormPostJob($getPostID);
         } else if ($postType == 'feature_image') {
             if ($_REQUEST['post_id'] == 0) {
@@ -194,10 +194,10 @@ if ($_REQUEST) {
 
     //Pre register
     $preRegister = empty($_REQUEST['pre_register']) ? false : $_REQUEST['pre_register'];
-    if ($preRegister){
+    if ($preRegister) {
         $result = $classCandidate->addPreRegister($_REQUEST);
         echo strip_tags($classCandidate->returnMessage($result, $result['error'], true));
-        $_SESSION['fci'] = 1;
+        //$_SESSION['fci'] = 1;
         exit;
     }
     //Candidate
@@ -210,6 +210,7 @@ if ($_REQUEST) {
             case "register":
                 $result = $classCandidate->addCandidate($_REQUEST);
 
+                $candidateID = $result['candidate_id'];
                 /*if (!$result['error'] && !$getPostBackend) {
                     //$this->setUserLogin($user_id);
                     $_REQUEST['key'] = $result['key'];
@@ -222,7 +223,15 @@ if ($_REQUEST) {
                         echo $classCandidate->returnMessage("Sorry error send email.", true);
                     }
                 }*/
-
+                if (!$result['error']){//add resume file
+                    $resultAddResumeFile = $classCandidate->addAttachResume($_FILES['attach_resume'], $candidateID);
+                    if (!$resultAddResumeFile['error']) {
+                        $classCandidate->setAttachResumePath($candidateID, $resultAddResumeFile['path']);
+                    } else {
+                        $classCandidate->returnMessage($resultAddResumeFile, $resultAddResumeFile['error'], true);
+                        exit;
+                    }
+                }
                 echo $classCandidate->returnMessage($result, $result['error'], true);
                 break;
             case "none_member":
@@ -255,6 +264,18 @@ if ($_REQUEST) {
                 exit;
                 break;
             case "edit":
+                break;
+            case "send_email_confirm":
+                ob_start();
+                require_once("content-email/register_confirmation.php");
+                $message = ob_get_contents();
+                ob_end_clean();
+                $showStyle = empty($_REQUEST['show_style'])? true : false;
+                if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
+                    echo "Sorry error send email.";
+                } else
+                    echo "Send Success.";
+                exit;
                 break;
             case "get_career_profile":
                 $result = $classCandidate->buildCareerProfileTable($candidateID);
@@ -318,7 +339,7 @@ if ($_REQUEST) {
                 $result = $classCandidate->editWorkExperience($_REQUEST);
                 echo $result;
                 break;
-            case "edit_skill_languages":
+            case "edit_skill_languages"://var_dump($_REQUEST);exit;
                 $result = $classCandidate->editSkillLanguages($_REQUEST);
                 echo $result;
                 break;
@@ -518,28 +539,44 @@ if ($_REQUEST) {
 
     if (isset($_REQUEST['other_setting_post'])) {
         $classOthSetting = new OtherSetting($wpdb);
-        $result = $classOthSetting->saveData(
-            $_REQUEST[$classOthSetting->nameWorkingDay],
-            $_REQUEST[$classOthSetting->namePositionList],
-            $_REQUEST[$classOthSetting->nameJobLocation]
-        );
-        
-//        $result = $classOthSetting->saveWorkingDay($_REQUEST[$classOthSetting->namePositionList]);
-        echo $result;
+        $result = $classOthSetting->saveData($classOthSetting->nameTitle, $_REQUEST[$classOthSetting->nameTitle]);
+        if (!$result) {
+            echo json_encode(array('error' => true, 'message' => 'Save error'));
+            exit;
+        }
+        $result = $classOthSetting->saveData($classOthSetting->nameWorkingDay, $_REQUEST[$classOthSetting->nameWorkingDay]);
+        if (!$result) {
+            echo json_encode(array('error' => true, 'message' => 'Save error'));
+            exit;
+        }
+        $result = $classOthSetting->saveData($classOthSetting->namePositionList, $_REQUEST[$classOthSetting->namePositionList]);
+        if (!$result) {
+            echo json_encode(array('error' => true, 'message' => 'Save error'));
+            exit;
+        }
+        $result = $classOthSetting->saveData($classOthSetting->nameJobLocation, $_REQUEST[$classOthSetting->nameJobLocation]);
+        if (!$result) {
+            echo json_encode(array('error' => true, 'message' => 'Save error'));
+            exit;
+        }
+
+        echo json_encode(array('error' => false, 'message' => 'Save success'));
         exit;
     }
 
-    $queryBackendPost = empty($_REQUEST['query_backend_post'])? false: $_REQUEST['query_backend_post'];
+    $queryBackendPost = empty($_REQUEST['query_backend_post']) ? false : $_REQUEST['query_backend_post'];
     if ($queryBackendPost) {
-        $sql = empty($_REQUEST['query_txt'])? null: $_REQUEST['query_txt'];
-        if (strstr($sql, 'select') >= 0) {
-            $result = $wpdb->get_results($sql);
-            var_dump($result);
-        } else {
+        $sql = empty($_REQUEST['query_txt']) ? null : $_REQUEST['query_txt'];
+        if (strpos($sql, 'select') === false) {
             $result = $wpdb->query($sql);
             if ($result)
-                echo "Success";
-            else echo "Fail";
+                echo "Query Success";
+            else echo "Query Fail";
+        } else {
+            $result = $wpdb->get_results($sql);
+            if ($result)
+                var_dump($result);
+            else echo 'No data';
         }
         exit;
     }

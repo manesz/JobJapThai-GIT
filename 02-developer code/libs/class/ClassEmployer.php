@@ -1019,7 +1019,7 @@ class Employer
     function buildFormPostJob($post_id = 0)
     {
         $classQueryPostJob = new QueryPostJob($this->wpdb);
-        $objClassOtherSetting = new OtherSetting($this->wpdb);
+        $otherSetting = new OtherSetting($this->wpdb);
         $classCandidate = new Candidate($this->wpdb);
         $classPackage = new Package($this->wpdb);
 //        $user_id = get_current_user_id();
@@ -1192,10 +1192,10 @@ class Employer
             </div>
             <div class="form-group col-md-12">
                 <div class="col-md-2 text-right clearfix">
-                    <label for="working_day"><?php _e('Working Day:', 'framework') ?><span
+                    <label for="<?php echo $otherSetting->nameWorkingDay; ?>"><?php _e('Working Day:', 'framework') ?><span
                             class="font-color-red">*</span></label></div>
                 <div class="col-md-10">
-                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect('working_day', $working_day); ?>
+                    <?php echo $otherSetting->buildDataToSelect($otherSetting->nameWorkingDay, $working_day); ?>
                 </div>
             </div>
             <div class="form-group col-md-12" style="">

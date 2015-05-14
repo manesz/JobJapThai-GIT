@@ -436,7 +436,7 @@ if ($directions)
 
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right">
-                                <label for="japanese_skill">Attach resume</label><br/>
+                                <label for="attach_resume">Attach resume</label><br/>
                                 <small>(size max. 5MB)</small>
                             </div>
                             <div class="col-md-8">

@@ -231,8 +231,8 @@ class Candidate
         if ($objSkillLanguage)
             extract((array)$objSkillLanguage[0]);
         $userType = get_user_meta($candidate_id, 'user_type', true);
+        $getResumePath = get_user_meta($candidate_id, $this->resumePath, true);
         if ($userType == 'none_member') {
-            $getResumePath = get_user_meta($candidate_id, $this->resumePath, true);
             $isNoneMember = true;
         } else $isNoneMember = false;
         ob_start();
@@ -634,6 +634,45 @@ class Candidate
               data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
 
             <div id="div_step1" class="col-md-12">
+                <div id="div_step1" class="col-md-12">
+                    <div class="col-md-4 text-right">
+                        <label for="attach_resume">Attach resume</label><br/>
+                        <small>(size max. 5MB)</small>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                        <span class="btn btn-default btn-file">
+                                            <span class="fileinput-new"><span
+                                                    class="glyphicon glyphicon glyphicon-file"></span>Select PDF file</span>
+                                            <span class="fileinput-exists"><span
+                                                    class="glyphicon glyphicon glyphicon-file"></span> Change</span>
+                                            <input type="file" name="attach_resume" id="attach_resume"
+                                                   accept="application/pdf">
+                                        </span>
+                            <span class="fileinput-filename"></span>
+                            <a href="#" id="delete_file" class="close fileinput-exists" data-dismiss="fileinput"
+                               style="float: none">&times;</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-12">
+                    <div class="col-md-4 text-right clearfix"><label for="first_name">Name<span
+                                class="font-color-red">*</span></label></div>
+                    <div class="col-md-8">
+                        <input type="text" id="first_name" name="first_name" class="form-control"
+                               maxlength="50" required=""
+                            />
+                    </div>
+                </div>
+                <div class="form-group col-md-12">
+                    <div class="col-md-4 text-right clearfix"><label for="phone">Mobile<span
+                                class="font-color-red">*</span></label></div>
+                    <div class="col-md-8">
+                        <input type="text" id="phone" name="phone" class="form-control"
+                               maxlength="50" required=""
+                            />
+                    </div>
+                </div>
                 <div class="form-group col-md-12">
                     <div class="col-md-4 text-right clearfix"><label for="email">Email<span
                                 class="font-color-red">*</span></label></div>
@@ -642,6 +681,14 @@ class Candidate
                                maxlength="50"
                                data-bv-emailaddress="true"
                                required data-bv-emailaddress-message="The input is not a valid email address"
+                            />
+                    </div>
+                </div>
+                <div class="form-group col-md-12">
+                    <div class="col-md-4 text-right clearfix"><label for="line_id">Line ID</label></div>
+                    <div class="col-md-8">
+                        <input type="text" id="line_id" name="line_id" class="form-control"
+                               maxlength="50"
                             />
                     </div>
                 </div>
@@ -662,9 +709,9 @@ class Candidate
                 <div class="form-group col-md-12" style="">
                     <button id="submitStep1" type="submit" class="btn btn-primary col-md-6 pull-right">Submit Form
                     </button>
-                    <button type="button" class="btn btn-default pull-right btn_reset_from" style="border: none;">
-                        Reset
-                    </button>
+<!--                    <button type="reset" class="btn btn-default pull-right btn_reset_from" style="border: none;">-->
+<!--                        Reset-->
+<!--                    </button>-->
                 </div>
             </div>
             <!-- END: step 1 -->
@@ -810,103 +857,31 @@ class Candidate
 //        $objDesiredJob = $this->getDesiredJob($user_id);
 //        if ($objDesiredJob)
 //            extract((array)$objDesiredJob[0]);
-
+        $getResumePath = get_user_meta($user_id, $this->resumePath, true);
         $objSkillLanguage = $this->getSkillLanguages($user_id);
         if ($objSkillLanguage)
             extract((array)$objSkillLanguage[0]);
         ob_start();
         ?>
-        <script>
-
-            var ajaxPageurl = '<?php echo get_home_url() ?>/';
-            var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
-            var proselect = {
-                proval: 0,
-                amval: 0,
-                init: function () {
-                    proselect.proval = $('#province').val();
-                    proselect.selectProvince();
-                    proselect.setEvent();
-                },
-                setEvent: function () {
-                    $('#province').on('change', proselect.selectProvince);
-                },
-                selectProvince: function () {
-                    proselect.proval = $('#province').val();
-                    proselect.clearampporSelect();
-                    $('#aupher-select').slideUp('fast', function () {
-                        if (proselect.proval !== '0') {
-                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
-                                if (typeof data['hasfile'] === 'undefined') {
-                                    alert(0)
-                                    proselect.createSelect(data);
-                                    $('#aupher-select').slideDown('fast');
-                                } else {
-                                    $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
-                                        proselect.createSelect(data);
-                                        $('#aupher-select').slideDown('fast');
-                                    });
-                                }
-                            });
-                        }
-                    });
-
-                },
-                createSelect: function (data) {
-                    $.each(data, function (index, dat) {
-                        var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
-                        var mytxt = '<option value="' + dat.AMPHUR_ID + '" ' + checkSelect + '>' +
-                            dat.AMPHUR_NAME + '</option>';
-                        $('#district').append(mytxt);
-                    });
-                    if ($('#district').html()) {
-                        proselect.selectAmphor();
-                    }
-                    $('#district').unbind('change');
-                    $('#district').on('change', proselect.selectAmphor);
-                },
-                clearampporSelect: function () {
-                    $('#district option[value!=0]').remove();
-                    $('#district').val(0);
-                    proselect.clearDistinctSelect();
-                },
-                clearDistinctSelect: function () {
-                    $('#sub_distinct option[value!=0]').remove();
-                    $('#sub_distinct').val(0);
-                    $('#distinct-select').css('display', 'none');
-                },
-                selectAmphor: function () {
-                    proselect.amval = $('#district').val();
-                    proselect.clearDistinctSelect();
-                    $('#distinct-select').slideUp('fast', function () {
-                        if (proselect.amval != '0') {
-                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
-                                if (typeof data['hasfile'] === 'undefined') {
-                                    proselect.createDistinctSelect(data);
-                                    $('#distinct-select').slideDown('fast');
-                                } else {
-                                    $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
-                                        proselect.createDistinctSelect(data);
-                                        $('#distinct-select').slideDown('fast');
-                                    });
-                                }
-                            });
-                        }
-                    });
-                },
-                createDistinctSelect: function (data) {//console.log(data);
-                    $.each(data, function (index, dat) {
-                        var checkSelect = dat.DISTRICT_ID == sub_district ? 'selected' : '';
-                        var mytxt = '<option value="' + dat.DISTRICT_ID + '" ' + checkSelect + '> ' + dat.DISTRICT_NAME + '</option>';
-                        $('#sub_distinct').append(mytxt);
-                    });
-                }
-            };
-            $(document).ready(function () {
-                proselect.init();
-            });
-        </script>
         <div id="div_step2" class="col-md-12">
+            <div class="panel panel-default" id="panel_career_profile">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="tab_panel collapsed" data-toggle="collapse" data-parent=""
+                           href=""
+                           aria-expanded="false" aria-controls="collapseTwo">
+                            Attach Resume
+                        </a>
+                    </h4>
+                </div>
+                <div class="panel-collapse collapse in" role="tabpanel"
+                     aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        <a href="<?php echo $getResumePath; ?>"
+                           target="_blank"><?php echo basename($getResumePath); ?></a>
+                    </div>
+                </div>
+            </div>
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
                 <div class="panel panel-default" id="panel_information">
@@ -925,6 +900,8 @@ class Candidate
                         <form method="post" id="form_candidate1" class="form-horizontal form_candidate">
                             <input type="hidden" name="information_id"
                                    value="<?php echo empty($objInformation) ? 0 : $objInformation[0]->id; ?>">
+                            <input type="hidden" name="post_backend"
+                                   value="<?php echo $is_backend ? 'true' : ''; ?>">
 
                             <div class="panel-body">
                                 <div class="form-group col-md-12">
@@ -971,16 +948,9 @@ class Candidate
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="title">Title<span
                                                 class="font-color-red">*</span></label></div>
-                                    <div class="col-md-8"><select id="title" name="title" class="form-control">
-                                            <option value="Mr." <?php echo $title == "Mr." ? "selected" : ""; ?>>Mr.
-                                            </option>
-                                            <option value="Ms." <?php echo $title == "Ms." ? "selected" : ""; ?>>Ms.
-                                            </option>
-                                            <option value="Mrs" <?php echo $title == "Mrs" ? "selected" : ""; ?>>Mrs
-                                            </option>
-                                            <option value="Miss" <?php echo $title == "Miss" ? "selected" : ""; ?>>Miss
-                                            </option>
-                                        </select></div>
+                                    <div class="col-md-8">
+                                        <?php echo $classOtherSetting->buildDataToSelect($classOtherSetting->nameTitle, $title);?>
+                                    </div>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="first_name">First Name<span
@@ -1034,6 +1004,14 @@ class Candidate
                                         <input type="text" maxlength="50"
                                                id="phone" name="phone" class="form-control" required
                                                value="<?php echo empty($phone) ? '' : $phone; ?>"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <div class="col-md-4 text-right clearfix"><label for="line_id">Line ID</label></div>
+                                    <div class="col-md-8">
+                                        <input type="text" maxlength="50"
+                                               id="line_id" name="line_id" class="form-control"
+                                               value="<?php echo empty($line_id) ? '' : $line_id; ?>"/>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
@@ -1096,7 +1074,17 @@ class Candidate
                                         </select>
                                     </div>
                                 </div>
-
+                                <?php if ($is_backend): ?>
+                                    <div class="form-group col-md-12" id="distinct-select">
+                                        <div class="col-md-4 text-right clearfix"><label
+                                                for="description">Description</label></div>
+                                        <div class="col-md-8">
+                                            <textarea class="form-control" id="description"
+                                                      rows="8"
+                                                      name="description"><?php echo empty($description) ? '' : $description; ?></textarea>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="form-group col-md-12" style="">
                                     <button type="submit" class="btn btn-primary col-md-6 pull-right btn_submit_form">
                                         Save
@@ -1131,7 +1119,8 @@ class Candidate
                                 <div id="career_profile_list"></div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="year_of_work_exp">Year of Work
-                                            Exp.</label>
+                                            Exp.<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="year_of_work_exp" name="year_of_work_exp"
@@ -1144,7 +1133,8 @@ class Candidate
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="last_position">Lasted
-                                            Position</label>
+                                            Position<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" maxlength="50" required=""
@@ -1154,14 +1144,14 @@ class Candidate
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="last_industry">Lasted
-                                            Industry</label>
+                                            Industry<span
+                                                class="font-color-red">*</span></label>
                                     </div>
 
                                     <div class="col-md-8">
-                                        <select id="last_industry" name="last_industry" class="form-control"
-                                                required="">
-                                            <option>xxxx</option>
-                                        </select>
+                                        <input type="text" maxlength="50" required=""
+                                               id="last_industry" name="last_industry" class="form-control"
+                                               value="<?php echo empty($last_industry) ? "" : $last_industry; ?>"/>
                                     </div>
                                 </div>
                                 <!--                        <div class="form-group col-md-12">-->
@@ -1178,7 +1168,8 @@ class Candidate
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="last_month_salary">Last
                                             Monthly
-                                            Salary</label>
+                                            Salary<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="last_month_salary" name="last_month_salary"
@@ -1227,42 +1218,46 @@ class Candidate
                             <div class="panel-body">
                                 <div id="desired_job_list"></div>
                                 <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="industry">Industry</label>
+                                    <div class="col-md-4 text-right clearfix"><label for="industry">Industry<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select id="industry" name="industry" class="form-control">
-                                            <option>xxxx</option>
-                                        </select>
+                                        <input type="text" maxlength="50" required=""
+                                               id="industry" name="industry" class="form-control"
+                                               value="<?php echo empty($industry) ? "" : $industry; ?>"/>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="job_position">Job
-                                            Position</label>
+                                            Position<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
-                                        <?php echo $classOtherSetting->buildWorkingDayToSelect('job_position',
+                                        <?php echo $classOtherSetting->buildDataToSelect('job_position',
                                             empty($job_position) ? "" : $job_position); ?>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="job_type">Job Type</label>
+                                    <div class="col-md-4 text-right clearfix"><label for="job_type">Job Type<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select id="job_type" name="job_type" class="form-control">
-                                            <option>xxxx</option>
-                                        </select>
+                                        <input type="text" maxlength="50" required=""
+                                               id="job_type" name="job_type" class="form-control"
+                                               value="<?php echo empty($job_type) ? "" : $job_type; ?>"/>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="expect_month_salary">Expect
                                             Monthly
-                                            Salary</label>
+                                            Salary<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="expect_month_salary" name="expect_month_salary"
                                                class="form-control"
                                                placeholder="THB" maxlength="50"
-                                               value=""/>
+                                               value="" required=""/>
                                         <span class="font-color-red">please enter only number No.(-) or (.) and space example: 15000 or 20000, 100000</span>
                                     </div>
                                 </div>
@@ -1270,19 +1265,21 @@ class Candidate
                                     <div class="col-md-4 text-right clearfix"><label for="available_to_work">Are you
                                             available to
                                             work
-                                            ?</label></div>
+                                            ?<span
+                                                class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
-                                        <select id="available_to_work" name="available_to_work" class="form-control">
-                                            <option>xxxx</option>
-                                        </select>
+                                        <input type="text" maxlength="50" required=""
+                                               id="available_to_work" name="available_to_work" class="form-control"
+                                               value="<?php echo empty($available_to_work) ? "" : $available_to_work; ?>"/>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="start_date">Start Date</label>
+                                    <div class="col-md-4 text-right clearfix"><label for="start_date">Start Date<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="start_date" name="start_date" maxlength="20"
-                                               class="form-control datepicker" placeholder="dd/mm/yyyy"
+                                               class="form-control datepicker" placeholder="dd/mm/yyyy" required=""
                                                value=""/>
                                     </div>
                                 </div>
@@ -1327,16 +1324,18 @@ class Candidate
                                 <span>Please provide details of education institutions, dates attended and qualification attained.</span>
 
                                 <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="degree">Degree</label></div>
+                                    <div class="col-md-4 text-right clearfix"><label for="degree">Degree<span
+                                                class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
-                                        <select id="degree" name="degree" class="form-control" required="">
-                                            <option>xxxx</option>
-                                        </select>
+                                        <input type="text" maxlength="50" required=""
+                                                         id="degree" name="degree" class="form-control"
+                                                         value="<?php echo empty($degree) ? "" : $degree; ?>"/>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="university">University /
-                                            Institute</label></div>
+                                            Institute<span
+                                                class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
                                         <input type="text" id="university" name="university" maxlength="80"
                                                class="form-control" placeholder="" required/>
@@ -1344,7 +1343,8 @@ class Candidate
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="education_period_from">Education
-                                            Period</label>
+                                            Period<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="education_period_from" name="education_period_from"
@@ -1364,7 +1364,8 @@ class Candidate
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="grade_gpa">Grade / GPA</label>
+                                    <div class="col-md-4 text-right clearfix"><label for="grade_gpa">Grade / GPA<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="grade_gpa" name="grade_gpa" class="form-control"
@@ -1407,7 +1408,8 @@ class Candidate
                                 <div id="work_experience_list"></div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="employment_period_from">Employment
-                                            Period</label>
+                                            Period<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="employment_period_from" name="employment_period_from"
@@ -1425,7 +1427,8 @@ class Candidate
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="company_name">Company
-                                            Name</label>
+                                            Name<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="company_name" name="company_name" class="form-control"
@@ -1433,7 +1436,8 @@ class Candidate
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <div class="col-md-4 text-right clearfix"><label for="position">Position</label>
+                                    <div class="col-md-4 text-right clearfix"><label for="position">Position<span
+                                                class="font-color-red">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" id="position" name="position" class="form-control"
@@ -1442,7 +1446,8 @@ class Candidate
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="col-md-4 text-right clearfix"><label for="month_salary">Monthly
-                                            Salary</label></div>
+                                            Salary<span
+                                                class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
                                         <input type="text" id="month_salary" name="month_salary" class="form-control"
                                                placeholder="" required="" maxlength="50"/>
@@ -1631,6 +1636,96 @@ class Candidate
 
             </div>
         </div>
+
+        <script>
+
+            var ajaxPageurl = '<?php echo get_home_url() ?>/';
+            var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
+            var proselect = {
+                proval: 0,
+                amval: 0,
+                init: function () {
+                    proselect.proval = $('#province').val();
+                    proselect.selectProvince();
+                    proselect.setEvent();
+                },
+                setEvent: function () {
+                    $('#province').on('change', proselect.selectProvince);
+                },
+                selectProvince: function () {
+                    proselect.proval = $('#province').val();
+                    proselect.clearampporSelect();
+                    $('#aupher-select').slideUp('fast', function () {
+                        if (proselect.proval !== '0') {
+                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
+                                if (typeof data['hasfile'] === 'undefined') {
+                                    proselect.createSelect(data);
+                                    $('#aupher-select').slideDown('fast');
+                                } else {
+                                    $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
+                                        proselect.createSelect(data);
+                                        $('#aupher-select').slideDown('fast');
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                },
+                createSelect: function (data) {
+                    $.each(data, function (index, dat) {
+                        var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
+                        var mytxt = '<option value="' + dat.AMPHUR_ID + '" ' + checkSelect + '>' +
+                            dat.AMPHUR_NAME + '</option>';
+                        $('#district').append(mytxt);
+                    });
+                    if ($('#district').html()) {
+                        proselect.selectAmphor();
+                    }
+                    $('#district').unbind('change');
+                    $('#district').on('change', proselect.selectAmphor);
+                },
+                clearampporSelect: function () {
+                    $('#district option[value!=0]').remove();
+                    $('#district').val(0);
+                    proselect.clearDistinctSelect();
+                },
+                clearDistinctSelect: function () {
+                    $('#sub_distinct option[value!=0]').remove();
+                    $('#sub_distinct').val(0);
+                    $('#distinct-select').css('display', 'none');
+                },
+                selectAmphor: function () {
+                    proselect.amval = $('#district').val();
+                    proselect.clearDistinctSelect();
+                    $('#distinct-select').slideUp('fast', function () {
+                        if (proselect.amval != '0') {
+                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
+                                if (typeof data['hasfile'] === 'undefined') {
+                                    proselect.createDistinctSelect(data);
+                                    $('#distinct-select').slideDown('fast');
+                                } else {
+                                    $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
+                                        proselect.createDistinctSelect(data);
+                                        $('#distinct-select').slideDown('fast');
+                                    });
+                                }
+                            });
+                        }
+                    });
+                },
+                createDistinctSelect: function (data) {//console.log(data);
+                    $.each(data, function (index, dat) {
+                        var checkSelect = dat.DISTRICT_ID == sub_district ? 'selected' : '';
+                        var mytxt = '<option value="' + dat.DISTRICT_ID + '" ' + checkSelect + '> ' + dat.DISTRICT_NAME + '</option>';
+                        $('#sub_distinct').append(mytxt);
+                    });
+                }
+            };
+            $(document).ready(function () {
+                proselect.init();
+            });
+        </script>
         <?php
         $html = ob_get_contents();
         ob_end_clean();
@@ -1893,6 +1988,8 @@ class Candidate
         $province = empty($province) ? false : $province;
         $district = empty($district) ? false : $district;
         $city = empty($city) ? false : $city;
+        $line_id = empty($line_id) ? false : $line_id;
+        $description = empty($description) ? false : $description;
         if (!$candidate_id)
             return false;
         $sql = "
@@ -1904,11 +2001,13 @@ class Candidate
                 `gender`,
                 `date_of_birth`,
                 `phone`,
+                `line_id`,
                 `nationality`,
                 `county`,
                 `province`,
                 `district`,
                 `city`,
+                `description`,
                 `create_datetime`,
                 `publish`)
             VALUES (
@@ -1919,11 +2018,13 @@ class Candidate
                 '{$gender}',
                 '{$date_of_birth}',
                 '{$phone}',
+                '{$line_id}',
                 '{$nationality}',
                 '{$county}',
                 '{$province}',
                 '{$district}',
                 '{$city}',
+                '{$description}',
                 NOW(),
                 1
             );
@@ -2252,10 +2353,11 @@ class Candidate
         }
         include_once($fxrootpath);
         extract($post);
+        $getPostBackend = empty($post['post_backend']) ? false : $post['post_backend'];
         $email = empty($email) ? false : $email;
+        //$pass = "jjt_password";
         $pass = empty($pass) ? false : $pass;
         $rePass = empty($rePass) ? false : $rePass;
-        $getPostBackend = empty($post['post_backend']) ? false : $post['post_backend'];
         if ($pass != $rePass && $pass && $rePass) {
             return $this->returnMessage('Error! Check your password and confirm password.', true, false);
         }
@@ -2409,8 +2511,21 @@ class Candidate
         update_user_meta($candidate_id, $this->resumePath, $path);
     }
 
+    function convertFileName($file, $candidate_id){
+        $pathInfo = pathinfo($file['name']);
+        $fileType = $pathInfo['extension'];
+//        $fileName = $pathInfo['name'];
+//        $fileName = iconv("UTF-8", "windows-874", $fileName);
+//        $fileName = utf8_encode($fileName);
+//        $fileName = mb_convert_encoding($fileName, 'windows-874');
+        $fileName = date_i18n("Y-m-d_Hms_") . $candidate_id;
+        $file['name'] = "resume_$fileName.$fileType";
+        return $file;
+    }
+
     function addAttachResume($file, $candidate_id)
     {
+        $file = $this->convertFileName($file, $candidate_id);
         $handle = new Upload($file);
         $upload_dir = wp_upload_dir();
         $dir_dest = $upload_dir['basedir'] . "/resume/$candidate_id/";
@@ -2470,7 +2585,8 @@ class Candidate
     function editInformation($post)
     {
         extract($post);
-        $post_backend = empty($post_backend) ? 'false' : $post_backend;
+        $candidate_id = empty($candidate_id) ? 0 : $candidate_id;
+        $post_backend = empty($post_backend) ? false : $post_backend;
         $information_id = empty($information_id) ? false : $information_id;
         $new_password = empty($new_password) ? false : $new_password;
         $old_password = empty($old_password) ? false : $old_password;
@@ -2497,6 +2613,10 @@ class Candidate
         $province = empty($province) ? false : $province;
         $district = empty($district) ? false : $district;
         $city = empty($city) ? false : $city;
+        $line_id = empty($line_id) ? false : $line_id;
+        if ($post_backend)
+            $description = empty($description) ? "''" : "'$description'";
+        else $description = "`description`";
 
         if (!$information_id) {
             $information_id = $this->addInformation($post);
@@ -2504,42 +2624,44 @@ class Candidate
                 return $this->returnMessage('Error not Information id.', true);
         } else {
             $sql = "
-            UPDATE `$this->tableInformation`
-            SET
-              `title` = '{$title}',
-              `first_name` = '{$first_name}',
-              `last_name` = '{$last_name}',
-              `gender` = '{$gender}',
-              `date_of_birth` = '{$date_of_birth}',
-              `phone` = '{$phone}',
-              `nationality` = '{$nationality}',
-              `county` = '{$county}',
-              `province` = '{$province}',
-              `district` = '{$district}',
-              `city` = '{$city}',
-              `update_datetime` = NOW()
-            WHERE `id` = '$information_id';
-        ";
+                UPDATE `$this->tableInformation`
+                SET
+                  `title` = '{$title}',
+                  `first_name` = '{$first_name}',
+                  `last_name` = '{$last_name}',
+                  `gender` = '{$gender}',
+                  `date_of_birth` = '{$date_of_birth}',
+                  `phone` = '{$phone}',
+                  `line_id` = '{$line_id}',
+                  `nationality` = '{$nationality}',
+                  `county` = '{$county}',
+                  `province` = '{$province}',
+                  `district` = '{$district}',
+                  `city` = '{$city}',
+                  `description` = $description,
+                  `update_datetime` = NOW()
+                WHERE `id` = '$information_id';
+            ";
             $result = $this->wpdb->query($sql);
             if (!$result)
                 return $this->returnMessage('Sorry Edit Error.', true);
 
-            //if ($new_password && $old_password) { //echo $new_password;echo $old_password;
-            $current_user = $this->getUser($candidate_id);
-            $user = get_user_by('login', $current_user->user_login);
-            $checkOldPass = $post_backend == 'true'? true: wp_check_password($old_password, $user->data->user_pass, $user->ID);
-            if ($user && $checkOldPass) {
-                wp_set_password($new_password, $user->ID);
-                if ($post_backend != 'true')
-                    return $this->returnMessage('<script>setTimeout(function(){window.location.reload()}, 3000);</script>Edit Success.', false);
-            } else {
-                return $this->returnMessage('Error check old password.', true);
+            if ($new_password) { //echo $new_password;echo $old_password;
+                $current_user = $this->getUser($candidate_id);
+                $user = get_user_by('login', $current_user->user_login);
+                $checkOldPass = $post_backend ? true : wp_check_password($old_password, $user->data->user_pass, $user->ID);
+                if ($user && $checkOldPass) {
+                    wp_set_password($new_password, $user->ID);
+                    if (!$post_backend)
+                        return $this->returnMessage('<script>setTimeout(function(){window.location.reload()}, 3000);</script>Edit Success.', false);
+                } else {
+                    return $this->returnMessage('Error check old password.', true);
+                }
             }
-            //}
-        }
+        }/*
         if ($post_backend == "true") {
             update_user_meta($candidate_id, "activation_confirm", "true");
-        }
+        }*/
         return $this->returnMessage('Edit Success.', false);
     }
 

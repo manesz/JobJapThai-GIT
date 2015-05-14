@@ -104,6 +104,15 @@ $(document).ready(function () {
                         message: 'The value is not a valid date'
                     }
                 }
+            },
+            attach_resume: {
+                validators: {
+                    file: {
+                        type: 'application/pdf',
+                        maxSize: 5 * 1024 * 1024,
+                        message: 'The selected file is not valid or check maximum size.!'
+                    }
+                }
             }
         }})
         .on('success.form.bv', function (e) {
@@ -116,23 +125,61 @@ $(document).ready(function () {
 
                 // Get the BootstrapValidator instance
                 var bv = $form.data('bootstrapValidator');
-                var data = $form.serialize();
-                data += "&" + data_for_post;
+                //alert($form.attr('id'));return false;
+                if ($form.attr('id') == 'form_candidate6')
+                {
+                    data_for_post = $.param({
+                        candidate_post: 'true',
+                        post_type: 'edit_skill_languages',
+                        candidate_id: candidate_id
+                    });
+                }
+                var attach_resume = !is_login ? $("#attach_resume")[0].files[0] : null;
+                //data += "&attach_resume=" + attach_resume;
+
+                var formData = new FormData();
+                //formData.append("attach_resume", attach_resume);
+                //$("input", $form).each(function(i) {
+                //    formData.append($(this).attr("name"), $(this).val());
+                //});
+                //$("select", $form).each(function(i) {
+                //    formData.append($(this).attr("name"), $(this).val());
+                //});
+                var other_data = $form.serializeArray();
+                //var data = $form.serialize();
                 if (is_page_backend)
-                    data += "&post_backend=true";
+                    data_for_post += "&post_backend=true";
+                data_for_post += "&" + data_for_post;
+
+                var pairs = data_for_post.split('&');
+                for(var i in pairs){
+                    var split = pairs[i].split('=');
+                    other_data[other_data.length] = {name:split[0], value:split[1]};
+                }
+                $.each(other_data,function(key,input){
+                    formData.append(input.name,input.value);
+                });
+                //for ( var key in objData ) {
+                //    formData.append(key, objData[key]);
+                //}
+                formData.append("attach_resume", attach_resume);
+                //console.log(other_data);
                 // Use Ajax to submit form data
-//                alert(data);return;
+                //alert(other_data + formData);return;
                 showImgLoading();
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     dataType: 'json',
                     cache: false,
-                    url: url_post,
-                    data: data,
+                    contentType: false,
+                    processData: false,
+                    url: '',
+                    data: formData,
                     success: function (result) {
                         hideImgLoading();
                         if (!result.error) {
                             if (!is_login) {
+                                $("#disabled").prop('disabled', true);
                                 showModalMessage(result.msg, "Message register Candidate");
                                 if (!is_page_backend) {
                                     setTimeout(function () {

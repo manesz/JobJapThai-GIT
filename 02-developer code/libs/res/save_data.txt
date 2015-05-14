@@ -1,4 +1,4 @@
-a:3:{s:11:"working_day";s:28:"test
+a:4:{s:11:"working_day";s:28:"test
 Mon-Fri 8.00 – 17.00";s:12:"job_position";s:705:"Japanese speaking Interpretation and Translation
 Japanese speaking Secretary
 Japanese speaking Coordinator
@@ -200,4 +200,7 @@ Kang Khoi Industrial Estate
 Hemaraj Eastern Seaboard Industrial Estate(3rd)
 Laamchabang Industrial Estate
 Hi-Tech Kabin Industrial Estate
-Rojana Industrial Estate";}
+Rojana Industrial Estate";s:5:"title";s:19:"Mr.
+Ms.
+Mrs
+Miss";}

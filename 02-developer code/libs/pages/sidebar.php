@@ -3,9 +3,10 @@ global $wpdb;
 $classQueryPostJob = new QueryPostJob($wpdb);
 $classPackage = new Package($wpdb);
 $classEmployer = new Employer($wpdb);
+$classOtherSetting = new OtherSetting($wpdb);
 $s = empty($_GET['s']) ? false : $_GET['s'];
 $location = empty($_GET['location']) ? false : $_GET['location'];
-$position = empty($_GET['position']) ? false : $_GET['position'];
+$position = empty($_GET[$classOtherSetting->namePositionList]) ? false : $_GET[$classOtherSetting->namePositionList];
 $emp_type = empty($_GET['emp_type']) ? false : $_GET['emp_type'];
 $job_cat = empty($_GET['job_cat']) ? false : $_GET['job_cat'];
 $sub_cat = empty($_GET['sub_cat']) ? false : $_GET['sub_cat'];
@@ -76,10 +77,12 @@ else: echo "display: block;"; endif; ?> border: 1px #ddd solid; border-radius: 5
                     </select>
                 </div>
                 <div class="form-group clearfix" style="margin-bottom: 10px;">
-                    <label for="position" class="" style="font-size: 12px; padding-right: 0px;">Position</label>
-                    <select name="position" class="col-md-12 form-control">
-                        <option>All Position</option>
-                    </select>
+                    <label for="<?php echo $classOtherSetting->namePositionList; ?>" class="" style="font-size: 12px; padding-right: 0px;">Position</label>
+                    <?php
+                        echo $classOtherSetting->buildDataToSelect(
+                            $classOtherSetting->namePositionList, $position,
+                        'col-md-12 form-control', false);
+                    ?>
                 </div>
                 <div class="form-group clearfix" style="margin-bottom: 10px;">
                     <label for="emp_type" class="" style="font-size: 12px; padding-right: 0px;">Job Level</label>

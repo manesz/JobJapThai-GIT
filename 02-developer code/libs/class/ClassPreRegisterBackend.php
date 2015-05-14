@@ -535,7 +535,7 @@ class Pre_Register extends WP_List_Table
                                 for="<?php echo $classOthSetting->namePositionList; ?>">Job
                                 Position<span class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <?php echo $classOthSetting->buildWorkingDayToSelect('job_position', empty($userData->job_position)? null :$userData->job_position) ?>
+                            <?php echo $classOthSetting->buildDataToSelect($classOthSetting->namePositionList, empty($userData->job_position)? null :$userData->job_position) ?>
                         </div>
                     </div>
                     <div class="form-group col-md-12">
@@ -543,7 +543,7 @@ class Pre_Register extends WP_List_Table
                                 for="<?php echo $classOthSetting->nameJobLocation; ?>">Job
                                 Location<span class="font-color-red">*</span></label></div>
                         <div class="col-md-8">
-                            <?php echo $classOthSetting->buildWorkingDayToSelect("job_location", empty($userData->job_location)? null :$userData->job_location); ?>
+                            <?php echo $classOthSetting->buildDataToSelect($classOthSetting->nameJobLocation, empty($userData->job_location)? null :$userData->job_location); ?>
                         </div>
                     </div>
                     <div class="form-group col-md-12">

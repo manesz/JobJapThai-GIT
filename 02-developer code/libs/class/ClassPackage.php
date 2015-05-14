@@ -50,6 +50,7 @@ class Package
             WHERE 1
             AND publish=1
             $strAnd
+            ORDER BY id DESC
         ";
         $myRows = $this->wpdb->get_results($sql);
         return $myRows;

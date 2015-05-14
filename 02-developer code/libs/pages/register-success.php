@@ -12,11 +12,12 @@ $getEmail = empty($_REQUEST['mail_confirm']) ? "" : $_REQUEST['mail_confirm'];
                 <div class="clearfix"
                      style="border: 1px #ddd solid; border-radius: 5px; background: #fff; padding: 10px; margin-bottom: 10px;">
                     <div class="col-md-12 border-bottom-1-ddd padding-bottom-10 margin-bottom-10">
-                        You have verified your Email as log in. Please enter "Email&Password" to log in.<br/>
-                        (Your verified Email is <?php echo $getEmail; ?>)
+<!--                        You have verified your Email as log in. Please enter "Email&Password" to log in.<br/>-->
+<!--                        (Your verified Email is --><?php //echo $getEmail; ?><!--)-->
+                        ขอบคุณที่สมัครสมาชิกกับเรา กรุณารอการติตต่อกลับไป
                     </div>
                     <div class="col-md-12 border-bottom-1-ddd padding-bottom-10 margin-bottom-10">
-                        <a class="btn" href="<?php echo home_url(); ?>">Go to Log in</a>
+                        <a class="btn" href="<?php echo home_url(); ?>">Go to Home</a>
                     </div>
                     <div class="clearfix" style="margin-top: 20px;"></div>
                 </div>

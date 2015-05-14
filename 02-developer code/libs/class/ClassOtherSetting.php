@@ -7,6 +7,8 @@ class OtherSetting
     public $nameWorkingDay = "working_day";
     public $namePositionList = "job_position";
     public $nameJobLocation = "job_location";
+    public $nameJobType = "job_type";
+    public $nameTitle = "title";
 
 
     function __construct($wpdb)
@@ -15,7 +17,7 @@ class OtherSetting
         $this->pathSaveFile = get_template_directory() . '/libs/res/save_data.txt';
     }
 
-    function getDataFromFile($strFileName)
+    function getDataFromFile($strFileName = null)
     {
         $pathSaveFile = $this->pathSaveFile;
         if (file_exists($pathSaveFile)) {
@@ -23,25 +25,24 @@ class OtherSetting
             $arrContent = unserialize($getContent);
             return $arrContent;
         } else {
-            $arrContent = array($strFileName => '');
+            $arrContent = $strFileName ? array($strFileName => '') : array();
             $default_content = serialize($arrContent);
             file_put_contents($pathSaveFile, $default_content);
             return $arrContent;
         }
     }
 
-    function saveData($data1, $data2, $data3)
+    function saveData($name, $data)
     {
         $pathSaveFile = $this->pathSaveFile;
-        $arrContent[$this->nameWorkingDay] = $data1;
-        $arrContent[$this->namePositionList] = $data2;
-        $arrContent[$this->nameJobLocation] = $data3;
-        $strContent = serialize($arrContent);
+        $allData = $this->getDataFromFile();
+        $allData[$name] = $data;
+        $strContent = serialize($allData);
         $result = file_put_contents($pathSaveFile, $strContent);
         if ($result) {
-            return json_encode(array('error' => false, 'message' => 'Save success'));
+            return true;
         }
-        return json_encode(array('error' => true, 'message' => 'Save error'));
+        return false;
     }
 
     function dataToArray($name)
@@ -51,18 +52,21 @@ class OtherSetting
         $contentWorkingDay = str_replace(',', ' ', $contentWorkingDay);
         $stringWorkingDay = trim(preg_replace('/\n+/', ',', $contentWorkingDay));
         $arrayWorkingDay = explode(',', $stringWorkingDay);
+        $arrayWorkingDay = array_map('trim',$arrayWorkingDay);
         return $arrayWorkingDay;
     }
 
-    function buildWorkingDayToSelect($name, $select = "", $class = "form-control")
+    function buildDataToSelect($name, $select = "", $class = "col-md-12 form-control", $require = true)
     {
-        $arrayWorkingDay = $this->dataToArray($name);
+        $require = $require? "required": "";
+        $arrData = $this->dataToArray($name);
         ob_start();
         ?>
-        <select id="<?php echo $name; ?>" name="<?php echo $name; ?>" class="<?php echo $class; ?>" required="">
+        <select id="<?php echo $name; ?>" name="<?php echo $name; ?>" class="<?php echo $class; ?>"
+            <?php echo $require; ?>>
             <option value="">--Select--</option>
             <?php
-            foreach ($arrayWorkingDay as $value) {
+            foreach ($arrData as $value) {
                 ?>
                 <option value="<?php echo $value; ?>"
                     <?php echo $select == $value ? "selected" : ""; ?>
@@ -77,7 +81,7 @@ class OtherSetting
         return $html;
     }
 
-    function getProvinces($id = "")
+    public function getProvinces($id = false)
     {
         $strAnd = $id ? " AND PROVINCE_ID = '$id'" : "";
         $sql = "

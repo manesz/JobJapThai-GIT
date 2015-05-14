@@ -282,10 +282,4 @@ if (is_user_logged_in()) {
     var employer_id = <?php echo $userID; ?>;
     var distinct = <?php echo empty($district) ? 0: $district; ?>;
     var sub_district = <?php echo empty($sub_district) ? 0: $sub_district; ?>;
-
-    $(document).ready(function () {
-        <?php if ($isLogin): ?>
-        showListPackage();
-        <?php endif;?>
-    });
 </script>

@@ -196,9 +196,9 @@ function custom_post_job()
                            name="salary" value="<?php echo $salary; ?>"/></td>
             </tr>
             <tr>
-                <td><label for="working_day">Working Day:</label></td>
+                <td><label for="<?php echo $objClassOtherSetting->nameWorkingDay?>">Working Day:</label></td>
                 <td>
-                    <?php echo $objClassOtherSetting->buildWorkingDayToSelect($objClassOtherSetting->nameWorkingDay, $working_day, "select-width"); ?>
+                    <?php echo $objClassOtherSetting->buildDataToSelect($objClassOtherSetting->nameWorkingDay, $working_day, "select-width"); ?>
                 </td>
             </tr>
         </table>

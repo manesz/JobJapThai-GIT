@@ -1,9 +1,20 @@
 <?php
 
+global $wpdb;
 if (is_user_logged_in()) {
-    global $current_user, $wpdb;
+    $classEmployer = new Employer($wpdb);
+    $page = empty($_REQUEST['page'])? false: $_REQUEST['page'];
+    $employer_page_type = empty($_REQUEST['employer_page_type'])? false: $_REQUEST['employer_page_type'];
+    $employer_id = empty($_REQUEST['employer_id'])? false: $_REQUEST['employer_id'];
+    if ($page && $employer_page_type && $employer_id) {
+        $current_user = $classEmployer->getUser($employer_id);
+    } else {
+        global $current_user;
+    }
     get_currentuserinfo();
     $userID = $current_user->ID;
+
+
     $classPackage = new Package($wpdb);
     $arrayPackage = $classPackage->getPackage();
     $arraySelectPackage = $classPackage->getSelectPackage($userID);

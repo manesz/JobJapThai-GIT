@@ -26,6 +26,15 @@ function remove_job_menus()
 
 }
 
+add_action('after_setup_theme','remove_core_updates');
+function remove_core_updates()
+{
+    if(! current_user_can('update_core')){return;}
+    add_action('init', create_function('$a',"remove_action( 'init', 'wp_version_check' );"),2);
+    add_filter('pre_option_update_core','__return_null');
+    add_filter('pre_site_transient_update_core','__return_null');
+}
+
 add_action('admin_menu', 'remove_job_menus');
 //Post type
 //require_once('libs/custom-post-type.php');

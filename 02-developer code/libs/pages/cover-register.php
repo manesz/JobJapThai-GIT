@@ -416,7 +416,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                                 for="<?php echo $classOthSetting->namePositionList; ?>">Job
                                                 Position<span class="font-color-red">*</span></label></div>
                                         <div class="col-md-8">
-                                            <?php echo $classOthSetting->buildWorkingDayToSelect($classOthSetting->namePositionList) ?>
+                                            <?php echo $classOthSetting->buildDataToSelect($classOthSetting->namePositionList) ?>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
@@ -424,7 +424,7 @@ $classOthSetting = new OtherSetting($wpdb);
                                                 for="<?php echo $classOthSetting->nameJobLocation; ?>">Job
                                                 Location<span class="font-color-red">*</span></label></div>
                                         <div class="col-md-8">
-                                            <?php echo $classOthSetting->buildWorkingDayToSelect($classOthSetting->nameJobLocation); ?>
+                                            <?php echo $classOthSetting->buildDataToSelect($classOthSetting->nameJobLocation); ?>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
