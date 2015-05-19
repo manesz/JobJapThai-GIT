@@ -16,9 +16,9 @@ echo $primenu; unset($primenu);}else{?>
                         </a>
                     </li>
                     <li class="col-md-2 text-center">
-                        <a href="<?php echo get_site_url();?>/employer/" target="_blank" class="">
+                        <a href="<?php echo get_permalink(get_page_by_title('Seeking for Manpower'));?>" target="_blank" class="">
                             <img src="<?php echo get_template_directory_uri(); ?>/libs/img/nav-employer.png" style=""/>
-                            <h4><span class="font-color-BF2026">雇用主</span><br/><br/>EMPLOYER</h4>
+                            <h4><span class="font-color-BF2026">雇用主</span><br/><br/>SEEKING FOR MANPOWER</h4>
                         </a>
                     </li>
                     <li class="col-md-2 text-center">

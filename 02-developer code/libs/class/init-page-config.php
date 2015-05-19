@@ -53,14 +53,14 @@ $init_page = array(
 	),
 	/* Employer page */
 	array(
-		  'post_title' => 'Employer',
+		  'post_title' => 'Seeking for Manpower',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Employer Register',
+		  'post_title' => 'Seeking for Manpower Register',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
@@ -95,14 +95,14 @@ $init_page = array(
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Favorite Candidate',
+		  'post_title' => 'Favorite Seeking for Job',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Favorite Employer',
+		  'post_title' => 'Favorite Seeking for Manpower',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
@@ -116,35 +116,35 @@ $init_page = array(
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Contact Candidate',
+		  'post_title' => 'Contact Seeking for Job',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Search Candidate',
+		  'post_title' => 'Search Seeking for Job',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
 	array(
-		  'post_title' => 'Candidate List',
+		  'post_title' => 'Seeking for Job List',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
         array(
-		  'post_title' => 'Candidate Register',
+		  'post_title' => 'Seeking for Job Register',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
 		  'post_author'=> 1
 	),
         array(
-		  'post_title' => 'Candidate View',
+		  'post_title' => 'Seeking for Job View',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
@@ -152,7 +152,7 @@ $init_page = array(
 	),
 	/* Employer page */
 	array(
-		  'post_title' => 'Apply Employer Register',
+		  'post_title' => 'Apply Seeking for Manpower Register',
 		  'post_content'  => '',
 		  'post_status'=> 'publish',
 		  'post_type'=>'page',
@@ -178,10 +178,10 @@ $init_page = array(
 		  'post_author'=> 1
 	),
 
-    /* Candidate Page*/
+    /* Seeking for Job Page*/
 
     array(
-        'post_title' => 'Candidate',
+        'post_title' => 'Seeking for Job',
         'post_content'  => '',
         'post_status'=> 'publish',
         'post_type'=>'page',
@@ -201,7 +201,7 @@ $init_page = array(
         'post_type'=>'page',
         'post_author'=> 1
     ),
-    /* End Candidate Page*/
+    /* End Seeking for Job Page*/
 
     //Register
     array(

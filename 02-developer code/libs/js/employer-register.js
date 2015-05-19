@@ -81,7 +81,7 @@ $(document).ready(function () {
                 data: data,
                 success: function (result) {
                     hideImgLoading();
-                    showModalMessage(result.msg, "Message Employer");
+                    showModalMessage(result.msg, "Message");
                     if (!is_login && !result.error) {
                         if (!is_page_backend)
                             setTimeout(function () {
@@ -186,7 +186,7 @@ function removeAvatarImage($elm) {
         },
         success: function (result) {
             hideImgLoading();
-            showModalMessage(result.msg, "Message Employer");
+            showModalMessage(result.msg, "Message");
             if (!result.error) {
                 $($elm).addClass('fileinput-exists');
             }
@@ -212,7 +212,7 @@ function removeBannerImage($elm) {
         },
         success: function (result) {
             hideImgLoading();
-            showModalMessage(result.msg, "Message Employer");
+            showModalMessage(result.msg, "Message");
             if (!result.error) {
                 $($elm).addClass('fileinput-exists');
             }

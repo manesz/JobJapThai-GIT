@@ -40,7 +40,7 @@ if (is_user_logged_in()) {
                             <img src="<?php echo get_template_directory_uri(); ?>/libs/img/icon-title.png"
                                  style="height: 25px;"/>
                             お知らせ
-                            <span class="font-color-BF2026" style="">Candidate View</span>
+                            <span class="font-color-BF2026" style="">Seeking for Job View</span>
                         </h5>
 
                         <div class="clearfix" style="margin-top: 20px;"></div>

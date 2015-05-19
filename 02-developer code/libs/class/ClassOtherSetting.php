@@ -89,7 +89,48 @@ class OtherSetting
           $strAnd
           ORDER BY PROVINCE_NAME ASC
         ";
-        $provinces = $this->wpdb->get_results($sql);
-        return $provinces;
+        $result = $this->wpdb->get_results($sql);
+        return $result;
+    }
+
+    public function getDistrict($id = false)
+    {
+        $strAnd = $id ? " AND AMPHUR_ID = '$id'" : "";
+        $sql = "
+          SELECT * FROM `amphur`
+          WHERE 1
+          $strAnd
+          ORDER BY AMPHUR_NAME ASC
+        ";
+        $result = $this->wpdb->get_results($sql);
+        return $result;
+    }
+
+    public function getCity($id = false)
+    {
+        $strAnd = $id ? " AND DISTRICT_ID = '$id'" : "";
+        $sql = "
+          SELECT * FROM `district`
+          WHERE 1
+          $strAnd
+          ORDER BY DISTRICT_NAME ASC
+        ";
+        $result = $this->wpdb->get_results($sql);
+        return $result;
+    }
+
+    function getProvincesName($id){//จังหวัด
+        $result = $this->getProvinces($id);
+        return $result[0]->PROVINCE_NAME;
+    }
+
+    function getDistrictName($id){
+        $result = $this->getDistrict($id);
+        return $result[0]->AMPHUR_NAME;
+    }
+
+    function getCityName($id){
+        $result = $this->getCity($id);
+        return $result[0]->DISTRICT_NAME;
     }
 }

@@ -22,7 +22,7 @@ function add_pre_register_options()
     global $classCandidateList;
     $option = 'per_page';
     $args = array(
-        'label' => 'Candidate',
+        'label' => 'Seeking for Job',
         'default' => 10,
         'option' => 'pre_register_per_page',
     );

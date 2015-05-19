@@ -9,9 +9,9 @@
 </script>
 <!--<div class="row">-->
     <div class="btn-group">
-        <a class="btn btn-default <?php if (is_page("employer-register") || is_page("Edit Profile")) { ?> active<?php } ?>"
+        <a class="btn btn-default <?php if (is_page("Seeking for Manpower Register") || is_page("Edit Profile")) { ?> active<?php } ?>"
            href="<?php echo get_site_url(); ?>/edit-profile/"
-           role="button"><?php if (is_page("employer-register") || is_page("Edit Profile")) { ?><strong>Edit
+           role="button"><?php if (is_page("Seeking for Manpower Register") || is_page("Edit Profile")) { ?><strong>Edit
                 Profile</strong><?php } else { ?>Edit Profile<?php } ?></a>
         <a class="btn btn-default <?php if (is_page("Post Job")) { ?> active<?php } ?>"
            href="<?php echo get_site_url(); ?>/post-job/" role="button"><?php if (is_page("Post Job")) { ?>
@@ -22,10 +22,10 @@
         <a class="btn btn-default <?php if (is_page("Request Resume")) { ?> active<?php } ?>"
            href="<?php echo get_site_url(); ?>/request-resume/" role="button"><?php if (is_page("Request Resume")) { ?>
                 <strong>Request Resume</strong><?php } else { ?>Request Resume<?php } ?></a>
-        <a class="btn btn-default <?php if (is_page("Favorite Candidate")) { ?> active<?php } ?>"
-           href="<?php echo get_site_url(); ?>/favorite-candidate/"
-           role="button"><?php if (is_page("Favorite Candidate")) { ?><strong>Favorite
-                Candidate</strong><?php } else { ?>Favorite Candidate<?php } ?></a>
+        <a class="btn btn-default <?php if (is_page("Favorite Seeking for Job")) { ?> active<?php } ?>"
+           href="<?php echo get_permalink(get_page_by_title('Favorite Seeking for Job')); ?>"
+           role="button"><?php if (is_page("Favorite Seeking for Job")) { ?><strong>Favorite
+                Seeking for Job</strong><?php } else { ?>Favorite Seeking for Job<?php } ?></a>
 <!--        <a class="btn btn-default --><?php //if (is_page("Contact Candidate")) { ?><!-- active--><?php //} ?><!--"-->
 <!--           href="--><?php //echo get_site_url(); ?><!--/contact-candidate/"-->
 <!--           role="button">--><?php //if (is_page("Contact Candidate")) { ?><!--<strong>Contact-->
@@ -34,9 +34,10 @@
 <!--           href="--><?php //echo get_site_url(); ?><!--/search-candidate/"-->
 <!--           role="button">--><?php //if (is_page("Search Candidate")) { ?><!--<strong>Search-->
 <!--                Candidate</strong>--><?php //} else { ?><!--Search Candidate--><?php //} ?><!--</a>-->
-        <a class="btn btn-default <?php if (is_page("Candidate List")) { ?> active<?php } ?>"
-           href="<?php echo get_site_url(); ?>/candidate-list/" role="button"><?php if (is_page("Candidate List")) { ?>
-                <strong>Candidate List</strong><?php } else { ?>Candidate List<?php } ?></a>
+        <a class="btn btn-default <?php if (is_page("Seeking for Job List")) { ?> active<?php } ?>"
+           href="<?php echo get_permalink(get_page_by_title('Seeking for Job List')); ?>" role="button"><?php
+            if (is_page("Seeking for Job List")) { ?>
+                <strong>Seeking for Job List</strong><?php } else { ?>Seeking for Job List<?php } ?></a>
         <a class="btn btn-info" href="<?php echo wp_logout_url(home_url()); ?>" role="button">Logout</a>
     </div>
 <!--</div>-->

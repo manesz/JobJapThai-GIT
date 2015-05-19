@@ -180,7 +180,7 @@ $(document).ready(function () {
                         if (!result.error) {
                             if (!is_login) {
                                 $("#disabled").prop('disabled', true);
-                                showModalMessage(result.msg, "Message register Candidate");
+                                showModalMessage(result.msg, "Message register Seeking for Job");
                                 if (!is_page_backend) {
                                     setTimeout(function () {
                                         window.location.href = url_post + "register-success/?mail_confirm=" +
@@ -195,7 +195,7 @@ $(document).ready(function () {
 
                             }
                             else {
-                                showModalMessage(result.msg, "Message Edit Candidate");
+                                showModalMessage(result.msg, "Message Edit Seeking for Job");
                             }
                         } else {
                             showModalMessage(result.msg, 'Error');
@@ -337,7 +337,7 @@ function removeAvatarImage($elm) {
         },
         success: function (result) {
             hideImgLoading();
-            showModalMessage(result.msg, "Message Employer");
+            showModalMessage(result.msg, "Message");
             if (!result.error) {
                 $($elm).addClass('fileinput-exists');
             }

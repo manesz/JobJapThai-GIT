@@ -222,6 +222,7 @@ class Candidate
 
     function buildViewCandidateProfile($candidate_id)
     {
+        $otherSetting = new OtherSetting($this->wpdb);
         $current_user = $this->getUser($candidate_id);
         $objInformation = $this->getInformation($candidate_id);
         if ($objInformation)
@@ -342,19 +343,19 @@ class Candidate
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="province">Province</label></div>
                             <div class="col-md-8">
-                                <span class="form-control"><?php echo empty($province) ? "" : $province; ?></span>
+                                <span class="form-control"><?php echo empty($province) ? "" : $otherSetting->getProvincesName($province); ?></span>
                             </div>
                         </div>
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="district">District</label></div>
                             <div class="col-md-8">
-                                <span class="form-control"><?php echo empty($district) ? "" : $district; ?></span>
+                                <span class="form-control"><?php echo empty($district) ? "" : $otherSetting->getDistrictName($district); ?></span>
                             </div>
                         </div>
                         <div class="form-group col-md-12">
                             <div class="col-md-4 text-right clearfix"><label for="city">City / Locality</label></div>
                             <div class="col-md-8">
-                                <span class="form-control"><?php echo empty($city) ? "" : $city; ?></span>
+                                <span class="form-control"><?php echo empty($city) ? "" : $otherSetting->getCityName($city); ?></span>
                             </div>
                         </div>
                     </div>
@@ -729,15 +730,14 @@ class Candidate
         ob_start();
         ?>
         <div class="btn-group">
-            <a href="<?php echo $siteUrl; ?>/candidate"
-               class="btn btn-default <?php echo is_page("candidate-register") || is_page("candidate") ? 'active' : ''; ?>">Edit
-                Resume</a>
+            <a href="<?php echo get_permalink(get_page_by_title('Edit Profile')); ?>"
+               class="btn btn-default <?php echo is_page("Edit Profile") ? 'active' : ''; ?>">Edit Profile</a>
             <a href="<?php echo $siteUrl; ?>/applied-job" class="btn btn-default <?php
             echo is_page("applied-job") ? 'active' : ''; ?>">Applied Job</a>
             <a href="<?php echo $siteUrl; ?>/favorite-job" class="btn btn-default <?php
             echo is_page("favorite-job") ? 'active' : ''; ?>">Favorite Job</a>
-            <a href="<?php echo $siteUrl; ?>/favorite-employer" class="btn btn-default <?php
-            echo is_page("favorite-employer") ? 'active' : ''; ?>">Favorite Employer</a>
+            <a href="<?php echo get_permalink(get_page_by_title("Favorite Seeking for Manpower")); ?>" class="btn btn-default <?php
+            echo is_page("Favorite Seeking for Manpower") ? 'active' : ''; ?>">Favorite Seeking for Manpower</a>
             <a href="<?php echo $siteUrl; ?>/request-profile-by-company" class="btn btn-default <?php
             echo is_page("request-profile-by-company") ? 'active' : ''; ?>">Request Profile By Company</a>
             <!--            <a href="#" class="btn btn-default">Account Setting</a>-->
@@ -781,12 +781,12 @@ class Candidate
                             data: formData,
                             dataType: 'json',
                             success: function (result) {
-                                showModalMessage(result.msg, 'Message Candidate');
+                                showModalMessage(result.msg, 'Message Seeking for Job');
                                 path_avatar = result.path;
                                 hideImgLoading();
                             },
                             error: function (result) {
-                                showModalMessage(result.responseText, 'Message Candidate');
+                                showModalMessage(result.responseText, 'Message Seeking for Job');
                                 hideImgLoading();
                             },
                             cache: false,
@@ -1018,9 +1018,9 @@ class Candidate
                                     <div class="col-md-4 text-right clearfix"><label for="nationality">Nationality<span
                                                 class="font-color-red">*</span></label></div>
                                     <div class="col-md-8">
-                                        <select id="nationality" name="nationality" class="form-control" required>
-                                            <option>Thailand</option>
-                                        </select>
+                                        <input type="text" maxlength="50"
+                                               id="nationality" name="nationality" class="form-control"
+                                               value="<?php echo empty($nationality) ? '' : $nationality; ?>"/>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">

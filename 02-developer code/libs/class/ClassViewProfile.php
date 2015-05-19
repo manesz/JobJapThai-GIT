@@ -104,10 +104,10 @@ class ViewProfile
             ";
             $result = $this->wpdb->query($sql);
             if (!$result)
-                return $this->returnMessage('Add View Employer Fail.', true);
+                return $this->returnMessage('Add View Seeking for Manpower Fail.', true);
         }
 //        return $this->wpdb->insert_id;
-        return $this->returnMessage('Add View Employer Success.', false);
+        return $this->returnMessage('Add View Seeking for Manpower Success.', false);
     }
 
 //    public function setPublishJob($id)

@@ -52,7 +52,7 @@ function addRequestProfile() {
             if (!result.error) {
                 $("#frm_search_candidate").submit();
             }
-            showModalMessage(result.msg, "Employer");
+            showModalMessage(result.msg, "Message");
         },
         error: function (result) {
             showModalMessage(result.responseText, "Error");

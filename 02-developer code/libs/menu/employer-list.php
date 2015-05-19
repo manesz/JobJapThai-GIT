@@ -7,8 +7,8 @@ function my_add_employer_list_menu_items()
 {
     $hook = add_submenu_page(
         'ics_theme_settings',
-        'Employer List',
-        'Employer List',
+        'Seeking for Manpower List',
+        'Seeking for Manpower List',
         'manage_options',
         'employer-list',
         'render_employer_list_page_list'
@@ -21,7 +21,7 @@ function add_employer_options()
 {
     $option = 'per_page';
     $args = array(
-        'label' => 'Employer',
+        'label' => 'Seeking for Manpower',
         'default' => 10,
         'option' => 'employer_per_page',
     );
@@ -41,7 +41,7 @@ function render_employer_list_page_list()
     }  else if ($getEditEmployer == 'edit') {
         $classEmployerList->employerAddTemplate();
     } else {
-        echo '</pre><div class="wrap"><h2>Employer List
+        echo '</pre><div class="wrap"><h2>Seeking for Manpower List
         <a href="?page=employer-list&employer_page_type=add" class="add-new-h2">Add New</a></h2>';
         $classEmployerList->prepare_items();
         ?>

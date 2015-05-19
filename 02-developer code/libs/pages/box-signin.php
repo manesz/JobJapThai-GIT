@@ -27,7 +27,7 @@ if (is_user_logged_in()) {
 
         $countPostJob = $classQueryPostJob->countPostJob($userID);
     } else if ($userType == "candidate") {
-        $urlEditResume = get_site_url() . "/candidate";
+        $urlEditResume = get_permalink(get_page_by_title('Seeking for Job'));
         $isLogin = true;
     } else
         $urlEditResume = get_site_url() . "/wp-admin";
@@ -37,10 +37,10 @@ if (is_user_logged_in()) {
 ?>
 <div class="clearfix"
      style="border: 1px #ddd solid; border-radius: 5px; background: #fff; padding-bottom: 10px; margin-bottom: 10px;">
-    <div style="background: #BF2026; margin: 20px 0 10px 0; padding : 5px; color: #fff;">における求職者ログイン Job Seeker Log in
+    <div style="background: #BF2026; margin: 20px 0 10px 0; padding : 5px; color: #fff;">における求職者ログイン Seeker Log in
     </div>
     <?php if (!$isLogin): ?>
-        <form action="<?php echo get_site_url(); ?>/apply-employer-register/" method="post"
+        <form action="<?php echo get_permalink(get_page_by_title('Apply Seeking for Manpower Register')); ?>" method="post"
               id="frm_sigin" class="form-horizontal col-md-12">
             <input type="hidden" name="sign_in_post" value="true">
 

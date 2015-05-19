@@ -59,7 +59,7 @@ function setPackageForJob(job_id) {
         },
         success: function (result) {
             hideImgLoading();
-            showModalMessage(result.msg, "Message Employer");
+            showModalMessage(result.msg, "Message");
             if (!result.error) {
                 $('#frm_query_list_job').submit();
                 getTotalPackage();
@@ -89,7 +89,7 @@ function removeFeatureImage($elm) {
         },
         success: function (result) {
             hideImgLoading();
-            showModalMessage(result.msg, "Message Employer");
+            showModalMessage(result.msg, "Message");
             if (!result.error) {
                 $($elm).addClass('fileinput-exists');
             }

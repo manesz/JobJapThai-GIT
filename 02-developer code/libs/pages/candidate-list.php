@@ -60,7 +60,7 @@ if (!$isLogin) {
                         include_once('emp_menu.php');
                     } ?>
                     <hr/>
-                    <h5 class="bg-ddd padding-10 clearfix">Search Candidate</h5>
+                    <h5 class="bg-ddd padding-10 clearfix">Search Seeking for Job</h5>
 
                     <form id="frm_search_candidate" method="post">
                         <input type="hidden" name="post_type" value="search_candidate">

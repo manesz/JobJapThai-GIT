@@ -32,7 +32,7 @@ if (is_user_logged_in()) {
 <h5 class="pull-left" style="">
     <img src="<?php echo get_template_directory_uri(); ?>/libs/img/icon-title.png" style="height: 25px;"/>
     お知らせ
-    <span class="font-color-BF2026" style="">Candidate Register</span>
+    <span class="font-color-BF2026" style="">Seeking for Job Register</span>
 </h5>
 
 <div class="clearfix" style="margin-top: 20px;"></div>

@@ -7,8 +7,8 @@ function my_add_candidate_list_menu_items()
 {
     $hook = add_submenu_page(
         'ics_theme_settings',
-        'Candidate List',
-        'Candidate List',
+        'Seeking for Job List',
+        'Seeking for Job List',
         'manage_options',
         'candidate-list',
         'render_candidate_list_page_list'
@@ -22,7 +22,7 @@ function add_candidate_options()
     global $classCandidateList;
     $option = 'per_page';
     $args = array(
-        'label' => 'Candidate',
+        'label' => 'Seeking for Job',
         'default' => 10,
         'option' => 'candidate_per_page',
     );
@@ -43,7 +43,7 @@ function render_candidate_list_page_list()
     }  else if ($getEditCandidate == 'edit') {
         $classCandidateList->candidateAddTemplate();
     } else {
-        echo '</pre><div class="wrap"><h2>Candidate List
+        echo '</pre><div class="wrap"><h2>Seeking for Job List
         <a href="?page=candidate-list&candidate_page_type=add" class="add-new-h2">Add New</a></h2>';
         $classCandidateList->prepare_items();
         ?>

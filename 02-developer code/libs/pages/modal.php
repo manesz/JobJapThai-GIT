@@ -10,10 +10,10 @@
             </div>
             <div class="modal-body">
                 <div class="col-md-6 btn">
-                    <a href="<?php echo get_site_url(); ?>/candidate-register/">Candidate</a>
+                    <a href="<?php echo get_permalink(get_page_by_title('Seeking for Job Register')); ?>">Seeking for Job</a>
                 </div>
                 <div class="col-md-6 btn">
-                    <a href="<?php echo get_site_url(); ?>/employer-register/">Employer</a>
+                    <a href="<?php echo get_permalink(get_page_by_title('Seeking for Manpower Register')); ?>">Seeking for Manpower</a>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -90,7 +90,7 @@
                 <button type="button" class="close" data-dismiss="modal"><span
                         aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">Candidate Profile</h4>
+                <h4 class="modal-title" id="myModalLabel">Seeking for Job Profile</h4>
             </div>
             <div class="modal-body" id="body_candidate_profile">
 

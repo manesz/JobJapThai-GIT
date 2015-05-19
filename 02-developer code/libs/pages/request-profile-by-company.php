@@ -42,7 +42,7 @@ if (!$isLogin) {
             },
             success: function (result) {
                 hideImgLoading();
-                showModalMessage(result.msg, "Message Candidate");
+                showModalMessage(result.msg, "Message");
                 if (!result.error) {
                     window.location.reload();
                 }
