@@ -36,20 +36,24 @@ class Authentication
                 <a href="#" data-toggle="modal" data-target="#modalForget"
                 onclick="closeModalMessage();">Lost your password</a>?</p>', true);
         else {
-            if (!$this->checkIsConfirm($user->ID)) {
-                wp_logout();
-                return $this->returnMessage(
-                    '<p>Sorry, your Email has not been confirmed.<br/>Please check your email inbox.', true);
-            }
             update_user_meta($user->ID, 'last_login', current_time('mysql'));
             $userType = get_user_meta($user->ID, 'user_type', true);
-            if ($userType == "employer")
+            if ($userType == 'employer' || $userType == 'candidate') {
+                if (!$this->checkIsConfirm($user->ID)) {
+                    wp_logout();
+                    return $this->returnMessage(
+                        '<p>Sorry, your Email has not been confirmed.<br/>Please check your email inbox.', true);
+                }
                 return $this->returnMessage(get_site_url() . '/edit-profile/', false, false);
-            else if ($userType == 'candidate') {
-                return $this->returnMessage(get_site_url() . '/candidate/', false, false);
-            } else {
-                return $this->returnMessage(get_site_url() . '/', false, false);
             }
+            return $this->returnMessage(get_site_url() . '/wp-admin', false, false);
+//            if ($userType == "employer")
+//                return $this->returnMessage(get_site_url() . '/edit-profile/', false, false);
+//            else if ($userType == 'candidate') {
+//                return $this->returnMessage(get_permalink(get_page_by_title('Seeking for Job')), false, false);
+//            } else {
+//                return $this->returnMessage(get_site_url() . '/', false, false);
+//            }
         }
     }
 
@@ -181,7 +185,7 @@ class Authentication
             $error = '<p>' . __('Username or Email was not found, try again!') . '</p>';
         }
         if ($user_exists) {
-            return $this->returnMessage(array('msg'=> '', 'user_data'=>$user_data), false, true, false);
+            return $this->returnMessage(array('msg' => '', 'user_data' => $user_data), false, true, false);
         }
         return $this->returnMessage($error, true, true, false);
 

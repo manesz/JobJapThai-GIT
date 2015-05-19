@@ -31,13 +31,13 @@ if ($arrayContact) {
 
                 </ul><?php } ?>
             <?php if (has_nav_menu('employer')) {
-                $primenu = wp_nav_menu(array('theme_location' => 'employer', 'echo' => TRUE, 'container' => '', 'items_wrap' => '<ul class="clearfix" style="list-style: none; border: none;"><li><span style="color: #BF2026">Employers</span></li>%3$s</ul>'));
+                $primenu = wp_nav_menu(array('theme_location' => 'employer', 'echo' => TRUE, 'container' => '', 'items_wrap' => '<ul class="clearfix" style="list-style: none; border: none;"><li><span style="color: #BF2026">Seeking for Manpower</span></li>%3$s</ul>'));
                 echo $primenu;
                 unset($primenu);
             } else {
                 ?>
                 <ul class="clearfix" style="list-style: none; border: none;">
-                    <li><span style="color: #BF2026">Employers</span></li>
+                    <li><span style="color: #BF2026">Seeking for Manpower</span></li>
 
                     <li>Post Job</li>
                     <li>Advertise Rate</li>

@@ -13,7 +13,7 @@
             </ul>
 
             <ul class="clearfix" style="list-style: none; border: none;">
-                <li><span style="color: #BF2026">Employers</span></li>
+                <li><span style="color: #BF2026">Seeking for Manpower</span></li>
                 <li>Post Job</li>
                 <li>Advertise Rate</li>
                 <li>Search Resume</li>

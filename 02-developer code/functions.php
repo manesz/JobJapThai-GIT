@@ -296,7 +296,7 @@ $GLOBALS['comment'] = $comment; ?>
     register_nav_menus(array(
         'primary' => 'Main Menu',
         'jobseeker' => 'Job seeker',
-        'employer' => 'Employer'
+        'employer' => 'Seeking for Manpower'
     ));
     $is_inittm = get_option('is_first_setup');
     if ($is_inittm == false) {
