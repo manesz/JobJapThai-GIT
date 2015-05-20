@@ -59,7 +59,64 @@ if ($_REQUEST) {
             if ($result)
                 echo 'success';
             else echo 'fail';
-        } else if ($postType == 'admin_add') {
+        } else if ($postType == 'set_status_package') {//Cancel package
+            $result = $classPackage->setStatusPackage($_REQUEST);
+            if ($result)
+                echo $classEmployer->returnMessage("Cancel Package Success.", false);
+            else
+                echo $classEmployer->returnMessage("Cancel Package Fail.", true);
+        } else if ($postType == 'confirm_buy_package') {
+            $employerID = $_REQUEST['employer_id'];
+            $employerData = $classEmployer->getUser($employerID);
+            $emailEmployer = $employerData->user_email;
+            $emailSale = "";
+            ob_start();
+            require_once("content-email/buy_package_confirmation.php");
+            $message = ob_get_contents();
+            ob_end_clean();
+
+//            if (!wp_mail($emailSale, "Buy Package Confirmation from Job Jap Thai", $message)) {
+//                echo $classCandidate->returnMessage("Sorry error send email.", true);
+//            }
+            if (!wp_mail($emailEmployer, "Buy Package Confirmation from Job Jap Thai", $message)) {
+                echo $classEmployer->returnMessage("Sorry error send email.", true);
+            }
+            $result = $classPackage->setStatusPackage($_REQUEST);
+
+            if ($result)
+                echo $classEmployer->returnMessage("Send email confirm Success.", false);
+            else
+                echo $classEmployer->returnMessage("Update Status Fail.", true);
+        } else if ($postType == 'approve_package') {
+            $result = $classPackage->setStatusPackage($_REQUEST);
+            if (!$result) {
+                echo $classPackage->returnMessage('Approve package fail.', false);
+            } else {
+                echo $classPackage->returnMessage('Approve package success.', false);
+            }
+
+        } else if ($postType == 'file_package_payment') {
+            $employerID = empty($_REQUEST['employer_id']) ? 0 : $_REQUEST['employer_id'];
+            $package_id = empty($_REQUEST['package_id']) ? 0 : $_REQUEST['package_id'];
+            $result = $classPackage->addAttachFilePayment($_FILES['payment_file'], $employerID);
+            $result['msg'] = strip_tags($result['msg']);
+            if (!$result['error']) {
+                if ($classPackage->setPaymentFilePath($package_id, $result['path']))
+                    echo $classPackage->returnMessage($result, $result['error']);
+            } else {
+                echo $classPackage->returnMessage($result, $result['error']);
+            }
+        }  else if ($postType == 'delete_select_package') {
+            $result = $classPackage->setPublishSelectPackage($_REQUEST['package_id']);
+            if ($result){
+                echo $classPackage->returnMessage("Delete success.", false);
+            }else {
+                echo $classPackage->returnMessage("Delete false.", true);
+            }
+        }
+
+        //Manage Package flow
+        else if ($postType == 'admin_add') {
             $result = $classPackage->addPackage($_REQUEST);
             if ($result) {
                 echo $classPackage->returnMessage('Add package success.', false);
@@ -86,10 +143,12 @@ if ($_REQUEST) {
             $result = $classEmployer->editPostJob($_REQUEST);
         } else if ($postType == 'delete') {
             $status = empty($_REQUEST['status']) ? false : $_REQUEST['status'];
-            $result = $classEmployer->deletePosJob($_REQUEST['post_id'], $status);
+            $employerID = empty($_REQUEST['employer_id']) ? 0 : $_REQUEST['employer_id'];
+            $result = $classEmployer->deletePosJob($_REQUEST['post_id'], $status, $employerID);
         } else if ($postType == 'load_edit') {
             $getPostID = empty($_REQUEST['post_id']) ? 0 : $_REQUEST['post_id'];
-            $result = $classEmployer->buildFormPostJob($getPostID);
+            $employerID = empty($_REQUEST['employer_id']) ? 0 : $_REQUEST['employer_id'];
+            $result = $classEmployer->buildFormPostJob($getPostID, $employerID);
         } else if ($postType == 'feature_image') {
             if ($_REQUEST['post_id'] == 0) {
                 $post_id = $classEmployer->addPostJob(array(), 'draft');
@@ -223,7 +282,7 @@ if ($_REQUEST) {
                         echo $classCandidate->returnMessage("Sorry error send email.", true);
                     }
                 }*/
-                if (!$result['error']){//add resume file
+                if (!$result['error']) {//add resume file
                     $resultAddResumeFile = $classCandidate->addAttachResume($_FILES['attach_resume'], $candidateID);
                     if (!$resultAddResumeFile['error']) {
                         $classCandidate->setAttachResumePath($candidateID, $resultAddResumeFile['path']);
@@ -270,7 +329,7 @@ if ($_REQUEST) {
                 require_once("content-email/register_confirmation.php");
                 $message = ob_get_contents();
                 ob_end_clean();
-                $showStyle = empty($_REQUEST['show_style'])? true : false;
+                $showStyle = empty($_REQUEST['show_style']) ? true : false;
                 if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
                     echo "Sorry error send email.";
                 } else

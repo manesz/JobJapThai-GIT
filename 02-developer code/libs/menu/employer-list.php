@@ -38,7 +38,7 @@ function render_employer_list_page_list()
     $getEditEmployer = empty($_GET['employer_page_type'])? false: $_GET['employer_page_type'];
     if ($getEditEmployer == 'add') {
         $classEmployerList->employerAddTemplate();
-    }  else if ($getEditEmployer == 'edit') {
+    } else if ($getEditEmployer == 'edit') {
         $classEmployerList->employerAddTemplate();
     } else {
         echo '</pre><div class="wrap"><h2>Seeking for Manpower List

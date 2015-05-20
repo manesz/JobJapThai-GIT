@@ -470,10 +470,9 @@ class Employer
         $argc = $classQueryPostJob->queryPostJob($userID);
         echo $classQueryPostJob->buildListJob($argc, true, true);
         ?>
-        <h5 id="head_text_edit_job" class="bg-ddd padding-10 clearfix">Add New Post Job</h5>
 
         <div id="div_form_job">
-            <?php echo $this->buildFormPostJob(); ?>
+            <?php echo $this->buildFormPostJob(0, $userID); ?>
         </div>
     <?php
     }
@@ -1016,25 +1015,29 @@ class Employer
         return true;
     }
 
-    function buildFormPostJob($post_id = 0)
+    function buildFormPostJob($post_id = 0, $employer_id = 0)
     {
         $classQueryPostJob = new QueryPostJob($this->wpdb);
         $otherSetting = new OtherSetting($this->wpdb);
         $classCandidate = new Candidate($this->wpdb);
         $classPackage = new Package($this->wpdb);
-//        $user_id = get_current_user_id();
-//        $getCompanyInfo = $this->getCompanyInfo(0, $user_id);
         $getPost = null;
         $custom = null;
+        $showHotJob = false;
         if ($post_id) {
             $getPost = get_post($post_id);
             $custom = get_post_custom($post_id);
             $post_type = 'edit';
+            $highlight_jobs = empty($custom["highlight_jobs"][0]) ? "" : $custom["highlight_jobs"][0];
+            if ($classPackage->checkHaveHotJob($post_id) || $highlight_jobs) {
+                $showHotJob = true;
+            }
         } else {
             $post_type = 'add';
+            if ($classPackage->checkHaveHotJob($post_id)) {
+                $showHotJob = true;
+            }
         }
-        $employer_id = empty($custom["employer_id"][0]) ? "" : $custom["employer_id"][0];
-        $user_id = $employer_id;
         $qualification = empty($custom["qualification"][0]) ? "" : $custom["qualification"][0];
         $highlight_jobs = empty($custom["highlight_jobs"][0]) ? "" : $custom["highlight_jobs"][0];
         $job_type = empty($custom["job_type"][0]) ? "" : $custom["job_type"][0];
@@ -1048,11 +1051,15 @@ class Employer
         $getListJapaneseSkill = $classCandidate->japanese_skill;
 
         $featureImage = get_the_post_thumbnail($post_id);
+
         ob_start();
         ?>
 
         <script src="<?php echo get_template_directory_uri(); ?>/libs/js/post-job.js"></script>
-        <?php if ($classPackage->getTotalPost($user_id) > 0 || $post_id): ?>
+
+
+        <?php if ($classPackage->getTotalPost($employer_id) > 0 || $post_id): ?>
+        <h5 id="head_text_edit_job" class="bg-ddd padding-10 clearfix"><?php echo $post_id? 'Edit': 'Add'; ?> New Post Job</h5>
         <form id="form_post_job" method="POST"
               class="form-horizontal">
             <input type="hidden" name="post_job" value="true">
@@ -1114,7 +1121,7 @@ class Employer
                               class="form-control"><?php echo $qualification; ?></textarea>
                 </div>
             </div>
-            <?php if ($classPackage->getTotalHotJob($employer_id) > 0 || $post_type == "edit" && $highlight_jobs): ?>
+            <?php if ($showHotJob): ?>
                 <div class="form-group col-md-12">
                     <div class="col-md-2 text-right clearfix">
                         <label for="job_type"><?php _e('Highlight jobs:', 'framework') ?></div>
@@ -1192,7 +1199,8 @@ class Employer
             </div>
             <div class="form-group col-md-12">
                 <div class="col-md-2 text-right clearfix">
-                    <label for="<?php echo $otherSetting->nameWorkingDay; ?>"><?php _e('Working Day:', 'framework') ?><span
+                    <label for="<?php echo $otherSetting->nameWorkingDay; ?>"><?php _e('Working Day:', 'framework') ?>
+                        <span
                             class="font-color-red">*</span></label></div>
                 <div class="col-md-10">
                     <?php echo $otherSetting->buildDataToSelect($otherSetting->nameWorkingDay, $working_day); ?>
@@ -1221,9 +1229,11 @@ class Employer
             $('#postContent').wysihtml5();
         </script>
     <?php else: ?>
-        <a class="btn btn-success" href="edit-profile/"><span class="glyphicon glyphicon-shopping-cart"></span> Buy
-            Package</a>
-    <?php endif; ?>
+        <?php $isBackend = empty($_REQUEST['employer_page_type']) ? false : true;
+        if (!$isBackend): ?>
+            <a class="btn btn-success" href="<?php echo home_url();?>/edit-profile?buy_package=true">
+                <span class="glyphicon glyphicon-shopping-cart"></span> Buy Package</a>
+        <?php endif;endif; ?>
         <?php
         $html = ob_get_contents();
         ob_end_clean();
@@ -1541,7 +1551,6 @@ class Employer
         $employer_id = empty($post['employer_id']) ? '' : $post['employer_id'];
         $highlight_jobs = empty($post['highlight_jobs']) ? '' : $post['highlight_jobs'];
 
-
         $post_information = array(
             'post_author' => $userID,
             'post_title' => wp_strip_all_tags($postTitle),
@@ -1611,7 +1620,7 @@ class Employer
                     if (!$result)
                         return $this->returnMessage("Error apply Highlight job package.", true);
                 } else
-                    return $this->returnMessage("You are no package Highlight job.", true);
+                    return $this->returnMessage("You are no package Highlight job.11", true);
             }
         } else {
             if ($getOldHighlightJob == 1) {
@@ -1645,30 +1654,31 @@ class Employer
         return $this->returnMessage("Edit Job success.", false);
     }
 
-    function deletePosJob($post_id, $status = 'draft')
+    function deletePosJob($post_id, $status = 'draft', $user_id)
     {
-        $userID = get_current_user_id();
-//        switch ($status) {
-//            case 0:
-//                $status = "draft";
-//                break;
-//            case 1:
-//                $status = "publish";
-//                break;
-//            case 'delete' :
-//                $status = "trash";
-//                break;
-//        }
+//        $userID = get_current_user_id();
+        $title = '';
+        switch ($status) {
+            case 'draft':
+                $title = "Draft";
+                break;
+            case 'publish':
+                $title = "Publish";
+                break;
+            case 'trash':
+                $title = "Trash";
+                break;
+        }
         $post_information = array(
             'ID' => $post_id,
-            'post_author' => $userID,
+            'post_author' => $user_id,
             'post_status' => $status
         );
 
         $result = wp_update_post($post_information);
         if (!$result)
             return $this->returnMessage($result->get_error_message(), true);
-        return $this->returnMessage("Delete Job success.", false);
+        return $this->returnMessage("Update job to '$title''", false);
     }
 
     function addRequestProfile($candidate_id, $employer_id)

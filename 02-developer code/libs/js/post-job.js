@@ -150,6 +150,8 @@ function formValidate() {
                             loadPostJob('');
                             post_id = result.post_id;
                             scrollToTop();
+                        } else {
+                            formValidate();
                         }
                     },
                     error: function (result) {
@@ -226,6 +228,7 @@ function changeStatusJob(postID, status) {
         data: {
             post_job: 'true',
             post_type: 'delete',
+            employer_id: user_id,
             post_id: postID,
             status: status
         },
@@ -249,14 +252,10 @@ function changeStatusJob(postID, status) {
 }
 
 function loadPostJob(postID) {
-    if (postID != '') {
-        $("#head_text_edit_job").html("Edit Post Job");
-    } else {
-        $("#head_text_edit_job").html("Add New Post Job");
-    }
     showImgLoading();
     var $frm = $("#form_post_job");
-    $("#div_form_job").load(url_post + "?post_job=true&post_type=load_edit&post_id=" + postID, function () {
+    $("#div_form_job").load(url_post + "?post_job=true&post_type=load_edit&post_id=" + postID +
+        "&employer_id=" + user_id, function () {
         $("#postTitle").focus();
         if (postID != '')
             post_id = postID;

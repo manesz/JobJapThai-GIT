@@ -33,20 +33,22 @@ footer p { font-size: 12px; }
 .font-size-12 { font-size: 12px; }
 
 /*----------------------- Font color style -----------------------*/
-.font-color-BF2026 { color: #BF2026; }
-.font-color-4BB748 { color: #4BB748; }
-.font-color-4D94CC { color: #4D94CC; }
-.font-color-006cb7 { color: #006cb7; }
-.font-color-333 { color: #333; }
+.font-color-BF2026 { color: #BF2026 !important; }
+.font-color-4BB748 { color: #4BB748 !important; }
+.font-color-4D94CC { color: #4D94CC !important; }
+.font-color-006cb7 { color: #006cb7 !important; }
+.font-color-FFF200 { color: #FFF200 !important; }
+.font-color-FF04FF { color: #FF04FF !important; }
+.font-color-333 { color: #333 !important; }
 .font-color-999 { color: #999 !important; }
-.font-color-ddd { color: #ddd; }
-.font-color-red { color: red; }
-.font-color-fff { color: #fff }
+.font-color-ddd { color: #ddd !important; }
+.font-color-red { color: red !important; }
+.font-color-fff { color: #fff!important; }
 
 /*----------------------- Background style -----------------------*/
-.bg-ddd { background: #ddd; }
-.bg-BF2026 { background: #BF2026 }
-.bg-f3f3f4 { background: #f3f3f4 }
+.bg-ddd { background: #ddd !important; }
+.bg-BF2026 { background: #BF2026 !important; }
+.bg-f3f3f4 { background: #f3f3f4 !important; }
 
 /*----------------------- Margin style -----------------------*/
 .no-margin { margin: 0px; }

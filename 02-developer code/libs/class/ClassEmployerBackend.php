@@ -504,17 +504,8 @@ class Employer_List extends WP_List_Table
             </div>
 
         </section>
-
-        <!-- Modal -->
-        <div class="modal fade" id="modal_package" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel" aria-hidden="true"
-             style="font-size: 12px;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                </div>
-            </div>
-        </div>
+        <?php
+        include_once('libs/pages/modal.php');?>
         <style type="text/css">
             #aupher-select {
                 display: none

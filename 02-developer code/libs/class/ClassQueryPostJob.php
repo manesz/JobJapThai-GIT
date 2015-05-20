@@ -640,7 +640,7 @@ class QueryPostJob
                 if ($paging)
                     echo $this->buildPagingPostJob($loopJobs); ?>
             <?php else: ?>
-                <div class="no-padding">Not result</div>
+                <div class="no-padding" align="center">Not result</div>
             <?php endif; ?>
             <hr/>
         </div>

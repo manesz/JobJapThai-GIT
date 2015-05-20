@@ -67,7 +67,9 @@ class Package
               a.*,
               b.*,
               c.*,
-              c.id AS select_package_id
+              c.id AS select_package_id,
+              c.create_datetime AS sp_create,
+              c.update_datetime AS sp_update
             FROM
               $this->tableUser a
             INNER JOIN
@@ -75,7 +77,7 @@ class Package
             ON (a.ID = b.employer_id)
             INNER JOIN
               $this->tableSelectPackage c
-            ON (a.ID = c.employer_id)
+            ON (a.ID = c.employer_id AND c.publish = 1)
             WHERE 1
             $strAnd
             $order_by
@@ -347,24 +349,29 @@ class Package
 
     function buildTdList($array_package, $str_select_package, $package_id, $status)
     {
+        $sumPrice = 0;
         $strTd = "";
         $arrPosition = explode('|', $str_select_package);
 
         list($idText, $price, $strTime) = explode(':', $arrPosition[0]);
         $strText = $this->getTextPackageByID($array_package, $idText);
         $strTd .= "<td>$strText->text / ";
+        $sumPrice += $price;
 
         list($idText, $price, $strTime) = explode(':', $arrPosition[1]);
         $strText = $this->getTextPackageByID($array_package, $idText);
         $strTd .= "$strText->text</td>";
+        $sumPrice += $price;
 
         list($idText, $price, $strTime) = explode(':', $arrPosition[2]);
         $strText = $this->getTextPackageByID($array_package, $idText);
         $strTd .= "<td>$strText->text</td>";
+        $sumPrice += $price;
 
         list($idText, $price, $strTime) = explode(':', $arrPosition[3]);
         $strText = $this->getTextPackageByID($array_package, $idText);
         $strTd .= "<td>$strText->text</td>";
+        $sumPrice += $price;
 
         /*foreach ($arrPosition as $value) {
 //            $arrExp1 = explode(',', $value);
@@ -381,20 +388,29 @@ class Package
             }
 //            $strTd .= $strTime ? "/$strTime</td>" : "</td>";
         }*/
+        $sumPrice += $sumPrice * 0.07;
+        $sumPrice = number_format($sumPrice, 2);
         switch ($status) {
             case 'edit':
-                $strTd .= "<td>$status</td>";
-                $strTd .= "<td><a href='#' data-toggle=\"modal\"
-        class='edit_package' data='$package_id' data-target=\"#modal_package\">Edit</a></td>";
+                $strTd .= "<td><a href='#' package-id='$package_id'" .
+                    "price='$sumPrice' class='btn_confirm_package btn btn-success pull-left'>" .
+                    "<span class='glyphicon glyphicon-shopping-cart'></span> Buy Package</a></td>";
+                $strTd .= "<td align='center'><a href='#' data-toggle=\"modal\"
+        class='edit_package btn btn-primary' data='$package_id' data-target=\"#modal_package\">Edit</a></td>";
                 break;
             case 'payment':
-                $strTd .= "<td>$status</td>";
+                $strTd .= "<td><p class='font-color-FF04FF'>Payment</p></td>";
+                $strTd .= "<td align='center'><a class='btn btn-danger' " .
+                    "href='javascript:cancelPackage($package_id);' >Cancel</a></td>";
                 break;
             case 'approve':
-                $strTd .= "<td><p class='font-color-4BB748'>$status</p></td>";
+                $strTd .= "<td><p class='font-color-4BB748'>Approve</p></td><td align='center'>----</td>";
+                break;
+            case 'cancel':
+                $strTd .= "<td><p class='font-color-999'>Cancel</p></td><td align='center'>----</td>";
                 break;
             case 'expire':
-                $strTd .= "<td><p class='font-color-BF2026'>$status</p></td>";
+                $strTd .= "<td><p class='font-color-999'>Expire</p></td><td align='center'>----</td>";
                 break;
         }
         return $strTd;
@@ -422,6 +438,17 @@ class Package
         return $newStrSelectPackage;
     }
 
+    function buildLogPackage($data)
+    {
+        global $current_user;
+        get_currentuserinfo();
+        $userID = $current_user->ID;
+        $userLogin = $current_user->user_login;
+        $data['editBy'] = "$userID|$userLogin";
+        $data['editTime'] = date_i18n('Y-m-d H:i:s');
+        return serialize($data);
+    }
+
     function addSelectPackage($post)
     {
         extract($post);
@@ -430,18 +457,20 @@ class Package
         if (empty($employer_id))
             return false;
         $newStrSelectPackage = $this->convertStrSelectPackage($select_package);
-//        var_dump($newStrSelectPackage);exit;
+        $data = array(
+            'employer_id' => $employer_id,
+            'string_package' => $newStrSelectPackage,
+            'status' => 'edit',
+            'approve' => 1,
+            'create_datetime' => date_i18n('Y-m-d H:i:s'),
+            'update_datetime' => '0000-00-00 00:00:00',
+            'publish' => 1,
+        );
+        $strLog = $this->buildLogPackage($data);
+        $data['log'] = $strLog;
         $result = $this->wpdb->insert(
             $this->tableSelectPackage,
-            array(
-                'employer_id' => $employer_id,
-                'string_package' => $newStrSelectPackage,
-                'status' => 'approve',
-                'approve' => 1,
-                'create_datetime' => date_i18n('Y-m-d H:i:s'),
-                'update_datetime' => '0000-00-00 00:00:00',
-                'publish' => 1,
-            ),
+            $data,
             array(
                 '%d',
                 '%s',
@@ -450,12 +479,37 @@ class Package
                 '%s',
                 '%s',
                 '%d',
+                '%s',
             )
         );
         if ($result) {
             return $this->wpdb->insert_id;
         }
         return false;
+    }
+
+    function setStatusPackage($post)
+    {
+        $package_id = $post['package_id'];
+        $status = $post['status_package'];
+        $approve = $status != 'approve' ? 0 : 1;
+        $data = array(
+            'approve' => $approve,
+            'status' => $status,
+            'update_datetime' => date_i18n('Y-m-d H:i:s'),
+        );
+        $strLog = $this->buildLogPackage($data);
+        $sql = "
+            UPDATE $this->tableSelectPackage
+            SET
+              `approve` = '{$approve}',
+             `status` = '{$status}',
+             `log` = CONCAT(IFNULL(`log`, ''), '$strLog'),
+             `update_datetime` = NOW()
+            WHERE `id` = $package_id;
+        ";
+        $result = $this->wpdb->query($sql);
+        return $result;
     }
 
     public function editSelectPackage($post)
@@ -486,27 +540,21 @@ class Package
         }
         $newStrSelectPackage = implode('|', $arraySavePosition);*/
         $newStrSelectPackage = $this->convertStrSelectPackage($select_package);
-        $result = $this->wpdb->update(
-            $this->tableSelectPackage,
-            array(
-                'employer_id' => $employer_id,
-                'string_package' => $newStrSelectPackage,
-                'update_datetime' => date_i18n('Y-m-d H:i:s'),
-                'publish' => 1,
-            ),
-            array('id' => $package_id),
-            array(
-                '%d',
-                '%s',
-                '%s',
-                '%d',
-            ),
-            array('%d')
+        $data = array(
+            'string_package' => $newStrSelectPackage,
+            'update_datetime' => date_i18n('Y-m-d H:i:s')
         );
-        if ($result) {
-            return true;
-        }
-        return false;
+        $strLog = $this->buildLogPackage($data);
+        $sql = "
+            UPDATE $this->tableSelectPackage
+            SET
+              `string_package` = '{$newStrSelectPackage}',
+             `log` = CONCAT(IFNULL(`log`, ''), '$strLog'),
+             `update_datetime` = NOW()
+            WHERE `id` = $package_id;
+        ";
+        $result = $this->wpdb->query($sql);
+        return $result;
     }
 
     function addPackage($post)
@@ -725,7 +773,6 @@ class Package
         return false;
     }
 
-
     function addApplyHotJob($post_id)
     {
         $getSelectPackageHotJobID = get_post_meta($post_id, $this->strSelectHotJobID, true);
@@ -934,6 +981,346 @@ class Package
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
+    }
+
+    function buildJavaFormNewPackage($packageID, $userID, $isBackend = false)
+    {
+        $arrayPackage = $this->getPackage();
+        $arraySelectPackage = $packageID ? $this->getSelectPackage($userID, $packageID) : null;
+//        $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
+        $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+        ob_start();
+        ?>
+        <script>
+            var package_id = <?php echo $packageID; ?>;
+
+            <?php echo $this->buildJsArrayPrice($arrayPackage); ?>
+            var jsHookCalPackage = {
+                <?php echo $this->buildJsParameter($arrayPackage); ?>
+
+                jopPackSum: 0,
+                jopTax: 0,
+                jopPackAllSum: 0,
+                init: function () {
+                    jsHookCalPackage.updateVal();
+                    jsHookCalPackage.addEvent();
+//            proselect.init();
+                },
+                addEvent: function () {
+                    <?php echo $this->buildJsEvent($arrayPackage); ?>
+                },
+                updateVal: function () {
+                    jsHookCalPackage.jopPackSum = <?php echo $this->buildJsCalValue($arrayPackage); ?>;
+                    jsHookCalPackage.jopTax = jsHookCalPackage.jopPackSum * 0.07;
+                    jsHookCalPackage.jopPackAllSum = jsHookCalPackage.jopPackSum + jsHookCalPackage.jopTax;
+
+                    <?php echo $this->buildJsSumValue($arrayPackage); ?>
+
+                    $('.jj-allsum').text(jsHookCalPackage.formatDollar(jsHookCalPackage.jopPackSum));
+                    $('.jj-taxsum').text(jsHookCalPackage.formatDollar(jsHookCalPackage.jopTax));
+                    $('.jj-alltaxsum').text(jsHookCalPackage.formatDollar(jsHookCalPackage.jopPackAllSum));
+
+                    jsHookCalPackage.addStringPackage();
+                },
+                addStringPackage: function () {
+                    var strSelectPackage = <?php echo $this->buildJsStrSelectPackage($arrayPackage); ?>;
+                    $("#select_package").val(strSelectPackage);
+                },
+                formatDollar: function (num) {
+                    var p = num.toFixed(2).split(".");
+                    return p[0].split("").reverse().reduce(function (acc, num, i, orig) {
+                            return num + (i && !(i % 3) ? "," : "") + acc;
+                        }, "") + "." + p[1];
+                }
+            };
+
+            var check_post_package = false;
+            $(document).ready(function () {
+                jsHookCalPackage.init();
+
+                <?php if($isApprove == 'approve'): ?>
+                $('#frm_package>select').prop('disabled', 'disabled');
+                <?php endif; ?>
+
+                $("#frm_package").submit(function () {
+                    if (!check_post_package) {
+                        showImgLoading();
+                        $.ajax({
+                            type: "POST",
+                            url: '',
+                            data: $(this).serialize(),
+                            success: function (result) {
+                                if (result != 'success') {
+                                    alert(result);
+                                } else {
+                                    <?php if (!$isBackend): ?>
+                                    showListPackage();
+                                    $('#modal_package').modal('hide');
+                                    $(".modal-backdrop").remove();
+                                    <?php else :?>
+                                    alert("Save Success.");
+                                    <?php endif;?>
+                                }
+                                hideImgLoading();
+                                check_post_package = false;
+                            },
+                            error: function (result) {
+                                alert("Error:\n" + result.responseText);
+                                hideImgLoading();
+                                check_post_package = false;
+                            }
+                        });
+                    }
+                    check_post_package = true;
+                    return false;
+                });
+            });
+        </script>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+    function buildHtmlFormNewPackage($packageID, $userID)
+    {
+        $arrayPackage = $this->getPackage();
+        $arraySelectPackage = $packageID ? $this->getSelectPackage($userID, $packageID) : null;
+        $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
+//        $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+        ob_start();
+        ?>
+
+        <form method="post" id="frm_package">
+            <h4 class="bg-BF2026 font-color-fff padding-10" id="myModalLabel">Business Package</h4>
+
+            <div class="clearfix" id="frm_package">
+                <input type="hidden" id="employer_id" name="employer_id" value="<?php echo $userID; ?>">
+                <input type="hidden" id="package_id" name="package_id" value="<?php echo $packageID; ?>">
+                <input type="hidden" id="select_package" name="select_package" value="">
+                <input type="hidden" id="post_package" name="post_package" value="true">
+                <input type="hidden" id="type_post" name="type_post"
+                       value="<?php echo $packageID ? 'edit' : 'add'; ?>"/>
+                <table style="width: 100%;">
+                    <?php
+                    $saveName = "";
+                    $savePosition = 0;
+                    foreach ($arrayPackage as $key => $value):
+
+                        ?>
+
+                        <?php if ($savePosition != $value->position && $key != 0): ?>
+                        <tr>
+                            <td colspan="3">
+                                <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                        <?php if ($savePosition != $value->position):
+                        $strHeader = "";
+                        $strTitle = "";
+                        $countName = 0;
+                        switch ($value->position) {
+                            case 1:
+                                $strHeader = "เลือกจำนวนตำแหน่ง";
+                                $countName = 1;
+                                break;
+                            case 2:
+                                $strHeader = 'เลือกระยะเวลา';
+                                $countName = 2;
+                                break;
+                            case 3:
+                                $strHeader = 'เลือกจำนวน <span
+                    class="font-color-BF2026">Hotjob</span>';
+                                $countName = 3;
+                                break;
+                            case 4:
+                                $strHeader = 'เลือกระยะเวลาของ <span
+                    class="font-color-BF2026">Auto Update</span>';
+                                $countName = 4;
+                                break;
+                        }
+                        switch ($value->position) {
+                            case 1:
+                                $strTitle = "จำนวนตำแหน่ง";
+                                break;
+                            case 2:
+                                $strTitle = 'ระยะเวลา';
+                                break;
+                            case 3:
+                                $strTitle = 'จำนวนตำแหน่ง';
+                                break;
+                            case 4:
+                                $strTitle = 'ระยะเวลา';
+                                break;
+                        }
+                        ?>
+                        <tr>
+                            <td colspan="3"><h5><?php echo "$countName. $strHeader"; ?></h5></td>
+                        </tr>
+                        <tr class="padding-bottom-10" style="">
+                            <?php echo $this->buildTd1($arrayPackage, $value->position, $strTitle); ?>
+                            <?php echo $this->buildTd2($arrayPackage, $value->position, $strSelectPackage); ?>
+                            <?php echo $this->buildTd3($arrayPackage, $value->position); ?>
+                        </tr>
+                    <?php endif; ?>
+
+                        <?php
+                        $savePosition = $value->position;
+                    endforeach; ?>
+
+                    <tr>
+                        <td colspan="3">
+                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-10 text-right" colspan="2">Sub Total</td>
+                        <td class="col-md-2"><span class="jj-allsum">600</span> บาท</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-10 text-right" colspan="2">+ Vat (7%)</td>
+                        <td class="col-md-2"><span class="jj-taxsum">0</span> บาท</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-10 text-right" colspan="2"><strong>ยอดสุทธิ</strong></td>
+                        <td class="col-md-2"><span class="jj-alltaxsum">0</span> บาท</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"></td>
+                        <td class="col-md-7"></td>
+                        <td class="col-md-2"></td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+    function getPaymentFilePath($package_id)
+    {
+        $sql = "
+            SELECT * FROM $this->tableSelectPackage
+            WHERE `id` = '$package_id';
+        ";
+        $result = $this->wpdb->get_results($sql);
+        if ($result) {
+            return $result[0]->payment_file;
+        } else {
+            return '';
+        }
+    }
+
+    function setPaymentFilePath($package_id, $path)
+    {
+        $sql = "
+            UPDATE $this->tableSelectPackage
+            SET
+              `payment_file` = '$path',
+              `update_datetime` = NOW()
+            WHERE `id` = '$package_id';
+        ";
+        return $this->wpdb->query($sql);
+    }
+
+    function setPublishSelectPackage($id)
+    {
+        $data = array(
+            'publish' => 0,
+            'update_datetime' => date_i18n('Y-m-d H:i:s')
+        );
+        $strLog = $this->buildLogPackage($data);
+        $sql = "
+            UPDATE $this->tableSelectPackage
+            SET
+             `publish` = 0,
+             `log` = CONCAT(IFNULL(`log`, ''), '$strLog'),
+             `update_datetime` = NOW()
+            WHERE `id` = $id;
+        ";
+        $result = $this->wpdb->query($sql);
+        return $result;
+    }
+
+    function convertFileName($file, $candidate_id)
+    {
+        $pathInfo = pathinfo($file['name']);
+        $fileType = $pathInfo['extension'];
+        $fileName = date_i18n("Y-m-d_Hms_") . $candidate_id;
+        $file['name'] = "payment_$fileName.$fileType";
+        return $file;
+    }
+
+    function addAttachFilePayment($file, $employer_id)
+    {
+        $file = $this->convertFileName($file, $employer_id);
+        $handle = new Upload($file);
+        $upload_dir = wp_upload_dir();
+        $dir_dest = $upload_dir['basedir'] . "/payment_package/$employer_id/";
+
+        $dir_file = $upload_dir['baseurl'] . "/payment_package/$employer_id/";
+        $arrayReturn = array();
+//        $filePath = 'wp-content/uploads/avatar' . $upload_dir['subdir'];;
+        if ($handle->uploaded) {
+//            $handle->image_resize = true;
+//            $handle->image_ratio_y = true;
+//            $handle->image_x = $image_x;
+
+            // yes, the file is on the server
+            // now, we start the upload 'process'. That is, to copy the uploaded file
+            // from its temporary location to the wanted location
+            // It could be something like $handle->Process('/home/www/my_uploads/');
+            $handle->Process($dir_dest);
+
+            // we check if everything went OK
+            if ($handle->processed) {
+                $dir_file .= $handle->file_dst_name;
+//                $filePath .= '/' . $handle->file_dst_name;
+                $arrayReturn['error'] = false;
+                // everything was fine !
+                $msgReturn = '<p class="result">';
+                $msgReturn .= '  <b>File uploaded with success</b><br />';
+                $msgReturn .= '  File: <a target="_blank" href="' . $dir_file . '">' .
+                    $handle->file_dst_name . '</a>';
+                $msgReturn .= '   (' . round(filesize($handle->file_dst_pathname) / 256) / 4 . 'KB)';
+                $msgReturn .= '</p>';
+            } else {
+                $arrayReturn['error'] = true;
+                // one error occured
+                $msgReturn = '<p class="result">';
+                $msgReturn .= '  <b>File not uploaded to the wanted location</b><br />';
+                $msgReturn .= '  Error: ' . $handle->error . '';
+                $msgReturn .= '</p>';
+            }
+
+            // we delete the temporary files
+            $handle->Clean();
+
+        } else {
+            $arrayReturn['error'] = true;
+            // if we're here, the upload file failed for some reasons
+            // i.e. the server didn't receive the file
+            $msgReturn = '<p class="result">';
+            $msgReturn .= '  <b>File not uploaded on the server</b><br />';
+            $msgReturn .= '  Error: ' . $handle->error . '';
+            $msgReturn .= '</p>';
+        }
+        $arrayReturn['msg'] = $msgReturn;
+        $arrayReturn['path'] = $dir_file;
+        return $arrayReturn;
     }
 
     //------------Auto Update---------------//

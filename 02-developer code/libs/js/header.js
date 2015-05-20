@@ -1,3 +1,4 @@
+var check_post_data = false;
 function showImgLoading() {
     hideImgLoading();
     $("body").append(str_loading);
@@ -6,6 +7,7 @@ function showImgLoading() {
     $($screenBlock).css({ opacity: 0, width: $(document).width(), height: $(document).height() });
     $($screenBlock).addClass('blockDiv');
     $($screenBlock).animate({opacity: 0.7}, 200);
+    check_post_data = true;
 }
 
 function hideImgLoading() {
@@ -13,6 +15,7 @@ function hideImgLoading() {
     $('#screenBlock').animate({opacity: 0}, 200, function () {
         $('#screenBlock').remove();
     });
+    check_post_data = false;
 }
 
 function scrollToTop(fade_in) {

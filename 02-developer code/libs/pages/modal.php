@@ -13,7 +13,7 @@
                     <a href="<?php echo get_permalink(get_page_by_title('Seeking for Job Register')); ?>">Seeking for Job</a>
                 </div>
                 <div class="col-md-6 btn">
-                    <a href="<?php echo get_permalink(get_page_by_title('Seeking for Manpower Register')); ?>">Seeking for Manpower</a>
+                    <a href="<?php echo get_permalink(get_page_by_title('Seeking for Job Register')); ?>">Seeking for Manpower</a>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -101,4 +101,24 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal_package" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true"
+     style="font-size: 12px;">
+    <div class="modal-dialog">
+        <div id="modal_package_content" class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    #aupher-select {
+        display: none
+    }
+
+    #distinct-select {
+        display: none
+    }
+</style>
 <!-- END: Modal -->

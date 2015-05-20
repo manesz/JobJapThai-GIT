@@ -86,7 +86,7 @@ $(document).ready(function () {
                         if (!is_page_backend)
                             setTimeout(function () {
                                 window.location.href = url_post + "register-success/?mail_confirm=" +
-                                    $("#employerEmail").val()
+                                $("#employerEmail").val()
                             }, 3000);
                         else $("#btn_success").show();
                     }
@@ -140,7 +140,6 @@ $(document).ready(function () {
             });
         }
     });
-
     $('#banner_image').change(function () {
         if ($(this).val() != '') {
             var formData = new FormData();
@@ -171,6 +170,70 @@ $(document).ready(function () {
         }
     });
 });
+$(document).on("click", ".btn_confirm_package", function (e) {
+    var price = $(this).attr('price');
+    var package_id = $(this).attr('package-id');
+    var packageNo = $("#package_no" + package_id).text();
+    if (!confirm("คุณต้องการซื้อ Package: '" +packageNo+"' ราคา " + price + " ใช่ หรือไม่")) {
+        return false;
+    }
+    $(this).hide();
+    showImgLoading();
+    $.ajax({
+        url: '',
+        type: 'POST',
+        dataType: 'json',
+        cache: false,
+        data: {
+            'post_package': 'true',
+            'type_post': 'confirm_buy_package',
+            'package_id': package_id,
+            'status_package': 'payment',
+            'employer_id': user_id
+        },
+        success: function (result) {
+            hideImgLoading();
+            if (!result.error)
+                showListPackage();
+            showModalMessage(result.msg, 'Message');
+        },
+        error: function (result) {
+            hideImgLoading();
+            showModalMessage(result.responseText, 'Message');
+        }
+    });
+    return false;
+});
+
+function cancelPackage(id) {
+    var packageNo = $("#package_no" + id).text();
+    if (!confirm("คุณต้องการยกเลิก Package: '" + packageNo + "' ใช่ หรือไม่")) {
+        return false;
+    }
+    showImgLoading();
+    $.ajax({
+        url: '',
+        type: 'POST',
+        dataType: 'json',
+        cache: false,
+        data: {
+            'post_package': 'true',
+            'type_post': 'set_status_package',
+            'status_package': 'cancel',
+            'package_id': id
+        },
+        success: function (result) {
+            hideImgLoading();
+            if (!result.error)
+                showListPackage();
+            showModalMessage(result.msg, 'Message');
+        },
+        error: function (result) {
+            hideImgLoading();
+            showModalMessage(result.responseText, 'Message');
+        }
+    });
+}
 
 function removeAvatarImage($elm) {
     showImgLoading();
@@ -228,10 +291,10 @@ function showAddPackage(package_id, user_id) {
     package_id = package_id | false;
     user_id = user_id | false;
     var strUrl = "?new_package=true";
-    strUrl += package_id ? "&package_id=" + package_id + "&user_id=" + user_id: "&user_id=" + user_id;
-    $(".modal-content").load(strUrl);
+    strUrl += package_id ? "&package_id=" + package_id + "&user_id=" + user_id : "&user_id=" + user_id;
+    $("#modal_package_content").load(strUrl);
 }
 
 function showListPackage() {
-    $("#list_package").load("?list_package=true");
+    $("#list_package").load("?list_package=true&employer_id=" + user_id);
 }

@@ -35,33 +35,49 @@ class Approve_Package extends WP_List_Table
         $classPackage = new Package($wpdb);
         $this->approve_data = array();
         $result = $classPackage->getUserSelectPackage();
-        $siteUrl = home_url();
         foreach ($result as $key => $value) {
+            $packageNo = str_pad($value->select_package_id, 5, '0', STR_PAD_LEFT);
+            $linkEdit = "admin.php?page=approve-package&page_approve=true&package_id=$value->select_package_id&employer_id=$value->ID";
             if ($this->searchInArray((array)$value))
                 $this->approve_data[] = array(
-                    "id" => $value->ID,
+                    "id" => "<a href='$linkEdit'>$packageNo</a>",
                     "count" => $key + 1,
                     "company_name" => $value->company_name,
-                    "email" => $value->user_email,
+                    "email" => "<a href='mailto:$value->user_email'>$value->user_email</a>",
                     "user_login" => $value->user_login,
-//                    "status" => $this->checkStatus($value->status),
-                    "create_time" => $value->create_datetime,
-                    "update_time" => $value->update_datetime,
-                    "edit" => $this->buildBtnApprove($value->select_package_id, $value->approve) . " | "
-                        . '<a href="#" data-toggle="modal" id="new_package" onclick="showAddPackage(' .
-                        $value->select_package_id . ', ' . $value->ID . ')" data-target="#modal_package">View</a>' .
+                    "status" => $this->buildStatus($value->status),
+                    "create_time" => $value->sp_create,
+                    "update_time" => $value->sp_update,
+                    "edit" => "<a href='$linkEdit'>View</a>" .
                         " | " .
-                        '<a class="btn_delete_approve" href="#" pm-id="' . $value->ID . '">Delete</a>'
+                        '<a href="javascript:deleteSelectPackage('.$value->select_package_id.
+                        ');">Delete</a>'
                 );
         }
 
     }
 
-    function buildBtnApprove($id, $approve)
+    function buildStatus($status)
     {
-        if ($approve == 1)
-            return "<span style='color:green'>Approved</span>";
-        return "<a href='#' onclick='return setApprove($id);'>Approve</a>";
+        $strStatus = '';
+        switch ($status) {
+            case 'edit':
+                $strStatus .= "<b class='font-color-006cb7'>Buy Package</b>";
+                break;
+            case 'payment':
+                $strStatus .= "<b class='font-color-FF04FF'>Payment</b>";
+                break;
+            case 'approve':
+                $strStatus .= "<b class='font-color-4BB748'>Approve</b>";
+                break;
+            case 'cancel':
+                $strStatus .= "<b class='font-color-999'>Cancel</b>";
+                break;
+            case 'expire':
+                $strStatus .= "<b class='font-color-999'>Expire<b>";
+                break;
+        }
+        return $strStatus;
     }
 
     function checkStatus($status)
@@ -115,12 +131,13 @@ class Approve_Package extends WP_List_Table
     {
         switch ($column_name) {
             case 'count':
+            case 'id':
             case 'company_name':
             case 'user_login':
 //            case 'user_nicename':
 //            case 'passport_no':
             case 'email':
-//            case 'status':
+            case 'status':
             case 'create_time':
             case 'update_time':
             case 'edit':
@@ -134,10 +151,11 @@ class Approve_Package extends WP_List_Table
     {
         $sortable_columns = array(
             'count' => array('count', true),
+            'id' => array('id', true),
             'company_name' => array('company_name', true),
             'user_login' => array('user_login', true),
             'user_nicename' => array('user_nicename', true),
-//            'status' => array('status', true),
+            'status' => array('status', true),
             'create_time' => array('create_time', true),
             'update_time' => array('update_time', true),
             'email' => array('email', true),
@@ -150,10 +168,11 @@ class Approve_Package extends WP_List_Table
         $columns = array(
             'cb' => '<input type="checkbox" />',
             'count' => __('#', 'mylisttable'),
+            'id' => __('Package No.', 'mylisttable'),
             'company_name' => __('Company name', 'mylisttable'),
             'user_login' => __('Login name', 'mylisttable'),
             'email' => __('Email', 'mylisttable'),
-//            'status' => __('Status', 'mylisttable'),
+            'status' => __('Status', 'mylisttable'),
             'create_time' => __('Create', 'mylisttable'),
             'update_time' => __('Update', 'mylisttable'),
             'edit' => __('', 'mylisttable'),
@@ -223,11 +242,155 @@ class Approve_Package extends WP_List_Table
     function approvePackageTemplate()
     {
         global $webSiteName, $wpdb;
-
+        $classPackage = new Package($wpdb);
+        $packageID = empty($_REQUEST['package_id']) ? 0 : $_REQUEST['package_id'];
+        $employerID = empty($_REQUEST['employer_id']) ? 0 : $_REQUEST['employer_id'];
+        $packageNo = str_pad($packageID, 5, '0', STR_PAD_LEFT);
+        $paymentFile = $classPackage->getPaymentFilePath($packageID);
+        $paymentFileName = $paymentFile ? basename($paymentFile) : '';
+        $arraySelectPackage = $packageID ? $classPackage->getSelectPackage($employerID, $packageID) : null;
+        $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
         ?>
-        </pre>
-        <div class="wrap"><h2>Approve</h2>
+        <script>
+            var user_id = <?php echo $employerID; ?>;
+            var str_loading = '<div class="img_loading"><img src="<?php
+        bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
+        </script>
+        <link rel="stylesheet" type="text/css"
+              href="<?php echo get_template_directory_uri(); ?>/libs/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/css/style.css"/>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/jquery.1.11.1.min.js"></script>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap.min.js"></script>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrapValidator.min.js"></script>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/header.js"></script>
 
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/libs/css/jasny-bootstrap.min.css">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/jasny-bootstrap.min.js"></script>
+        <script>
+            function setApprove() {
+                if ($("#attach_payment").val() == '') {
+                    alert("กรุณาเลือกไฟล์ หลังฐานการชำระเงิน");
+                    $("#attach_payment").click();
+                    return false;
+                }
+                showImgLoading();
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    dataType: 'json',
+                    url: '',
+                    data: {
+                        post_package: 'true',
+                        type_post: 'approve_package',
+                        status_package: 'approve',
+                        package_id: <?php echo $packageID; ?>
+                    },
+                    success: function (data) {
+                        hideImgLoading();
+                        alert(data.msg);
+                        if (!data.error) {
+                            window.location.reload();
+                        }
+                    }
+                })
+                    .fail(function () {
+                        hideImgLoading();
+                        alert("เกิดข้อผิดพลาด");
+                    });
+                return false;
+            }
+            $(document).ready(function () {
+                $('#attach_payment').change(function () {
+                    if ($(this).val() != '') {
+                        var formData = new FormData();
+                        formData.append('payment_file', $(this)[0].files[0]);
+                        formData.append('post_package', 'true');
+                        formData.append('type_post', 'file_package_payment');
+                        formData.append('package_id', '<?php echo $packageID; ?>');
+                        formData.append('employer_id', user_id);
+                        showImgLoading();
+                        $.ajax({
+                            url: '',
+                            type: 'POST',
+                            data: formData,
+                            dataType: 'json',
+                            success: function (result) {
+                                hideImgLoading();
+                                alert(result.msg);
+                            },
+                            error: function (result) {
+                                alert(result.responseText);
+                                hideImgLoading();
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false
+                        });
+                    }
+                });
+            })
+        </script>
+        <div class="wrap">
+            <h2>Package No. <?php echo $packageNo; ?></h2>
+            <section class="container-fluid" style="margin-top: 10px;">
+
+                <div class="container wrapper">
+                    <div class="row">
+                        <div class="form-group col-md-12" style="">
+                            <?php
+                            echo $classPackage->buildHtmlFormNewPackage($packageID, $employerID);
+                            //                        require_once(get_template_directory() . "/libs/pages/package-new.php");
+                            ?>
+
+                        </div>
+                        <div class="form-group col-md-12">
+                            <div class="col-md-4 text-right">
+                                <label for="attach_payment">Attach Payment File</label><br/>
+<!--                                <small>(PDF File)</small>-->
+                            </div>
+                            <div class="col-md-8">
+                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                    <?php if ($isApprove != 'approve' && !$paymentFile): ?>
+                                    <span class="btn btn-default btn-file">
+
+                                        <span class="fileinput-new"><span
+                                                class="glyphicon glyphicon glyphicon-file"></span> Select file</span>
+                                        <span class="fileinput-exists"><span
+                                                class="glyphicon glyphicon glyphicon-file"></span> Change</span>
+
+                                        <input type="file" name="attach_payment" id="attach_payment"
+                                                value="<?php echo $paymentFile; ?>">
+                                    </span>
+                                    <?php endif; ?>
+                                    <span class="fileinput-filename"><?php echo $paymentFile ?
+                                            "<a href='$paymentFile' target='_blank'>$paymentFileName</a>" : '';?></span>
+                                    <a href="#" id="delete_file" class="close fileinput-exists" data-dismiss="fileinput"
+                                       style="float: none">&times;</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <?php if ($isApprove == 'payment'): ?>
+                            <button type="button" class="btn btn-primary pull-right"
+                                    onclick="$('#frm_package').submit();">Save changes
+                            </button>
+                            <button type="button" class="btn btn-success pull-right"
+                                    onclick="setApprove();">Set Approve
+                            </button>
+                            <?php endif; ?>
+                            <a class="btn btn-default pull-left"
+                               href="admin.php?page=approve-package">Back</a>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <?php
+            echo $classPackage->buildJavaFormNewPackage($packageID, $employerID, true);
+            ?>
+        </div>
     <?php
     }
 

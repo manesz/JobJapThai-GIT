@@ -39,7 +39,9 @@ if (is_user_logged_in()) {
     $userID = 0;
     $isLogin = false;
     $current_user = null;
+    wp_redirect(home_url());
 }
+$showByPackage = empty($_REQUEST['buy_package']) ? false : true;
 ?>
 
 <section class="container-fluid" style="margin-top: 10px;">
@@ -54,6 +56,15 @@ if (is_user_logged_in()) {
         var user_id = <?php echo $userID; ?>;
     </script>
     <script src="<?php echo get_template_directory_uri(); ?>/libs/js/employer-register.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            <?php if ($showByPackage): ?>
+            $("#modal_package").modal("show");
+            showAddPackage();
+            <?php endif; ?>
+        })
+    </script>
 
     <div class="container wrapper">
         <!--<div class="form-group">-->
@@ -79,7 +90,7 @@ if (is_user_logged_in()) {
                         <!-- ---------------------------------------------------------------- Section : username -->
                         <?php if ($isLogin) {
                             include_once('emp_menu.php');
-                        }?>
+                        } ?>
                         <input type="hidden" name="employer_id" value="<?php echo $userID; ?>">
                         <input type="hidden" name="employer_post" value="true">
                         <input type="hidden" name="post_type"
@@ -188,7 +199,7 @@ if (is_user_logged_in()) {
 
                         <!-- ----------------------------------------- Section : Company information for contact -->
                         <h5 class="bg-ddd padding-10 clearfix">Company information for contact</h5>
-                        <?php if ($isLogin) :?>
+                        <?php if ($isLogin) : ?>
                             <div class="form-group col-md-12">
                                 <div class="col-md-2 text-right clearfix">
                                     <label for="employer_image"><?php _e('Logo:', 'framework') ?></label></div>
@@ -205,36 +216,36 @@ if (is_user_logged_in()) {
                             <input type="file" name="file" id="employer_image"
                                    class="ephoto-upload" accept="image/jpeg"></span>
                                             <a href="#" class="btn btn-default <?php
-                                            echo $getLogoImage['have_image'] ? "": "fileinput-exists";?>"
+                                            echo $getLogoImage['have_image'] ? "" : "fileinput-exists"; ?>"
                                                data-dismiss="fileinput"
-                                                onclick="return removeAvatarImage(this);">Remove</a>
+                                               onclick="return removeAvatarImage(this);">Remove</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        <div class="form-group col-md-12">
-                            <div class="col-md-2 text-right clearfix">
-                                <label for="banner_image"><?php _e('Banner:', 'framework') ?></label></div>
-                            <div class="col-md-10">
-                                <div></div>
-                                <div class="fileinput fileinput-new" data-provides="fileinput" style="width: 100%;">
-                                    <div id="preview" class="fileinput-preview thumbnail col-md-10"
-                                         data-trigger="fileinput"
-                                         style="width: 100%; height: 200px;"><?php echo $str_image_banner; ?></div>
-                                    <div>
+                            <div class="form-group col-md-12">
+                                <div class="col-md-2 text-right clearfix">
+                                    <label for="banner_image"><?php _e('Banner:', 'framework') ?></label></div>
+                                <div class="col-md-10">
+                                    <div></div>
+                                    <div class="fileinput fileinput-new" data-provides="fileinput" style="width: 100%;">
+                                        <div id="preview" class="fileinput-preview thumbnail col-md-10"
+                                             data-trigger="fileinput"
+                                             style="width: 100%; height: 200px;"><?php echo $str_image_banner; ?></div>
+                                        <div>
                         <span class="btn btn-default btn-file">
                             <span class="fileinput-new">Select image</span>
                             <span class="fileinput-exists">Change</span>
                             <input type="file" name="file" id="banner_image"
                                    class="ephoto-upload" accept="image/jpeg"></span>
-                                        <a href="#" class="btn btn-default <?php
-                                        echo $get_image_banner['have_image'] ? "": "fileinput-exists";?>"
-                                           data-dismiss="fileinput"
-                                            onclick="removeBannerImage(this);">Remove</a>
+                                            <a href="#" class="btn btn-default <?php
+                                            echo $get_image_banner['have_image'] ? "" : "fileinput-exists"; ?>"
+                                               data-dismiss="fileinput"
+                                               onclick="removeBannerImage(this);">Remove</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endif; ?>
 
                         <?php echo $classEmployer->buildHtmlCompanyInfo($dataEmployer); ?>
@@ -243,7 +254,7 @@ if (is_user_logged_in()) {
                             <div id="show_message"></div>
                             <button type="submit" id="btn_submit" class="btn btn-primary col-md-6 pull-right">Submit
                             </button>
-                            <button type="reset" class="btn btn-default pull-right" style="border: none;">Reset</button>
+<!--                            <button type="reset" class="btn btn-default pull-right" style="border: none;">Reset</button>-->
                         </div>
 
                     </form>
@@ -258,26 +269,6 @@ if (is_user_logged_in()) {
     </div>
 
 </section>
-
-<!-- Modal -->
-<div class="modal fade" id="modal_package" tabindex="-1" role="dialog"
-     aria-labelledby="myModalLabel" aria-hidden="true"
-     style="font-size: 12px;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-        </div>
-    </div>
-</div>
-<style type="text/css">
-    #aupher-select {
-        display: none
-    }
-
-    #distinct-select {
-        display: none
-    }
-</style>
 <script type="text/javascript">
     var employer_id = <?php echo $userID; ?>;
     var distinct = <?php echo empty($district) ? 0: $district; ?>;
