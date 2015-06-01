@@ -86,7 +86,7 @@ $(document).ready(function () {
                         if (!is_page_backend)
                             setTimeout(function () {
                                 window.location.href = url_post + "register-success/?mail_confirm=" +
-                                $("#employerEmail").val()
+                                $("#employerEmail").val() + "&emp=true"
                             }, 3000);
                         else $("#btn_success").show();
                     }
@@ -287,7 +287,7 @@ function removeBannerImage($elm) {
     });
 }
 
-function showAddPackage(package_id, user_id) {
+function showAddPackage(package_id) {
     package_id = package_id | false;
     user_id = user_id | false;
     var strUrl = "?new_package=true";

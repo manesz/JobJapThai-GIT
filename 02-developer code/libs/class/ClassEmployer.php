@@ -22,7 +22,7 @@ class Employer
 
     public function createTable()
     {
-        $sql = "
+        /*$sql = "
             CREATE TABLE `$this->tableEmployerPackage` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
               `employer_id` int(10) unsigned DEFAULT NULL,
@@ -69,7 +69,7 @@ class Employer
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8
         ";
-        dbDelta($sql);
+        dbDelta($sql);*/
     }
 
     public function getListUser($employer_id = 0, $order_by = "")
@@ -195,6 +195,21 @@ class Employer
         return $result;
     }
 
+    function buildContentHtmlConfirm($key)
+    {
+        $urlConfirm = home_url() . "/confirm-register?key=$key";
+        ob_start();
+        ?>
+        <p>ขอบคุณสำหรับการสมัครสมาชิก www.jobjapthai.com กรุณายืนยันการสมัครด้วยการคลิก link ด้านล่างนี้</p><br/><br/>
+        <p><a href="<?php echo $urlConfirm; ?>"
+              target="_blank"><?php echo $urlConfirm; ?></a>
+        </p>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
     function employerRegister($post)
     {
         $fxrootpath = ABSPATH . 'wp-load.php';
@@ -244,6 +259,7 @@ class Employer
             $message = array("msg" => 'Register Success.', 'key' => $generatedKey);
             return $this->returnMessage($message, false, false);
         } else {
+//            $error_string = "Sorry, that email already exists!";
             $error_string = $user_id->get_error_message();
             return $this->returnMessage($error_string, true, false);
         }
@@ -494,206 +510,7 @@ class Employer
         }
         ob_start();
         ?>
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&language=th"></script>
-        <script type="text/javascript">
-            var geocoder = new google.maps.Geocoder();
-            var lat_lng = new google.maps.LatLng(<?php echo $lat; ?>, <?php echo $long; ?>);
-            var loadDefaultLocation = <?php echo $directions ? "true": 'false'; ?>;
 
-            function geocodePosition(pos) {
-                geocoder.geocode({
-                    latLng: pos
-                }, function (responses) {
-                    if (responses && responses.length > 0) {
-                        updateMarkerAddress(responses[0].formatted_address);
-                    } else {
-                        updateMarkerAddress('Cannot determine address at this location.');
-                    }
-                });
-            }
-
-            function updateMarkerStatus(str) {
-                document.getElementById('markerStatus').innerHTML = str;
-            }
-
-            function updateMarkerPosition(latLng) {
-//                document.getElementById('info').innerHTML = [
-//                    latLng.lat(),
-//                    latLng.lng()
-//                ].join(', ');
-
-//                $("#current_location").text(latLng.lat() + ", " + latLng.lng());
-//                document.getElementById('current_location').value = [
-//                    latLng.lat(),
-//                    latLng.lng()
-//                ].join(', ');
-                if (loadDefaultLocation) {
-                    document.getElementById('employerContactDirections').value = [
-                        latLng.lat(),
-                        latLng.lng()
-                    ].join(', ');
-                }
-                loadDefaultLocation = true;
-            }
-
-            function updateMarkerAddress(str) {
-                document.getElementById('address').innerHTML = str;
-            }
-
-            function initialize() {
-                var map = new google.maps.Map(document.getElementById('mapCanvas'), {
-                    zoom: 14,
-                    center: lat_lng,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                });
-                var marker = new google.maps.Marker({
-                    position: lat_lng,
-                    title: 'Point A',
-                    map: map,
-                    draggable: true
-                });
-
-                // Update current position info.
-                updateMarkerPosition(lat_lng);
-                geocodePosition(lat_lng);
-
-                // Add dragging event listeners.
-                google.maps.event.addListener(marker, 'dragstart', function () {
-                    updateMarkerAddress('Dragging...');
-                });
-
-                google.maps.event.addListener(marker, 'drag', function () {
-                    updateMarkerStatus('Dragging...');
-                    updateMarkerPosition(marker.getPosition());
-                });
-
-                google.maps.event.addListener(marker, 'dragend', function () {
-                    updateMarkerStatus('Drag ended');
-                    geocodePosition(marker.getPosition());
-                });
-            }
-
-            // Onload handler to fire off the app.
-            function setGoogleMap() {
-                google.maps.event.addDomListener(window, 'load', initialize);
-            }
-
-            function setLocation() {
-                var getLatLong = document.getElementById('employerContactDirections').value;
-                if (!getLatLong)
-                    return;
-                var spLatLong = getLatLong.split(",");
-                var latitude = parseFloat(spLatLong[0].trim());
-                var longitude = parseFloat(spLatLong[1].trim());
-                lat_lng = new google.maps.LatLng(latitude, longitude);
-                initialize();
-            }
-
-            setGoogleMap();
-
-            var ajaxPageurl = '<?php echo get_home_url() ?>/';
-            var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
-            var proselect = {
-                proval: 0,
-                amval: 0,
-                init: function () {
-                    proselect.proval = $('#employerContactProvince').val();
-                    proselect.selectProvince();
-                    proselect.setEvent();
-                },
-                setEvent: function () {
-                    $('#employerContactProvince').on('change', proselect.selectProvince);
-                },
-                selectProvince: function () {
-                    proselect.proval = $('#employerContactProvince').val();
-                    proselect.clearampporSelect();
-                    $('#aupher-select').slideUp('fast', function () {
-                        if (proselect.proval !== '0') {
-                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
-                                if (typeof data['hasfile'] === 'undefined') {
-                                    proselect.createSelect(data);
-                                    $('#aupher-select').slideDown('fast');
-                                } else {
-                                    $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
-                                        proselect.createSelect(data);
-                                        $('#aupher-select').slideDown('fast');
-                                    });
-                                }
-                            });
-                        }
-                    });
-
-                },
-                createSelect: function (data) {
-                    $.each(data, function (index, dat) {
-                        var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
-                        var mytxt = '<option value="' + dat.AMPHUR_ID + '" ' + checkSelect + '>' +
-                            dat.AMPHUR_NAME + '</option>';
-                        $('#employerContactDistinct').append(mytxt);
-                    });
-                    if ($('#employerContactDistinct').html()) {
-                        proselect.selectAmphor();
-                    }
-                    $('#employerContactDistinct').unbind('change');
-                    $('#employerContactDistinct').on('change', proselect.selectAmphor);
-                },
-                clearampporSelect: function () {
-                    $('#employerContactDistinct option[value!=0]').remove();
-                    $('#employerContactDistinct').val(0);
-                    proselect.clearDistinctSelect();
-                },
-                clearDistinctSelect: function () {
-                    $('#employerContactSubDistinct option[value!=0]').remove();
-                    $('#employerContactSubDistinct').val(0);
-                    $('#distinct-select').css('display', 'none');
-                },
-                selectAmphor: function () {
-                    proselect.amval = $('#employerContactDistinct').val();
-                    proselect.clearDistinctSelect();
-                    $('#distinct-select').slideUp('fast', function () {
-                        if (proselect.amval != '0') {
-                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
-                                if (typeof data['hasfile'] === 'undefined') {
-                                    proselect.createDistinctSelect(data);
-                                    $('#distinct-select').slideDown('fast');
-                                } else {
-                                    $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
-                                        proselect.createDistinctSelect(data);
-                                        $('#distinct-select').slideDown('fast');
-                                    });
-                                }
-                            });
-                        }
-                    });
-                },
-                createDistinctSelect: function (data) {//console.log(data);
-                    $.each(data, function (index, dat) {
-                        var checkSelect = dat.DISTRICT_ID == sub_district ? 'selected' : '';
-                        var mytxt = '<option value="' + dat.DISTRICT_ID + '" ' + checkSelect + '> ' + dat.DISTRICT_NAME + '</option>';
-                        $('#employerContactSubDistinct').append(mytxt);
-                    });
-                }
-            };
-            $(document).ready(function () {
-                proselect.init();
-            });
-        </script>
-        <style>
-            #mapCanvas {
-                width: 500px;
-                height: 400px;
-                float: left;
-            }
-
-            #infoPanel {
-                float: left;
-                margin-left: 10px;
-            }
-
-            #infoPanel div {
-                margin-bottom: 5px;
-            }
-        </style>
 
         <div class="form-group col-md-12">
             <div class="col-md-2 text-right clearfix"><label for="employerContactPerson">Contact
@@ -718,15 +535,19 @@ class Employer
             <div class="col-md-2 text-right clearfix"><label for="employerContactBusinessType">Business
                     Type<span class="font-color-red">*</span></label></div>
             <div class="col-md-10">
-                <select id="employerContactBusinessType" name="employerContactBusinessType" required
-                        class="form-control">
-                    <option value="">---------------- Please select type ----------------</option>
-                    <option
-                        value="1" <?php if (!empty($business_type)) echo $business_type == '1' ? "selected" : ""; ?>>
-                        Business
-                        type
-                    </option>
-                </select>
+<!--                <select id="employerContactBusinessType" name="employerContactBusinessType" required-->
+<!--                        class="form-control">-->
+<!--                    <option value="">---------------- Please select type ----------------</option>-->
+<!--                    <option-->
+<!--                        value="1" --><?php //if (!empty($business_type)) echo $business_type == '1' ? "selected" : ""; ?><!-->
+<!--                        Business-->
+<!--                        type-->
+<!--                    </option>-->
+<!--                </select>-->
+                <input type="text" id="employerContactBusinessType"
+                       value="<?php echo empty($business_type) ? "" : $business_type; ?>"
+                       name="employerContactBusinessType" class="form-control"
+                       required/>
             </div>
         </div>
         <div class="form-group col-md-12">
@@ -951,6 +772,206 @@ class Employer
         */
         ?>
         <hr/>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&language=th"></script>
+        <script type="text/javascript">
+            var geocoder = new google.maps.Geocoder();
+            var lat_lng = new google.maps.LatLng(<?php echo $lat; ?>, <?php echo $long; ?>);
+            var loadDefaultLocation = <?php echo $directions ? "true": 'false'; ?>;
+
+            function geocodePosition(pos) {
+                geocoder.geocode({
+                    latLng: pos
+                }, function (responses) {
+                    if (responses && responses.length > 0) {
+                        updateMarkerAddress(responses[0].formatted_address);
+                    } else {
+                        updateMarkerAddress('Cannot determine address at this location.');
+                    }
+                });
+            }
+
+            function updateMarkerStatus(str) {
+                document.getElementById('markerStatus').innerHTML = str;
+            }
+
+            function updateMarkerPosition(latLng) {
+//                document.getElementById('info').innerHTML = [
+//                    latLng.lat(),
+//                    latLng.lng()
+//                ].join(', ');
+
+//                $("#current_location").text(latLng.lat() + ", " + latLng.lng());
+//                document.getElementById('current_location').value = [
+//                    latLng.lat(),
+//                    latLng.lng()
+//                ].join(', ');
+                if (loadDefaultLocation) {
+                    document.getElementById('employerContactDirections').value = [
+                        latLng.lat(),
+                        latLng.lng()
+                    ].join(', ');
+                }
+                loadDefaultLocation = true;
+            }
+
+            function updateMarkerAddress(str) {
+                document.getElementById('address').innerHTML = str;
+            }
+
+            function initialize() {
+                var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+                    zoom: 14,
+                    center: lat_lng,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+                var marker = new google.maps.Marker({
+                    position: lat_lng,
+                    title: 'Point A',
+                    map: map,
+                    draggable: true
+                });
+
+                // Update current position info.
+                updateMarkerPosition(lat_lng);
+                geocodePosition(lat_lng);
+
+                // Add dragging event listeners.
+                google.maps.event.addListener(marker, 'dragstart', function () {
+                    updateMarkerAddress('Dragging...');
+                });
+
+                google.maps.event.addListener(marker, 'drag', function () {
+                    updateMarkerStatus('Dragging...');
+                    updateMarkerPosition(marker.getPosition());
+                });
+
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    updateMarkerStatus('Drag ended');
+                    geocodePosition(marker.getPosition());
+                });
+            }
+
+            // Onload handler to fire off the app.
+            function setGoogleMap() {
+                google.maps.event.addDomListener(window, 'load', initialize);
+            }
+
+            function setLocation() {
+                var getLatLong = document.getElementById('employerContactDirections').value;
+                if (!getLatLong)
+                    return;
+                var spLatLong = getLatLong.split(",");
+                var latitude = parseFloat(spLatLong[0].trim());
+                var longitude = parseFloat(spLatLong[1].trim());
+                lat_lng = new google.maps.LatLng(latitude, longitude);
+                initialize();
+            }
+
+            setGoogleMap();
+
+            var ajaxPageurl = '<?php echo get_home_url() ?>/';
+            var ajaxDropurl = '<?php echo get_template_directory_uri() . '/libs/ajax'; ?>/';
+            var proselect = {
+                proval: 0,
+                amval: 0,
+                init: function () {
+                    proselect.proval = $('#employerContactProvince').val();
+                    proselect.selectProvince();
+                    proselect.setEvent();
+                },
+                setEvent: function () {
+                    $('#employerContactProvince').on('change', proselect.selectProvince);
+                },
+                selectProvince: function () {
+                    proselect.proval = $('#employerContactProvince').val();
+                    proselect.clearampporSelect();
+                    $('#aupher-select').slideUp('fast', function () {
+                        if (proselect.proval !== '0') {
+                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=provice', {proid: proselect.proval}, function (data) {
+                                if (typeof data['hasfile'] === 'undefined') {
+                                    proselect.createSelect(data);
+                                    $('#aupher-select').slideDown('fast');
+                                } else {
+                                    $.getJSON(ajaxDropurl + 'amphur/' + proselect.proval + '.json', function (data) {
+                                        proselect.createSelect(data);
+                                        $('#aupher-select').slideDown('fast');
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                },
+                createSelect: function (data) {
+                    $.each(data, function (index, dat) {
+                        var checkSelect = dat.AMPHUR_ID == distinct ? 'selected' : '';
+                        var mytxt = '<option value="' + dat.AMPHUR_ID + '" ' + checkSelect + '>' +
+                            dat.AMPHUR_NAME + '</option>';
+                        $('#employerContactDistinct').append(mytxt);
+                    });
+                    if ($('#employerContactDistinct').html()) {
+                        proselect.selectAmphor();
+                    }
+                    $('#employerContactDistinct').unbind('change');
+                    $('#employerContactDistinct').on('change', proselect.selectAmphor);
+                },
+                clearampporSelect: function () {
+                    $('#employerContactDistinct option[value!=0]').remove();
+                    $('#employerContactDistinct').val(0);
+                    proselect.clearDistinctSelect();
+                },
+                clearDistinctSelect: function () {
+                    $('#employerContactSubDistinct option[value!=0]').remove();
+                    $('#employerContactSubDistinct').val(0);
+                    $('#distinct-select').css('display', 'none');
+                },
+                selectAmphor: function () {
+                    proselect.amval = $('#employerContactDistinct').val();
+                    proselect.clearDistinctSelect();
+                    $('#distinct-select').slideUp('fast', function () {
+                        if (proselect.amval != '0') {
+                            $.getJSON(ajaxPageurl + '?adminPage=getamphor&type=amphur', {amid: proselect.amval}, function (data) {
+                                if (typeof data['hasfile'] === 'undefined') {
+                                    proselect.createDistinctSelect(data);
+                                    $('#distinct-select').slideDown('fast');
+                                } else {
+                                    $.getJSON(ajaxDropurl + 'district/' + proselect.amval + '.json', function (data) {
+                                        proselect.createDistinctSelect(data);
+                                        $('#distinct-select').slideDown('fast');
+                                    });
+                                }
+                            });
+                        }
+                    });
+                },
+                createDistinctSelect: function (data) {//console.log(data);
+                    $.each(data, function (index, dat) {
+                        var checkSelect = dat.DISTRICT_ID == sub_district ? 'selected' : '';
+                        var mytxt = '<option value="' + dat.DISTRICT_ID + '" ' + checkSelect + '> ' + dat.DISTRICT_NAME + '</option>';
+                        $('#employerContactSubDistinct').append(mytxt);
+                    });
+                }
+            };
+            $(document).ready(function () {
+                proselect.init();
+            });
+        </script>
+        <style>
+            #mapCanvas {
+                width: 500px;
+                height: 400px;
+                float: left;
+            }
+
+            #infoPanel {
+                float: left;
+                margin-left: 10px;
+            }
+
+            #infoPanel div {
+                margin-bottom: 5px;
+            }
+        </style>
         <?
         $html = ob_get_contents();
         ob_end_clean();

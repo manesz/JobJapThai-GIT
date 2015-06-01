@@ -2340,7 +2340,8 @@ class Candidate
             );
             return $this->returnMessage($message, false, false);
         } else {
-            $error_string = $user_id->get_error_message();
+//            $error_string = $user_id->get_error_message();
+            $error_string = "Sorry, that email already exists!";
             return $this->returnMessage($error_string, true, false);
         }
     }

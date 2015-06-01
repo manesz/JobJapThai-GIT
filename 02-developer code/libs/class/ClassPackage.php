@@ -86,10 +86,12 @@ class Package
         return $result;
     }
 
-    public function buildTd1($array_package, $position, $title = "")
+    public function buildTdSelectPackage1($position, $view = false)
     {
+        $array_package = $this->getPackage();
         if (!$array_package)
             return '';
+        $strTitle = $this->getTitlePackage($position);
         $strTd = '<td class="col-md-3">';
         $checkAddHead1 = false;
         $checkAddHead2 = false;
@@ -98,72 +100,107 @@ class Package
                 //if (!$checkAddHead1 && $value->type == 1) {
                 //$checkAddHead1 = true;
                 $strTd .= '
-                    <label for="select_package' . $value->position . '" class=" margin-top-10">' . $title;
-                $strTd .= $value->require ? '<span
-                        class="font-color-red">*</span></label>' : '';
+                    <label for="select_package' . $value->position . '" class=" margin-top-10">' . $strTitle;
+                if (!$view) {
+                    $strTd .= $value->require ? '<span class="font-color-red">*</span>' : '';
+                }
+                $strTd .= "</label>";
                 break;
-//                    } else if (!$checkAddHead2 && $value->type == 2) {
-//                        $checkAddHead2 = true;
-//                        $strTd .= '
-//                        <br/><label for="select_package' . $value->position . '" class=" margin-top-10">' . $value->title;
-//                        $strTd .= $value->require ? '<span
-//                            class="font-color-red">*</span></label>' : '';
-//                    }
+                /*} else if (!$checkAddHead2 && $value->type == 2) {
+                    $checkAddHead2 = true;
+                    $strTd .= '
+                    <br/><label for="select_package' . $value->position . '" class=" margin-top-10">' . $value->title;
+                    $strTd .= $value->require ? '<span
+                        class="font-color-red">*</span></label>' : '';
+                }*/
             }
         }
         $strTd .= '</td>';
         return $strTd;
     }
 
-    public function buildTd2($array_package, $position, $str_select_package)
+    public function buildTdSelectPackage2($position, $str_select_package, $view = false)
     {
+        $array_package = $this->getPackage();
         if (!$array_package)
             return '';
-        $strTd = '<td class="col-md-7">';
+        $strTd = '';
         $checkAddHead1 = false;
         $checkAddHead2 = false;
         $selectPosition = explode('|', $str_select_package);
-        foreach ($array_package as $key => $value) {
-            if ($value->position == $position) {
-                $isSelect = '';
-                foreach ($selectPosition as $value2) {
-                    list($selectIsMulti) = explode(',', $value2);
-                    list($selectID) = explode(':', $selectIsMulti);
-                    if ($selectID == $value->id) $isSelect = 'selected';
-                }
-                //if ($value->type == 1) {
-                if (!$checkAddHead1) {
-                    $checkAddHead1 = true;
-                    $strTd .= '<select id="select_package' . $value->position . '" name="select_package' . $value->position . '"
+        if (!$view) {
+            foreach ($array_package as $key => $value) {
+                if ($value->position == $position) {
+                    $isSelect = '';
+                    foreach ($selectPosition as $value2) {
+                        list($selectIsMulti) = explode(',', $value2);
+                        list($selectID) = explode(':', $selectIsMulti);
+                        if ($selectID == $value->id)
+                            $isSelect = 'selected';
+                    }
+                    //if ($value->type == 1) {
+                    if (!$checkAddHead1) {
+                        $checkAddHead1 = true;
+                        $strTd .= '<select id="select_package' . $value->position . '" name="select_package' . $value->position . '"
                         class="form-control margin-top-10">';
+                    }
+                    $strTd .= '<option value="' . $value->id . '" ' . $isSelect . '>' . $value->text . '</option>';
+
+                    /*} else if ($value->type == 2) {
+                        if (!$checkAddHead2) {
+                            $checkAddHead2 = true;
+                            $strTd .= '</select><select id="select_package' . $value->position . '" name="select_package' . $value->position . '"
+                            class="form-control margin-top-10">';
+                        }
+                        $strTd .= '<option value="' . $value->id . '" ' . $isSelect . '>' . $value->text . '</option>';
+                    }*/
                 }
-                $strTd .= '<option value="' . $value->id . '" ' . $isSelect . '>' . $value->text . '</option>';
-//                } else if ($value->type == 2) {
-//                    if (!$checkAddHead2) {
-//                        $checkAddHead2 = true;
-//                        $strTd .= '</select><select id="select_package' . $value->position . '" name="select_package' . $value->position . '"
-//                        class="form-control margin-top-10">';
-//                    }
-//                    $strTd .= '<option value="' . $value->id . '" ' . $isSelect . '>' . $value->text . '</option>';
-//                }
+            }
+            $strTd = $strTd ? "$strTd</select>" : $strTd;
+        } else {
+            foreach ($array_package as $key => $value) {
+                if ($value->position == $position) {
+                    foreach ($selectPosition as $value2) {
+                        list($selectIsMulti) = explode(',', $value2);
+                        list($selectID) = explode(':', $selectIsMulti);
+                        if ($selectID == $value->id)
+                            $strTd .= '<span>' . $value->text . '</span>';
+                    }
+
+                }
             }
         }
-        $strTd .= '</select></td>';
+        $strTd = '<td class="col-md-7">' . $strTd . '</td>';
         return $strTd;
     }
 
-    public function buildTd3($array_package, $position)
+    public function buildTdSelectPackage3($position, $view = false, &$price = 0, $str_select_package = '')
     {
+        $array_package = $this->getPackage();
         if (!$array_package)
             return '';
         $strTd = '<td class="col-md-4">';
         $checkAddHead1 = false;
+        $selectPosition = explode('|', $str_select_package);
         foreach ($array_package as $key => $value) {
             if ($value->position == $position) {
-                if (!$checkAddHead1) {
+                if (!$checkAddHead1 && !$view) {
                     $checkAddHead1 = true;
-                    $valueBath = $value->require ? $value->price : 0;
-                    $strTd .= '<span class="sum_position' . $position . '">' . $valueBath . '</span> บาท';
+                    if (!$view) {
+                        $valueBath = $value->require ? $value->price : 0;
+                        $strTd .= '<span class="sum_position' . $position . '">' . $valueBath . '</span> บาท';
+                    }
+                } else {
+                    $valueBath = 0;
+                    $expData = empty($selectPosition[$position - 1]) ? null : explode(':', $selectPosition[$position - 1]);
+                    $selectID = empty($expData[0]) ? null : $expData[0];
+                    $price = empty($expData[1]) ? null : $expData[1];
+                    //list($selectID, $price) = explode(':', $selectPosition[$position - 1]);
+                    if ($selectID == $value->id) {
+                        $valueBath = $value->price;
+                        $strTd .= '<span class="sum_position' . $position . '">' . $valueBath . '</span> บาท';
+                    }
+                    $price = $valueBath;
                 }
             }
         }
@@ -988,7 +1025,10 @@ class Package
         $arrayPackage = $this->getPackage();
         $arraySelectPackage = $packageID ? $this->getSelectPackage($userID, $packageID) : null;
 //        $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
-        $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+        $isApprove = "";
+        if ($arraySelectPackage)
+            $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+
         ob_start();
         ?>
         <script>
@@ -1082,128 +1122,294 @@ class Package
         return $html;
     }
 
-    function buildHtmlFormNewPackage($packageID, $userID)
+    function getTitlePackage($position)
+    {
+
+        $strTitle = "";
+        switch ($position) {
+            case 1:
+                $strTitle = "จำนวนตำแหน่ง";
+                break;
+            case 2:
+                $strTitle = 'ระยะเวลา';
+                break;
+            case 3:
+                $strTitle = 'จำนวนตำแหน่ง';
+                break;
+            case 4:
+                $strTitle = 'ระยะเวลา';
+                break;
+        }
+        return $strTitle;
+    }
+
+    function getHeaderPackage($position)
+    {
+        $strHeader = "";
+        switch ($position) {
+            case 1:
+                $strHeader = "เลือกจำนวนตำแหน่ง";
+                break;
+            case 2:
+                $strHeader = 'เลือกระยะเวลา';
+                break;
+            case 3:
+                $strHeader = 'เลือกจำนวน <span
+                    class="font-color-BF2026">Hotjob</span>';
+                break;
+            case 4:
+                $strHeader = 'เลือกระยะเวลาของ <span
+                    class="font-color-BF2026">Auto Update</span>';
+                break;
+        }
+        return $strHeader;
+    }
+
+    function buildHtmlFormNewPackage($packageID, $userID, $view = false)
     {
         $arrayPackage = $this->getPackage();
         $arraySelectPackage = $packageID ? $this->getSelectPackage($userID, $packageID) : null;
-        $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
-//        $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+        $strSelectPackage = "";
+        if ($arraySelectPackage)
+            $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
         ob_start();
         ?>
-
+        <?php if (!$view): ?>
         <form method="post" id="frm_package">
-            <h4 class="bg-BF2026 font-color-fff padding-10" id="myModalLabel">Business Package</h4>
-
-            <div class="clearfix" id="frm_package">
+    <?php endif; ?>
+        <h4 class="bg-BF2026 font-color-fff padding-10" id="myModalLabel">Business Package</h4>
+        <div class="clearfix" id="frm_package">
+            <?php if (!$view): ?>
                 <input type="hidden" id="employer_id" name="employer_id" value="<?php echo $userID; ?>">
                 <input type="hidden" id="package_id" name="package_id" value="<?php echo $packageID; ?>">
                 <input type="hidden" id="select_package" name="select_package" value="">
                 <input type="hidden" id="post_package" name="post_package" value="true">
                 <input type="hidden" id="type_post" name="type_post"
                        value="<?php echo $packageID ? 'edit' : 'add'; ?>"/>
-                <table style="width: 100%;">
+            <?php endif; ?>
+
+            <table style="width: 100%;">
+                <?php
+                $savePosition = 0;
+                foreach ($arrayPackage as $key => $value):
+                    ?>
+                    <?php if ($savePosition != $value->position && $key != 0): ?>
+                    <tr>
+                        <td colspan="3">
+                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                    <?php if ($savePosition != $value->position):
+                    $strHeader = $this->getHeaderPackage($value->position);
+                    $countName = $value->position;
+                    ?>
+                    <tr>
+                        <td colspan="3"><h5><?php echo "$countName. $strHeader"; ?></h5></td>
+                    </tr>
+                    <tr class="padding-bottom-10" style="">
+                        <?php echo $this->buildTdSelectPackage1($value->position, $view); ?>
+                        <?php echo $this->buildTdSelectPackage2($value->position, $strSelectPackage, $view); ?>
+                        <?php echo $this->buildTdSelectPackage3($value->position); ?>
+                    </tr>
+                <?php endif; ?>
+
                     <?php
-                    $saveName = "";
-                    $savePosition = 0;
-                    foreach ($arrayPackage as $key => $value):
+                    $savePosition = $value->position;
+                endforeach; ?>
 
-                        ?>
-
-                        <?php if ($savePosition != $value->position && $key != 0): ?>
-                        <tr>
-                            <td colspan="3">
-                                <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                        <?php if ($savePosition != $value->position):
-                        $strHeader = "";
-                        $strTitle = "";
-                        $countName = 0;
-                        switch ($value->position) {
-                            case 1:
-                                $strHeader = "เลือกจำนวนตำแหน่ง";
-                                $countName = 1;
-                                break;
-                            case 2:
-                                $strHeader = 'เลือกระยะเวลา';
-                                $countName = 2;
-                                break;
-                            case 3:
-                                $strHeader = 'เลือกจำนวน <span
-                    class="font-color-BF2026">Hotjob</span>';
-                                $countName = 3;
-                                break;
-                            case 4:
-                                $strHeader = 'เลือกระยะเวลาของ <span
-                    class="font-color-BF2026">Auto Update</span>';
-                                $countName = 4;
-                                break;
-                        }
-                        switch ($value->position) {
-                            case 1:
-                                $strTitle = "จำนวนตำแหน่ง";
-                                break;
-                            case 2:
-                                $strTitle = 'ระยะเวลา';
-                                break;
-                            case 3:
-                                $strTitle = 'จำนวนตำแหน่ง';
-                                break;
-                            case 4:
-                                $strTitle = 'ระยะเวลา';
-                                break;
-                        }
-                        ?>
-                        <tr>
-                            <td colspan="3"><h5><?php echo "$countName. $strHeader"; ?></h5></td>
-                        </tr>
-                        <tr class="padding-bottom-10" style="">
-                            <?php echo $this->buildTd1($arrayPackage, $value->position, $strTitle); ?>
-                            <?php echo $this->buildTd2($arrayPackage, $value->position, $strSelectPackage); ?>
-                            <?php echo $this->buildTd3($arrayPackage, $value->position); ?>
-                        </tr>
-                    <?php endif; ?>
-
-                        <?php
-                        $savePosition = $value->position;
-                    endforeach; ?>
-
-                    <tr>
-                        <td colspan="3">
-                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-10 text-right" colspan="2">Sub Total</td>
-                        <td class="col-md-2"><span class="jj-allsum">600</span> บาท</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-10 text-right" colspan="2">+ Vat (7%)</td>
-                        <td class="col-md-2"><span class="jj-taxsum">0</span> บาท</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-10 text-right" colspan="2"><strong>ยอดสุทธิ</strong></td>
-                        <td class="col-md-2"><span class="jj-alltaxsum">0</span> บาท</td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-3"></td>
-                        <td class="col-md-7"></td>
-                        <td class="col-md-2"></td>
-                    </tr>
-                </table>
-            </div>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-10 text-right" colspan="2">Sub Total</td>
+                    <td class="col-md-2"><span class="jj-allsum"></span> บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-10 text-right" colspan="2">+ Vat (7%)</td>
+                    <td class="col-md-2"><span class="jj-taxsum"></span> บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-10 text-right" colspan="2"><strong>ยอดสุทธิ</strong></td>
+                    <td class="col-md-2"><span class="jj-alltaxsum"></span> บาท</td>
+                </tr>
+                <tr>
+                    <td class="col-md-3"></td>
+                    <td class="col-md-7"></td>
+                    <td class="col-md-2"></td>
+                </tr>
+            </table>
+        </div>
+        <?php if (!$view): ?>
         </form>
+    <?php endif; ?>
+
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+    function buildHtmlEmailBuyPackage($package_id, $employer_id)
+    {
+        $arrayPackage = $this->getPackage();
+        $classEmployer = new Employer($this->wpdb);
+        $classOtherSetting = new OtherSetting($this->wpdb);
+        $arraySelectPackage = $package_id ? $this->getSelectPackage($employer_id, $package_id) : null;
+        $strSelectPackage = $package_id ? $arraySelectPackage[0]->string_package : '';
+
+        $employerData = $classEmployer->getCompanyInfo(0, $employer_id);
+        extract((array)$employerData[0]);
+        ob_start();
+
+        ?>
+
+        <p>Business Package</p>
+        <table style="width: 100%;">
+            <?php
+            $savePosition = 0;
+            $sumPrice = 0;
+            foreach ($arrayPackage as $key => $value):
+                ?>
+                <?php if ($savePosition != $value->position && $key != 0): ?>
+                <tr>
+                    <td colspan="3">
+                        <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                    </td>
+                </tr>
+            <?php endif; ?>
+                <?php if ($savePosition != $value->position):
+                $strHeader = $this->getHeaderPackage($value->position);
+                $countName = $value->position;
+                $price = 0;
+                ?>
+                <tr>
+                    <td colspan="3"><h3><?php echo "$countName. $strHeader"; ?></h3></td>
+                </tr>
+                <tr class="padding-bottom-10" style="">
+                    <?php echo $this->buildTdSelectPackage1($value->position, true); ?>
+                    <?php echo $this->buildTdSelectPackage2($value->position, $strSelectPackage, true); ?>
+                    <?php echo $this->buildTdSelectPackage3($value->position, true, $price, $strSelectPackage);
+                    $sumPrice += $price;
+                    ?>
+                </tr>
+            <?php endif; ?>
+
+                <?php
+                $savePosition = $value->position;
+            endforeach; ?>
+
+            <tr>
+                <td colspan="3">
+                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-10 text-right" colspan="2">Sub Total</td>
+                <td class="col-md-2"><span class="jj-allsum"><?php echo number_format($sumPrice, 2); ?></span> บาท</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-10 text-right" colspan="2">+ Vat (7%)</td>
+                <td class="col-md-2"><span class="jj-taxsum"><?php echo number_format($sumPrice * 0.07, 2); ?></span>
+                    บาท
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="border-bottom-1-ddd margin-top-10 margin-bottom-10"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-10 text-right" colspan="2"><strong>ยอดสุทธิ</strong></td>
+                <td class="col-md-2"><span
+                        class="jj-alltaxsum"><?php echo number_format($sumPrice + ($sumPrice * 0.07), 2); ?></span> บาท
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-3"></td>
+                <td class="col-md-7"></td>
+                <td class="col-md-2"></td>
+            </tr>
+        </table>
+        <hr/>
+        <h3>Seeking For Manpower Profile</h3>
+        <table>
+            <tr>
+                <td>Contact person</td>
+                <td><?php echo empty($contact_person) ? "-" : $contact_person; ?></td>
+            </tr>
+            <tr>
+                <td>Company name</td>
+                <td><?php echo empty($company_name) ? "-" : $company_name; ?></td>
+            </tr>
+            <tr>
+                <td>Business Type</td>
+                <td><?php echo empty($business_type) ? "-" : $business_type; ?></td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td><?php echo empty($address) ? "-" : $address; ?></td>
+            </tr>
+            <tr>
+                <td>Province</td>
+                <td><?php echo empty($province) ? "-" : $classOtherSetting->getProvincesName($province); ?></td>
+            </tr>
+            <tr>
+                <td>District</td>
+                <td><?php echo empty($district) ? "-" : $classOtherSetting->getDistrictName($district); ?></td>
+            </tr>
+            <tr>
+                <td>Sub district</td>
+                <td><?php echo empty($sub_district) ? "-" : $classOtherSetting->getCityName($sub_district); ?></td>
+            </tr>
+            <tr>
+                <td>Postcode</td>
+                <td><?php echo empty($postcode) ? "-" : $postcode; ?></td>
+            </tr>
+            <tr>
+                <td>Tel</td>
+                <td><?php echo empty($tel) ? "-" : $tel; ?></td>
+            </tr>
+            <tr>
+                <td>Fax</td>
+                <td><?php echo empty($fax) ? "-" : $fax; ?></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><?php echo empty($email) ? "-" : "<a href='mailto:$email'>$email</a>"; ?></td>
+            </tr>
+            <tr>
+                <td>Website</td>
+                <td><?php echo empty($website) ? "-" : $website; ?></td>
+            </tr>
+            <tr>
+                <td>Directions</td>
+                <td><?php if (empty($directions)): ?>
+                        -
+                    <?php else: ?>
+                        <a href="http://maps.google.com/maps?q=<?php echo $directions; ?>">Link Map</a>
+
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
         <?php
         $html = ob_get_contents();
         ob_end_clean();

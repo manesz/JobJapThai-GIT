@@ -155,6 +155,43 @@ class Contact
         );
         return 1;
     }
+
+    function buildContentHtmlEmail($post)
+    {
+        $send_subject = empty($post['send_subject']) ? '' : $post['send_subject'];
+        $send_name = empty($post['send_name']) ? '' : $post['send_name'];
+        $send_email = empty($post['send_email']) ? '' : $post['send_email'];
+        $send_phone_number = empty($post['send_phone_number']) ? '' : $post['send_phone_number'];
+        $send_message = empty($post['send_message']) ? '' : $post['send_message'];
+        ob_start();
+        ?>
+        <table>
+        <tr>
+            <td>Subject:</td>
+            <td><?php echo @$send_subject; ?></td>
+        </tr>
+        <tr>
+            <td>Name:</td>
+            <td><?php echo @$send_name; ?></td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td><?php echo @$send_email; ?></td>
+        </tr>
+        <tr>
+            <td>Phone number:</td>
+            <td><?php echo @$send_phone_number; ?></td>
+        </tr>
+        <tr>
+            <td>Message:</td>
+            <td><?php echo @$send_message; ?></td>
+        </tr>
+        </table>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
 }
 
 $objClassContact = new Contact($wpdb);

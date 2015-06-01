@@ -39,7 +39,6 @@ if (is_user_logged_in()) {
     $userID = 0;
     $isLogin = false;
     $current_user = null;
-    wp_redirect(home_url());
 }
 $showByPackage = empty($_REQUEST['buy_package']) ? false : true;
 ?>
@@ -190,7 +189,7 @@ $showByPackage = empty($_REQUEST['buy_package']) ? false : true;
                             <div class="form-group col-md-12">
                                 <div class="col-md-12">
                                     <input type="button" class="btn btn-primary col-md-12"
-                                           value="New Package" data-toggle="modal" id="new_package"
+                                           value="Choose Package" data-toggle="modal" id="new_package"
                                            data-target="#modal_package"/>
                                 </div>
                             </div>

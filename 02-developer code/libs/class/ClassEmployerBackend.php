@@ -178,10 +178,13 @@ class Employer_List extends WP_List_Table
             }
         </style>
         <!--        <script type="text/javascript"-->
-        <!--                src="--><?php //bloginfo('template_directory'); ?><!--/library/js/employer_edit.js"></script>-->
+        <!--                src="--><?php //bloginfo('template_directory');
+        ?><!--/library/js/employer_edit.js"></script>-->
 
-        <!--        <link rel="stylesheet" href="--><?php //bloginfo('template_directory'); ?><!--/library/css/flip-clock/flipclock.css">-->
-        <!--        <script src="--><?php //bloginfo('template_directory'); ?><!--/library/js/flip-clock/flipclock.js"></script>-->
+        <!--        <link rel="stylesheet" href="--><?php //bloginfo('template_directory');
+        ?><!--/library/css/flip-clock/flipclock.css">-->
+        <!--        <script src="--><?php //bloginfo('template_directory');
+        ?><!--/library/js/flip-clock/flipclock.js"></script>-->
     <?php
     }
 
@@ -330,23 +333,6 @@ class Employer_List extends WP_List_Table
         }
         ?>
         </pre>
-        <div class="wrap"><h2><?php echo $isEdit ? "Edit" : "Add New"; ?> Employer</h2>
-        <link rel="stylesheet" type="text/css"
-              href="<?php echo get_template_directory_uri(); ?>/libs/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/css/style.css"/>
-        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/jquery.1.11.1.min.js"></script>
-        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap.min.js"></script>
-        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrapValidator.min.js"></script>
-        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/header.js"></script>
-        <section class="container-fluid" style="margin-top: 10px;">
-            <script>
-                var site_url = '<?php echo get_site_url(); ?>/';
-                var is_login = <?php echo $isEdit? "true": "false"; ?>;
-                var url_post = "<?php echo home_url(); ?>/";
-                var str_loading = '<div class="img_loading"><img src="<?php
-    bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
-            </script>
-
             <style type="text/css">
                 .blockDiv {
                     position: absolute;
@@ -365,6 +351,26 @@ class Employer_List extends WP_List_Table
                     z-index: 9999;
                 }
             </style>
+        <div class="wrap"><h2><?php echo $isEdit ? "Edit" : "Add New"; ?> Seeking for Manpower</h2>
+            <script>
+                var user_id = <?php echo $userID; ?>;
+                var site_url = '<?php echo get_site_url(); ?>/';
+                var is_login = <?php echo $isEdit ? "true" : "false"; ?>;
+                var url_post = "<?php echo home_url(); ?>/";
+                var str_loading = '<div class="img_loading"><img src="<?php
+        bloginfo('template_directory'); ?>/libs/images/loading.gif" width="40"/></div>';
+            var distinct = <?php echo empty($district) ? 0 : $district; ?>;
+            var sub_district = <?php echo empty($sub_district) ? 0 : $sub_district; ?>;
+            is_page_backend = true;
+        </script>
+        <link rel="stylesheet" type="text/css"
+              href="<?php echo get_template_directory_uri(); ?>/libs/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/css/style.css"/>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/jquery.1.11.1.min.js"></script>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrap.min.js"></script>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/bootstrapValidator.min.js"></script>
+        <script src="<?php echo get_template_directory_uri(); ?>/libs/js/header.js"></script>
+        <section class="container-fluid" style="margin-top: 10px;">
             <script src="<?php echo get_template_directory_uri(); ?>/libs/js/employer-register.js"></script>
 
             <!-- Latest compiled and minified CSS -->
@@ -374,12 +380,6 @@ class Employer_List extends WP_List_Table
 
             <script src="<?php echo get_template_directory_uri(); ?>/libs/js/post-job.js"></script>
 
-        <script type="text/javascript">
-            var user_id = <?php echo $userID; ?>;
-            var distinct = <?php echo empty($district) ? 0: $district; ?>;
-            var sub_district = <?php echo empty($sub_district) ? 0: $sub_district; ?>;
-            is_page_backend = true;
-        </script>
             <div class="container wrapper">
                 <!--<div class="form-group">-->
                 <div class="row">
@@ -413,19 +413,19 @@ class Employer_List extends WP_List_Table
                                                 class="font-color-red">*</span></label></div>
                                     <div class="col-md-10">
                                         <?php if ($isEdit): ?>
-                                            <span class="form-control"><?php echo $current_user->user_login; ?></span>
-                                        <?php else: ?>
-                                            <input type="text" class="form-control"
-                                                   maxlength="20"
-                                                   data-bv-stringlength="true"
-                                                   data-bv-stringlength-min="4"
-                                                   data-bv-message="The username is not valid" id="employerUsername"
-                                                   name="employerUsername"
-                                                   required
-                                                   data-bv-notempty-message="The username is required and cannot be empty"
-                                                   pattern="^[a-zA-Z0-9]+$"
-                                                   data-bv-regexp-message="The username can only consist of alphabetical, number"/>
-                                        <?php endif; ?>
+        <span class="form-control"><?php echo $current_user->user_login; ?></span>
+    <?php else: ?>
+        <input type="text" class="form-control"
+               maxlength="20"
+               data-bv-stringlength="true"
+               data-bv-stringlength-min="4"
+               data-bv-message="The username is not valid" id="employerUsername"
+               name="employerUsername"
+               required
+               data-bv-notempty-message="The username is required and cannot be empty"
+               pattern="^[a-zA-Z0-9]+$"
+               data-bv-regexp-message="The username can only consist of alphabetical, number"/>
+    <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
@@ -434,14 +434,14 @@ class Employer_List extends WP_List_Table
                                     <div class="col-md-10">
 
                                         <?php if ($isEdit): ?>
-                                            <span class="form-control"><?php echo $current_user->user_email; ?></span>
-                                        <?php else: ?>
-                                            <input type="email" id="employerEmail" name="employerEmail"
-                                                   class="form-control"
-                                                   data-bv-emailaddress="true"
-                                                   required
-                                                   data-bv-emailaddress-message="The input is not a valid email address"/>
-                                        <?php endif; ?>
+        <span class="form-control"><?php echo $current_user->user_email; ?></span>
+    <?php else: ?>
+        <input type="email" id="employerEmail" name="employerEmail"
+               class="form-control"
+               data-bv-emailaddress="true"
+               required
+               data-bv-emailaddress-message="The input is not a valid email address"/>
+    <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-12">
@@ -458,19 +458,19 @@ class Employer_List extends WP_List_Table
                                 </div>
                                 <div class="clearfix"></div>
                                 <?php if ($isEdit): ?>
-                                    <!-- ----------------------------------------------------------------- Section : package -->
-                                    <h5 class="bg-ddd padding-10 clearfix">Package</h5>
-                                    <div id="list_package">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <div class="col-md-12">
-                                            <input type="button" class="btn btn-primary col-md-12"
-                                                   value="New Package" data-toggle="modal" id="new_package"
-                                                   data-target="#modal_package"/>
-                                        </div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                <?php endif; ?>
+        <!-- ----------------------------------------------------------------- Section : package -->
+        <h5 class="bg-ddd padding-10 clearfix">Package</h5>
+        <div id="list_package">
+        </div>
+        <div class="form-group col-md-12">
+            <div class="col-md-12">
+                <input type="button" class="btn btn-primary col-md-12"
+                       value="Choose Package" data-toggle="modal" id="new_package"
+                       data-target="#modal_package"/>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    <?php endif; ?>
 
                                 <!-- ----------------------------------------- Section : Company information for contact -->
                                 <h5 class="bg-ddd padding-10 clearfix">Company information for contact</h5>
@@ -505,7 +505,8 @@ class Employer_List extends WP_List_Table
 
         </section>
         <?php
-        include_once('libs/pages/modal.php');?>
+        //include_once('libs/pages/modal.php');
+        ?>
         <style type="text/css">
             #aupher-select {
                 display: none
@@ -518,6 +519,16 @@ class Employer_List extends WP_List_Table
         </div>
 
 
+
+        <div class="modal fade" id="modal_package" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true"
+             style="font-size: 12px;">
+            <div class="modal-dialog">
+                <div id="modal_package_content" class="modal-content">
+
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="modal_show_message" tabindex="-1" role="dialog"
              aria-labelledby="myModalMassage" aria-hidden="true"
              style="font-size: 12px;">

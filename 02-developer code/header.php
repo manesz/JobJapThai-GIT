@@ -48,10 +48,15 @@
     <script src="<?php echo get_template_directory_uri(); ?>/libs/js/html5shiv.min.js"></script>
     <script src="<?php echo get_template_directory_uri(); ?>/libs/js/respond.min.js"></script>
     <![endif]-->
-
+    <?php
+    $showRegister = empty($_REQUEST['show_register']) ? false : true;
+    ?>
     <script>
         $(document).ready(function () {
             $(".datepicker").datepicker();
+            <?php if ($showRegister): ?>
+            $("#modalRegister").modal('show');
+            <?php endif; ?>
         });
         var url_post = "<?php echo home_url(); ?>/";
         var str_loading = '<div class="img_loading"><img src="<?php
@@ -75,7 +80,7 @@
             position: fixed;
             top: 40%;
             left: 50%;
-            z-index: 9999;
+            z-index: 99999!important;
         }
     </style>
 </head>

@@ -306,7 +306,7 @@ class Candidate_List extends WP_List_Table
                 background-color: #FFF;
                 width: 0px;
                 height: 0px;
-                z-index: 9998;
+                z-index: 9999;
             }
 
             .img_loading {
@@ -368,7 +368,7 @@ class Candidate_List extends WP_List_Table
                                 }
                             },
                             error: function (result) {
-                                showModalMessage("Error:\n" + result.responseText, "Error");
+                                //showModalMessage("Error:\n" + result.responseText, "Error");
                                 hideImgLoading();
                                 check_post = false;
                             }

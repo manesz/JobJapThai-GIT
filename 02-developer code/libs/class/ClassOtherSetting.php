@@ -124,12 +124,12 @@ class OtherSetting
         return $result[0]->PROVINCE_NAME;
     }
 
-    function getDistrictName($id){
+    function getDistrictName($id){//อำเภอ
         $result = $this->getDistrict($id);
         return $result[0]->AMPHUR_NAME;
     }
 
-    function getCityName($id){
+    function getCityName($id){//ตำบล
         $result = $this->getCity($id);
         return $result[0]->DISTRICT_NAME;
     }

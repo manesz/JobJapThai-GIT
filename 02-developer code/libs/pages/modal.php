@@ -13,7 +13,7 @@
                     <a href="<?php echo get_permalink(get_page_by_title('Seeking for Job Register')); ?>">Seeking for Job</a>
                 </div>
                 <div class="col-md-6 btn">
-                    <a href="<?php echo get_permalink(get_page_by_title('Seeking for Job Register')); ?>">Seeking for Manpower</a>
+                    <a href="<?php echo get_permalink(get_page_by_title('Seeking for Manpower Register')); ?>">Seeking for Manpower</a>
                 </div>
                 <div class="clearfix"></div>
             </div>

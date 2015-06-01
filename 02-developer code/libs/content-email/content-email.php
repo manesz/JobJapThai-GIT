@@ -12,8 +12,6 @@ function wp_mail_set_content_type()
 }
 add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
 
-$getKey = $_REQUEST['key'];
-$urlConfirm = home_url() . "/confirm-register?key=$getKey";
 $objClassContact = new Contact($wpdb);
 $getContact = $objClassContact->getContact(1);
 if ($getContact) {
@@ -25,7 +23,7 @@ if ($getContact) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Register Confirmation.</title>
+    <title>{{title}}</title>
     <style type="text/css">
         body {
             padding-top: 0 !important;
@@ -240,7 +238,7 @@ if ($getContact) {
                                     <td height='40'></td>
                                 </tr>
                                 <tr>
-                                    <td style='border: 1px solid #EEEEEE; border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px'>
+                                    <td style='border: 1px solid #EEEEEE; border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px;padding: 10px;'>
                                         <table width="480" border="0" cellspacing="0" cellpadding="0"
                                                align="center">
                                             <tr>
@@ -251,12 +249,9 @@ if ($getContact) {
                                                     <div class='contentEditableContainer contentTextEditable'>
                                                         <div class='contentEditable'
                                                              style='text-align: left;'>
-                                                            <h2 style="font-size: 20px;">Register Confirmation.</h2>
+                                                            <h2 style="font-size: 20px;">{{title}}</h2>
                                                             <br>
-
-                                                            <p>ขอบคุณสำหรับการสมัครสมาชิก www.jobjapthai.com กรุณายืนยันการสมัครด้วยการคลิก link ด้านล่างนี้</p><br/><br/>
-                                                            <p><a href="<?php echo $urlConfirm; ?>"
-                                                                  target="_blank"><?php echo $urlConfirm; ?></a> </p>
+                                                            {{content}}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -284,7 +279,110 @@ if ($getContact) {
                         </div>
 
                         <!-- =============== END BODY =============== -->
-                        <?php require_once("footer.php"); ?>
+                        <!-- =============== START FOOTER =============== -->
+                        <div class='movableContent'>
+                            <table width="580" border="0" cellspacing="0" cellpadding="0" align="center">
+                                <tr>
+                                    <td colspan="3" height='48'></td>
+                                </tr>
+                                <tr>
+                                    <td width='90'></td>
+                                    <td width='400' align='center' style='text-align: center;'>
+                                        <table width='400' cellpadding="0" cellspacing="0" align="center">
+                                            <tr>
+                                                <td>
+                                                    <div class='contentEditableContainer contentTextEditable'>
+                                                        <div class='contentEditable'
+                                                             style='text-align: center;color:#AAAAAA;'>
+                                                            <p>
+                                                                Sent by info@jobjapthai.com <br/>
+                                                                JobJapThai Co., Ltd.<br/>
+                                                                1 Infinite Loop Cupertino, CA 95014<br/>
+                                                                Tel. +6686 627 0681<br/>
+                                                                <a href="mailto:contact@jobjapthai.com">contact@jobjapthai.com</a>
+                                                                <!--                                                                <a href="[FORWARD]" style='color:#AAAAAA;'>Forward-->
+                                                                <!--                                                                    to a friend</a> <br/>-->
+                                                                <!--                                                                <a href="[UNSUBSCRIBE]"-->
+                                                                <!--                                                                   style='color:#AAAAAA;'>Unsubscribe</a>-->
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td width='90'></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class='movableContent'>
+                            <table width="580" border="0" cellspacing="0" cellpadding="0" align="center">
+                                <tr>
+                                    <td colspan="3" height='40'></td>
+                                </tr>
+                                <tr>
+                                    <td width='195'></td>
+                                    <td width='190' align='center' style='text-align: center;'>
+                                        <table width='190' cellpadding="0" cellspacing="0" align="center">
+                                            <tr>
+                                                <td width='20'></td>
+                                                <?php if (!empty($getContact->link_facebook)): ?>
+                                                    <td width='40'>
+                                                        <div class='contentEditableContainer contentFacebookEditable'>
+                                                            <div class='contentEditable'
+                                                                 style='text-align: center;color:#AAAAAA;'>
+                                                                <a href="<?php echo $getContact->link_facebook; ?>" target="_blank">
+                                                                    <img src="http://ideacorners.com/files/cust-logo/jobjapthai-social-fb.png" alt="facebook"
+                                                                         width='40' height='40' data-max-width="40"
+                                                                         data-customIcon="true"></a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width='10'></td>
+                                                <?php endif;
+                                                if (!empty($getContact->link_twitter)):
+                                                    ?>
+                                                    <td width='40'>
+                                                        <div class='contentEditableContainer contentTwitterEditable'>
+                                                            <div class='contentEditable'
+                                                                 style='text-align: center;color:#AAAAAA;'>
+                                                                <a href="<?php echo $getContact->link_twitter; ?>" target="_blank">
+                                                                    <img src="http://ideacorners.com/files/cust-logo/jobjapthai-social-ggp.png" alt="twitter"
+                                                                         width='40' height='40' data-max-width="40"
+                                                                         data-customIcon="true">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width='10'></td>
+
+                                                <?php endif;
+                                                if (!empty($getContact->link_ggp)):
+                                                    ?>
+                                                    <td width='40'>
+                                                        <div class='contentEditableContainer contentImageEditable'>
+                                                            <div class='contentEditable'
+                                                                 style='text-align: center;color:#AAAAAA;'>
+                                                                <a href="<?php echo $getContact->link_ggp; ?>" target="_blank">
+                                                                    <img src="http://ideacorners.com/files/cust-logo/jobjapthai-social-tw.png" alt="Pinterest"
+                                                                         width='40' height='40' data-max-width="40">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                <?php endif; ?>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td width='195'></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" height='40'></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- =============== END FOOTER =============== -->
                     </td>
                 </tr>
             </table>

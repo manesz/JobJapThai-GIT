@@ -25,7 +25,7 @@ if (is_user_logged_in()) {
     <thead>
     <tr>
         <td>No.</td>
-        <td>Position/Time</td>
+        <td>Package/Time</td>
         <td>Hotjob</td>
         <td>Auto Update</td>
         <td>Status</td>

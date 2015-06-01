@@ -191,6 +191,20 @@ class Authentication
 
     }
 
+    function buildContentHtmlForgetPassword()
+    {
+        $userLogin = $_REQUEST['user_login'];
+        $newPassword = $_REQUEST['new_pass'];
+        ob_start();
+        ?>
+        <p>User name: <?php echo $userLogin; ?></p><br/>
+        <p>New password: <?php echo $newPassword; ?></p>
+        <?php
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
     function returnMessage($msg, $error, $show_div = true, $json = true)
     {
         if ($error) {

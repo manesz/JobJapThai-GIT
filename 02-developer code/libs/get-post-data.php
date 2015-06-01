@@ -5,25 +5,29 @@ if (!session_id())
 global $wpdb;
 if ($_REQUEST) {
     $classCandidate = new Candidate($wpdb);
-    $sendTo = 'ruxchuk@gmail.com'; //email info
+    $classContact = new Contact($wpdb);
+    $emailInfo = 'info@jobjapthai.com'; //email info
+    $emailSale = 'sale@jobjapthai.com'; //email sale
     $sendEmailContactUs = empty($_REQUEST['send_email_contact_us']) ? false : $_REQUEST['send_email_contact_us'];
     if ($sendEmailContactUs == 'true') {
-        extract($_REQUEST);
+
+        $security_code = empty($_REQUEST['security_code']) ? '' : $_REQUEST['security_code'];
+        $send_subject = empty($_REQUEST['send_subject']) ? '' : $_REQUEST['send_subject'];
+        $send_name = empty($_REQUEST['send_name']) ? '' : $_REQUEST['send_name'];
+        $send_subject = empty($_REQUEST['send_subject']) ? '' : $_REQUEST['send_subject'];
         if ($_SESSION['captcha_contact_us']['code'] != @$security_code) {
             echo 'error_captcha';
         } else {
-            function wp_mail_set_content_type()
-            {
-                return "text/html";
-            }
-
-            add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
             $subject = "Email Contact Us from $send_name";
             ob_start();
-            require_once("content-email/contact-us-email.php");
+            require_once("content-email/content-email.php");
             $message = ob_get_contents();
             ob_end_clean();
-            $result = wp_mail($sendTo, $subject, $message);
+            $title = "Contact Us From Job Jap Thai.";
+            $content = $classContact->buildContentHtmlEmail($_REQUEST);
+            $message = str_replace('{{title}}', $title, $message);
+            $message = str_replace('{{content}}', $content, $message);
+            $result = wp_mail($emailInfo, $subject, $message);
             if ($result)
                 echo 'success';
             else echo 'fail';
@@ -67,19 +71,26 @@ if ($_REQUEST) {
                 echo $classEmployer->returnMessage("Cancel Package Fail.", true);
         } else if ($postType == 'confirm_buy_package') {
             $employerID = $_REQUEST['employer_id'];
+            $packageID = empty($_REQUEST['package_id']) ? 0 : $_REQUEST['package_id'];
             $employerData = $classEmployer->getUser($employerID);
             $emailEmployer = $employerData->user_email;
-            $emailSale = "";
             ob_start();
-            require_once("content-email/buy_package_confirmation.php");
+            require_once("content-email/content-email.php");
             $message = ob_get_contents();
             ob_end_clean();
+            $title = "Buy Package Confirmation.";
+            $content = $classPackage->buildHtmlEmailBuyPackage($packageID, $employerID);
+            $message = str_replace('{{title}}', $title, $message);
+            $message = str_replace('{{content}}', $content, $message);
 
-//            if (!wp_mail($emailSale, "Buy Package Confirmation from Job Jap Thai", $message)) {
-//                echo $classCandidate->returnMessage("Sorry error send email.", true);
-//            }
+//            echo $message;
+            if (!wp_mail($emailSale, "Buy Package Confirmation from Job Jap Thai", $message)) {
+                echo $classCandidate->returnMessage("Sorry error send email.", true);
+            }
+
             if (!wp_mail($emailEmployer, "Buy Package Confirmation from Job Jap Thai", $message)) {
                 echo $classEmployer->returnMessage("Sorry error send email.", true);
+                exit;
             }
             $result = $classPackage->setStatusPackage($_REQUEST);
 
@@ -188,9 +199,13 @@ if ($_REQUEST) {
                 //$this->setUserLogin($user_id);
                 $_REQUEST['key'] = $result['key'];
                 ob_start();
-                require_once("content-email/register_confirmation.php");
+                require_once("content-email/content-email.php");
                 $message = ob_get_contents();
                 ob_end_clean();
+                $title = "Register Confirmation.";
+                $content = $classEmployer->buildContentHtmlConfirm($result['key']);
+                $message = str_replace('{{title}}', $title, $message);
+                $message = str_replace('{{content}}', $content, $message);
 
                 if (!wp_mail($_REQUEST['employerEmail'], "Register Confirmation from Job Jap Thai", $message)) {
                     echo $classEmployer->returnMessage("Sorry error send email.", true);
@@ -277,6 +292,10 @@ if ($_REQUEST) {
                     require_once("content-email/register_confirmation.php");
                     $message = ob_get_contents();
                     ob_end_clean();
+                    $title = "Register Confirmation.";
+                    $content = $classEmployer->buildContentHtmlConfirm($_REQUEST['key']);
+                    $message = str_replace('{{title}}', $title, $message);
+                    $message = str_replace('{{content}}', $content, $message);
 
                     if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
                         echo $classCandidate->returnMessage("Sorry error send email.", true);
@@ -326,9 +345,13 @@ if ($_REQUEST) {
                 break;
             case "send_email_confirm":
                 ob_start();
-                require_once("content-email/register_confirmation.php");
+                require_once("content-email/content-email.php");
                 $message = ob_get_contents();
                 ob_end_clean();
+                $title = "Register Confirmation.";
+                $content = $classEmployer->buildContentHtmlConfirm($_REQUEST['key']);
+                $message = str_replace('{{title}}', $title, $message);
+                $message = str_replace('{{content}}', $content, $message);
                 $showStyle = empty($_REQUEST['show_style']) ? true : false;
                 if (!wp_mail($_REQUEST['email'], "Register Confirmation from Job Jap Thai", $message)) {
                     echo "Sorry error send email.";
@@ -571,9 +594,13 @@ if ($_REQUEST) {
 
                 add_filter('wp_mail_content_type', 'wp_mail_set_content_type');
                 ob_start();
-                require_once("content-email/forget_password.php");
+                require_once("content-email/content-email.php");
                 $message = ob_get_contents();
                 ob_end_clean();
+                $title = "Forget Your Password.";
+                $content = $classAuthentication->buildContentHtmlForgetPassword();
+                $message = str_replace('{{title}}', $title, $message);
+                $message = str_replace('{{content}}', $content, $message);
                 if (!wp_mail($email, "Forget password from Job Jap Thai", $message)) {
                     echo $classAuthentication->returnMessage("Sorry error send email.", true);
                 } else {

@@ -2,16 +2,22 @@
 if (is_user_logged_in()) {
     global $current_user;
     get_currentuserinfo();
-    $packageID = empty($_GET['package_id']) ? 0 : $_GET['package_id'];
-    $employerID = empty($_GET['user_id']) ? 0 : $_GET['user_id'];
+    $packageID = empty($_REQUEST['package_id']) ? 0 : $_REQUEST['package_id'];
+    $employerID = empty($_REQUEST['user_id']) ? 0 : $_REQUEST['user_id'];
     if (!$employerID) {
         $employerID = $current_user->ID;
     }
     $classPackage = new Package($wpdb);
     $arrayPackage = $classPackage->getPackage();
     $arraySelectPackage = $packageID ? $classPackage->getSelectPackage($employerID, $packageID) : null;
-    $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
-    $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+    $isApprove = '';
+    $strSelectPackage = '';
+
+    if ($arraySelectPackage)
+        $strSelectPackage = $packageID ? $arraySelectPackage[0]->string_package : '';
+    if ($strSelectPackage) {
+        $isApprove = $packageID ? $arraySelectPackage[0]->status : '';
+    }
 } else {
     echo "Please Login";
     exit;

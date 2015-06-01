@@ -24,19 +24,26 @@ if (have_posts()) :
                 get_currentuserinfo();
                 $userID = $current_user->ID;
                 $userType = get_user_meta($userID, 'user_type', $single);
-                if ($userType){
+                if ($userType) {
                     if ($userType == 'employer') {
                         get_template_part('libs/pages/employer-register');
                     } else if ($userType == 'candidate') {
                         get_template_part('libs/pages/candidate-register');
                     }
                 } else {
-                    wp_redirect(home_url());
+                    ?>
+                    <script>
+                        window.location.href = '<?php echo home_url(); ?>/wp-admin/profile.php';
+                    </script>
+                <?php
                 }
                 //get_template_part('libs/pages/employer-register');
             } else {
-                wp_redirect(home_url());
-                exit;
+                ?>
+                <script>
+                    window.location.href = '<?php echo home_url(); ?>?show_register=true';
+                </script>
+            <?php
             }
         } else if (is_page("request-resume")) {
             get_template_part('libs/pages/request-resume');
@@ -71,7 +78,12 @@ if (have_posts()) :
         } else if (is_page("highlight-jobs")) {
             get_template_part('libs/pages/highlight-jobs');
         } else if (is_page("register-success")) {
-            get_template_part('libs/pages/register-success');
+            $getCheckPage = empty($_REQUEST['emp']) ? false : true;
+            if ($getCheckPage)
+                get_template_part('libs/pages/employer-register-success');
+            else
+                get_template_part('libs/pages/candidate-register-success');
+
         } else if (is_page("confirm-register")) {
             get_template_part('libs/pages/confirm-register');
         } else if (is_page("confirm-success")) {
